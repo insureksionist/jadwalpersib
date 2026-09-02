@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Persib Bandung 2026/27 — Match Calendar Dashboard</title>
+<style>
+  :root{
+    --persib-blue: #212062;
+    --persib-blue-light: #2f2d86;
+    --white: #F4F4F5;
+    --black: #1B1B1B;
+    --sl-bg: #dbe9fd;
+    --sl-bg-strong: #bcd7fb;
+    --sl-dot: #3b7dd8;
+    --acl-bg: #fbedc4;
+    --acl-bg-strong: #f6dd94;
+    --acl-dot: #d8a428;
+    --shopee-bg: #dcf3e4;
+    --shopee-bg-strong: #b7e6c6;
+    --shopee-dot: #2f9e5c;
+    --card-radius: 14px;
+    --shadow: 0 4px 18px rgba(27,27,27,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg,#eceef7 0%, #f4f4f5 260px, #f4f4f5 100%);
+    color: var(--black);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 16px 60px;}
+
+  /* HEADER */
+  header.top{
+    background: linear-gradient(135deg, var(--persib-blue) 0%, #171650 100%);
+    color: var(--white);
+    padding: 34px 16px 26px;
+    text-align:center;
+    border-radius: 0 0 22px 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+  }
+  header.top .title-main{
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+  header.top .title-sub{
+    font-size: 0.95rem;
+    opacity: 0.85;
+    margin-top: 6px;
+    letter-spacing: 3px;
+    font-weight: 600;
+  }
+  header.top .title-tag{
+    font-size: 1.1rem;
+    margin-top: 2px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .stats-row{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .stat-box{
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 10px 18px;
+    min-width: 92px;
+  }
+  .stat-box .num{font-size:1.5rem;font-weight:800;line-height:1;}
+  .stat-box .lab{font-size:0.65rem;letter-spacing:1px;opacity:0.8;margin-top:4px;text-transform:uppercase;}
+  .homeaway-row{
+    display:flex;justify-content:center;gap:14px;margin-top:12px;font-size:0.8rem;opacity:0.9;font-weight:600;
+  }
+
+  /* SECTIONS */
+  section.card{
+    background:#fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  h2.section-title{
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--persib-blue);
+    margin: 0 0 14px 0;
+    font-weight: 800;
+  }
+
+  /* highlight / countdown grid */
+  .top-cards{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 680px){
+    .top-cards{grid-template-columns: 1fr;}
+  }
+  .today-card, .countdown-card{
+    border-radius: var(--card-radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    color: var(--white);
+  }
+  .today-card{
+    background: linear-gradient(135deg,#c0392b,#8e2a20);
+  }
+  .today-card.empty{
+    background: #e9e9ec;
+    color: #555;
+  }
+  .countdown-card{
+    background: linear-gradient(135deg, var(--persib-blue), #131230);
+  }
+  .card-tag{
+    font-size:0.7rem;
+    letter-spacing:2px;
+    font-weight:800;
+    opacity:0.85;
+    margin-bottom:8px;
+  }
+  .matchup{
+    font-size:1.05rem;
+    font-weight:800;
+    text-align:center;
+    line-height:1.5;
+  }
+  .matchup .vs{
+    font-size:0.75rem;
+    opacity:0.7;
+    display:block;
+    margin: 2px 0;
+    font-weight:600;
+  }
+  .meta-line{
+    text-align:center;
+    font-size:0.8rem;
+    margin-top:10px;
+    opacity:0.9;
+  }
+  .countdown-timer{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .countdown-timer .seg{
+    background: rgba(255,255,255,0.12);
+    border-radius:8px;
+    padding:8px 10px;
+    min-width:56px;
+    text-align:center;
+  }
+  .countdown-timer .seg .n{font-size:1.2rem;font-weight:800;display:block;}
+  .countdown-timer .seg .l{font-size:0.6rem;letter-spacing:1px;opacity:0.75;}
+  .tbc-text{
+    text-align:center;
+    margin-top:14px;
+    font-weight:700;
+    font-size:0.9rem;
+    opacity:0.9;
+  }
+
+  /* controls */
+  .controls-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 16px;
+  }
+  .filters{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .filter-btn{
+    border: 2px solid var(--persib-blue);
+    background: #fff;
+    color: var(--persib-blue);
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .filter-btn.active, .filter-btn:hover{
+    background: var(--persib-blue);
+    color: #fff;
+  }
+  .search-box{
+    flex: 1 1 220px;
+    max-width: 320px;
+    position: relative;
+  }
+  .search-box input{
+    width:100%;
+    padding: 9px 14px 9px 34px;
+    border-radius: 999px;
+    border: 2px solid #d8d8dc;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .search-box input:focus{ border-color: var(--persib-blue); }
+  .search-box .icon{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    font-size:0.85rem; opacity:0.6;
+  }
+
+  /* calendar */
+  .cal-nav{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 18px;
+    margin-bottom: 14px;
+  }
+  .cal-nav button{
+    background: var(--persib-blue);
+    color:#fff;
+    border:none;
+    width:36px;height:36px;
+    border-radius: 50%;
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cal-nav button:hover{ background:#141235; }
+  .cal-nav .cal-month-label{
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--persib-blue);
+    min-width: 190px;
+    text-align:center;
+    letter-spacing: 1px;
+  }
+  .cal-months{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 900px){
+    .cal-months{ grid-template-columns: 1fr; }
+  }
+  .cal-month-panel .mini-month-label{
+    text-align:center;
+    font-weight:800;
+    font-size:0.85rem;
+    color: var(--persib-blue);
+    margin-bottom:8px;
+    letter-spacing:0.5px;
+  }
+  .filter-group-label{
+    font-size:0.7rem;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#999;
+    text-transform:uppercase;
+    margin: 14px 0 8px;
+  }
+  .filter-group-label:first-of-type{ margin-top:0; }
+  .cal-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .cal-dow{
+    text-align:center;
+    font-size:0.68rem;
+    font-weight:800;
+    color: #888;
+    letter-spacing:0.5px;
+    padding-bottom:4px;
+    text-transform:uppercase;
+  }
+  .cal-cell{
+    min-height: 54px;
+    border-radius: 8px;
+    background: #f7f7f9;
+    padding: 4px 3px;
+    font-size: 0.62rem;
+    position: relative;
+    display:flex;
+    flex-direction:column;
+    gap: 2px;
+  }
+  .cal-cell.empty{ background: transparent; }
+  .cal-cell.today{ box-shadow: inset 0 0 0 2px var(--persib-blue); }
+  .cal-cell .daynum{
+    font-weight: 700;
+    font-size: 0.68rem;
+    color: #555;
+  }
+  .cal-cell.has-match{ cursor:pointer; }
+  .cal-cell.has-match:hover{ filter: brightness(0.97); }
+  .cal-cell .match-chip{
+    border-radius: 5px;
+    padding: 2px 4px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--black);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .match-chip.sl{ background: var(--sl-bg-strong); }
+  .match-chip.acl{ background: var(--acl-bg-strong); }
+  .match-chip.shopee{ background: var(--shopee-bg-strong); }
+  .match-chip.dim{ opacity: 0.35; }
+
+  .legend{
+    display:flex;
+    gap: 18px;
+    margin-top: 14px;
+    font-size: 0.75rem;
+    justify-content:center;
+    flex-wrap: wrap;
+  }
+  .legend span{ display:flex; align-items:center; gap:6px; font-weight:600; color:#555; }
+  .legend .dot{ width:10px;height:10px;border-radius:50%; display:inline-block; }
+  .dot.sl{ background: var(--sl-dot); }
+  .dot.acl{ background: var(--acl-dot); }
+  .dot.shopee{ background: var(--shopee-dot); }
+
+  /* upcoming list */
+  .upcoming-list{ display:flex; flex-direction:column; gap: 10px; }
+  .upcoming-item{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    border: 1px solid #ececef;
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .upcoming-item:hover{ background: #f7f7fa; }
+  .upcoming-date{
+    background: var(--persib-blue);
+    color:#fff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align:center;
+    min-width: 58px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height:1.2;
+  }
+  .upcoming-date .dnum{ font-size: 1.05rem; display:block; }
+  .upcoming-main{ flex:1; }
+  .upcoming-main .teams{ font-weight: 800; font-size: 0.9rem; }
+  .upcoming-main .sub{ font-size: 0.75rem; color:#777; margin-top:3px; }
+  .upcoming-main .comp-badge{
+    display:inline-block;
+    margin-top: 5px;
+    font-size: 0.62rem;
+    font-weight:800;
+    letter-spacing:0.5px;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .comp-badge.sl{ background: var(--sl-bg); color:#1c4a8c; }
+  .comp-badge.acl{ background: var(--acl-bg); color:#8a6407; }
+  .comp-badge.shopee{ background: var(--shopee-bg); color:#1f7a44; }
+  .side-tag{ font-size:1.1rem; }
+  .no-results{ text-align:center; color:#888; padding: 20px 0; font-size:0.85rem; }
+
+  /* modal */
+  .modal-overlay{
+    position: fixed; inset:0;
+    background: rgba(20,19,40,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 999;
+    padding: 16px;
+    animation: fadeIn .15s ease;
+  }
+  .modal-overlay.open{ display:flex; }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+  @keyframes slideUp{ from{ transform: translateY(16px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .modal-box{
+    background:#fff;
+    border-radius: 16px;
+    max-width: 420px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y:auto;
+    padding: 22px 20px 20px;
+    position: relative;
+    animation: slideUp .18s ease;
+  }
+  .modal-close{
+    position:absolute; top: 12px; right: 14px;
+    background:none; border:none;
+    font-size:1.3rem;
+    cursor:pointer;
+    color:#999;
+    line-height:1;
+  }
+  .modal-close:hover{ color:#333; }
+  .modal-comp-badge{
+    display:inline-block;
+    font-size:0.65rem;
+    font-weight:800;
+    letter-spacing:1px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+  }
+  .modal-matchday{ font-size:0.72rem; color:#888; font-weight:600; margin-bottom: 14px; }
+  .modal-teams{
+    text-align:center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 6px 0 16px;
+  }
+  .modal-teams .vsline{ font-size:0.7rem; color:#999; display:block; font-weight:700; letter-spacing:1px; }
+  .modal-detail-row{
+    display:flex;
+    gap: 10px;
+    font-size: 0.85rem;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f2;
+  }
+  .modal-detail-row:last-of-type{ border-bottom:none; }
+  .modal-detail-row .ico{ width: 20px; text-align:center; }
+  .modal-single{ margin-bottom: 18px; }
+  .modal-gcal-btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    background: var(--persib-blue);
+    color:#fff;
+    border:none;
+    padding: 11px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration:none;
+  }
+  .modal-gcal-btn:hover{ background:#141235; }
+
+  footer{
+    text-align:center;
+    padding: 20px 16px 6px;
+    color:#888;
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+  footer strong{ color: var(--persib-blue); }
+
+  ::-webkit-scrollbar{ width:6px; }
+  ::-webkit-scrollbar-thumb{ background:#ccc; border-radius:4px; }
+
+  .team-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    overflow:hidden;
+    flex-shrink:0;
+    background:#fff;
+    vertical-align:middle;
+    font-weight:800;
+    color:#fff;
+  }
+  .team-badge img{ width:100%; height:100%; object-fit:contain; }
+  .team-badge.badge-fallback{ color:#fff; }
+
+  .header-top-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+  }
+  .header-logo-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex-shrink:0;
+  }
+  .header-stars{
+    font-size:0.75rem;
+    letter-spacing:2px;
+    color:#ffd54a;
+    margin-bottom:2px;
+    line-height:1;
+  }
+  .header-logo-col img{
+    width:56px;
+    height:56px;
+    object-fit:contain;
+  }
+  .header-logo-col .logo-fallback{
+    width:56px;height:56px;border-radius:50%;
+    background:rgba(255,255,255,0.12);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:1.3rem;color:#fff;
+    border:2px solid rgba(255,255,255,0.3);
+  }
+  .header-text-col{ text-align:center; }
+  @media (max-width: 480px){
+    .header-logo-col img, .header-logo-col .logo-fallback{ width:42px; height:42px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="header-top-row">
+    <div class="header-logo-col">
+      <div class="header-stars">⭐⭐⭐⭐⭐</div>
+      <img src="https://id.wikipedia.org/wiki/Special:FilePath/Logo_Persib_Bandung.png" alt="Persib Bandung" onerror="this.outerHTML='<div class=&quot;logo-fallback&quot;>PB</div>'">
+    </div>
+    <div class="header-text-col">
+      <p class="title-main">⚽ PERSIB BANDUNG</p>
+      <p class="title-tag">2026/27</p>
+      <p class="title-sub">MATCH CALENDAR</p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="num" id="statTotal">-</div><div class="lab">Total Matches</div></div>
+    <div class="stat-box"><div class="num" id="statSL">-</div><div class="lab">Super League</div></div>
+    <div class="stat-box"><div class="num" id="statACL">-</div><div class="lab">ACL 2</div></div>
+    <div class="stat-box"><div class="num" id="statShopee">-</div><div class="lab">Shopee Cup</div></div>
+  </div>
+  <div class="homeaway-row">
+    <span id="statHome">- HOME</span>
+    <span>•</span>
+    <span id="statAway">- AWAY</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="top-cards">
+    <div class="today-card empty" id="todayCard">
+      <div class="card-tag">TODAY</div>
+      <div class="meta-line">No Persib match today.</div>
+    </div>
+    <div class="countdown-card" id="countdownCard">
+      <div class="card-tag">NEXT MATCH</div>
+      <div class="matchup" id="nextMatchup">-</div>
+      <div class="meta-line" id="nextMeta">-</div>
+      <div class="countdown-timer" id="countdownTimer"></div>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="cal-nav">
+      <button id="prevMonth" aria-label="Previous month">‹</button>
+      <div class="cal-month-label" id="calMonthLabel">-</div>
+      <button id="nextMonth" aria-label="Next month">›</button>
+    </div>
+
+    <div class="cal-months" id="calMonths"></div>
+
+    <div class="legend">
+      <span><span class="dot sl"></span> Super League</span>
+      <span><span class="dot acl"></span> ACL 2</span>
+      <span><span class="dot shopee"></span> Shopee Cup</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">Filter</h2>
+    <div class="filter-group-label">Kompetisi</div>
+    <div class="filters" id="filterButtons">
+      <button class="filter-btn active" data-filter="ALL">ALL</button>
+      <button class="filter-btn" data-filter="Super League">SUPER LEAGUE</button>
+      <button class="filter-btn" data-filter="ACL 2">ACL 2</button>
+      <button class="filter-btn" data-filter="Shopee Cup">SHOPEE CUP</button>
+    </div>
+    <div class="filter-group-label">Home / Away</div>
+    <div class="filters" id="homeAwayButtons">
+      <button class="filter-btn active" data-homeaway="ALL">ALL MATCH</button>
+      <button class="filter-btn" data-homeaway="Home">HOME</button>
+      <button class="filter-btn" data-homeaway="Away">AWAY</button>
+    </div>
+    <div class="filter-group-label">Search</div>
+    <div class="search-box" style="max-width:100%;">
+      <span class="icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Cari tim lawan, kota, stadion...">
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">Upcoming Matches</h2>
+    <div class="upcoming-list" id="upcomingList"></div>
+  </section>
+
+</div>
+
+<footer>
+  <div>⚽ <strong>PERSIB BANDUNG 2026/27</strong></div>
+  <div>Match Calendar Dashboard</div>
+  <div>Schedule may change according to official competition updates.</div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// PERSIB BANDUNG MATCH DATA
+// Edit ONLY this section when schedule changes.
+// Do NOT change existing match "id" values when the
+// schedule is updated — only edit date/time/venue/etc.
+// =====================================================
+const matches = [
+  // ---- BRI SUPER LEAGUE 2026/27 ----
+  { id:"SL-01", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 1",  date:"2026-09-06", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"PSM Makassar", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-02", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 2",  date:"2026-09-12", time:"15:30", timezone:"Asia/Jakarta", home:"Persija Jakarta", away:"Persib Bandung", venue:"Gelora Bung Karno", city:"Jakarta", country:"Indonesia", side:"Away" },
+  { id:"SL-03", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 3",  date:"2026-09-20", time:"19:00", timezone:"Asia/Jakarta", home:"Persijap Jepara", away:"Persib Bandung", venue:"Gelora Bumi Kartini", city:"Jepara", country:"Indonesia", side:"Away" },
+  { id:"SL-04", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 4",  date:"2026-10-11", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Dewa United", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-05", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 5",  date:"2026-10-18", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Persik Kediri", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-06", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 6",  date:"2026-10-22", time:"19:00", timezone:"Asia/Jakarta", home:"Madura United", away:"Persib Bandung", venue:"Gelora Madura", city:"Pamekasan", country:"Indonesia", side:"Away" },
+  { id:"SL-07", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 7",  date:"2026-10-26", time:"15:30", timezone:"Asia/Jakarta", home:"Garudayaksa FC", away:"Persib Bandung", venue:"Pakansari Stadium", city:"Bogor", country:"Indonesia", side:"Away" },
+  { id:"SL-08", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 8",  date:"2026-11-01", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Isenmulang Kalteng FC", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-09", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 9",  date:"2026-11-08", time:"19:00", timezone:"Asia/Jakarta", home:"Java United", away:"Persib Bandung", venue:"Stadion Jatidiri", city:"Semarang", country:"Indonesia", side:"Away" },
+  { id:"SL-10", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 10", date:"2026-11-22", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Bali United", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-11", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 11", date:"2026-11-29", time:"19:00", timezone:"Asia/Jakarta", home:"Persita", away:"Persib Bandung", venue:"Indomilk Arena", city:"Tangerang", country:"Indonesia", side:"Away" },
+  { id:"SL-12", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 12", date:"2026-12-06", time:"15:30", timezone:"Asia/Jakarta", home:"Persebaya Surabaya", away:"Persib Bandung", venue:"Gelora Bung Tomo", city:"Surabaya", country:"Indonesia", side:"Away" },
+  { id:"SL-13", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 13", date:"2026-12-14", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"PSS Sleman", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-14", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 14", date:"2026-12-20", time:"19:00", timezone:"Asia/Jakarta", home:"Arema FC", away:"Persib Bandung", venue:"Kanjuruhan", city:"Malang", country:"Indonesia", side:"Away" },
+  { id:"SL-15", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 15", date:"2026-12-23", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Bhayangkara Presisi Lampung FC", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-16", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 16", date:"2026-12-27", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"PSIM Yogyakarta", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-17", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 17", date:"2027-02-03", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Borneo FC Samarinda", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-18", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 18", date:"2027-02-07", time:"20:30", timezone:"Asia/Jakarta", home:"Dewa United", away:"Persib Bandung", venue:"Banten International Stadium", city:"Serang", country:"Indonesia", side:"Away" },
+  { id:"SL-19", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 19", date:"2027-02-14", time:"20:30", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Madura United", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-20", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 20", date:"2027-02-21", time:"20:30", timezone:"Asia/Jakarta", home:"Isenmulang Kalteng FC", away:"Persib Bandung", venue:"Tuah Pahoe", city:"Palangka Raya", country:"Indonesia", side:"Away" },
+  { id:"SL-21", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 21", date:"2027-02-28", time:"20:30", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Persijap Jepara", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-22", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 22", date:"2027-03-14", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Java United", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-23", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 23", date:"2027-03-21", time:"19:00", timezone:"Asia/Jakarta", home:"PSS Sleman", away:"Persib Bandung", venue:"Maguwoharjo", city:"Sleman", country:"Indonesia", side:"Away" },
+  { id:"SL-24", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 24", date:"2027-04-03", time:"19:00", timezone:"Asia/Jakarta", home:"PSIM Yogyakarta", away:"Persib Bandung", venue:"Sultan Agung", city:"Bantul", country:"Indonesia", side:"Away" },
+  { id:"SL-25", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 25", date:"2027-04-10", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Arema FC", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-26", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 26", date:"2027-04-17", time:"19:00", timezone:"Asia/Jakarta", home:"Bali United", away:"Persib Bandung", venue:"Kapten I Wayan Dipta", city:"Gianyar", country:"Indonesia", side:"Away" },
+  { id:"SL-27", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 27", date:"2027-04-24", time:"15:30", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Persija Jakarta", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-28", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 28", date:"2027-04-30", time:"19:00", timezone:"Asia/Jakarta", home:"Borneo FC Samarinda", away:"Persib Bandung", venue:"Segiri", city:"Samarinda", country:"Indonesia", side:"Away" },
+  { id:"SL-29", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 29", date:"2027-05-04", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Garudayaksa FC", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-30", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 30", date:"2027-05-08", time:"15:30", timezone:"Asia/Jakarta", home:"PSM Makassar", away:"Persib Bandung", venue:"Gelora B.J. Habibie", city:"Parepare", country:"Indonesia", side:"Away" },
+  { id:"SL-31", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 31", date:"2027-05-13", time:"15:30", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Persebaya Surabaya", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"SL-32", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 32", date:"2027-05-23", time:"19:00", timezone:"Asia/Jakarta", home:"Persik Kediri", away:"Persib Bandung", venue:"Brawijaya", city:"Kediri", country:"Indonesia", side:"Away" },
+  { id:"SL-33", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 33", date:"2027-05-29", time:"19:00", timezone:"Asia/Jakarta", home:"Bhayangkara Presisi Lampung FC", away:"Persib Bandung", venue:"PKOR Sumpah Pemuda", city:"Bandar Lampung", country:"Indonesia", side:"Away" },
+  { id:"SL-34", competition:"BRI Super League 2026/27", competitionShort:"Super League", matchday:"Matchday 34", date:"2027-06-05", time:"19:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Persita", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+
+  // ---- AFC CHAMPIONS LEAGUE TWO 2026/27 — GRUP E ----
+  { id:"ACL2-01", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"Matchday 1 (Grup E)", date:"2026-09-16", time:"17:00", timezone:"Asia/Jakarta", home:"FC Seoul", away:"Persib Bandung", venue:"Seoul World Cup Stadium", city:"Seoul", country:"South Korea", side:"Away" },
+  { id:"ACL2-02", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"Matchday 2 (Grup E)", date:"2026-10-15", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Viettel FC", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"ACL2-03", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"Matchday 3 (Grup E)", date:"2026-10-29", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Melbourne Victory", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"ACL2-04", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"Matchday 4 (Grup E)", date:"2026-11-04", time:null, timezone:"Asia/Jakarta", home:"Melbourne Victory", away:"Persib Bandung", venue:"AAMI Park", city:"Melbourne", country:"Australia", side:"Away" },
+  { id:"ACL2-05", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"Matchday 5 (Grup E)", date:"2026-11-26", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"FC Seoul", venue:"Gelora Bandung Lautan Api", city:"Bandung", country:"Indonesia", side:"Home" },
+  { id:"ACL2-06", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"Matchday 6 (Grup E)", date:"2026-12-02", time:"17:00", timezone:"Asia/Jakarta", home:"Viettel FC", away:"Persib Bandung", venue:"Hang Day Stadium", city:"Hanoi", country:"Vietnam", side:"Away" },
+
+  // ---- SHOPEE CUP (ASEAN CLUB CHAMPIONSHIP) 2026/27 — GROUP B ----
+  // Source: aseanutdfc.com official schedule page. Kick-off time and venue
+  // are not yet published there (only date + fixture pairing) — kept as
+  // TBC rather than guessed. Update once the official time/venue is announced.
+  { id:"SHOPEE-01", competition:"Shopee Cup - ASEAN Club Championship 2026/27", competitionShort:"Shopee Cup", matchday:"Grup B", date:"2026-10-08", time:null, timezone:"Asia/Jakarta", home:"Port", away:"Persib Bandung", venue:null, city:null, country:"Thailand", side:"Away" },
+  { id:"SHOPEE-02", competition:"Shopee Cup - ASEAN Club Championship 2026/27", competitionShort:"Shopee Cup", matchday:"Grup B", date:"2026-11-19", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Pemenang Play-Off 2", venue:null, city:null, country:"Indonesia", side:"Home" },
+  { id:"SHOPEE-03", competition:"Shopee Cup - ASEAN Club Championship 2026/27", competitionShort:"Shopee Cup", matchday:"Grup B", date:"2026-12-10", time:null, timezone:"Asia/Jakarta", home:"Lion City Sailors", away:"Persib Bandung", venue:null, city:null, country:"Singapore", side:"Away" },
+  { id:"SHOPEE-04", competition:"Shopee Cup - ASEAN Club Championship 2026/27", competitionShort:"Shopee Cup", matchday:"Grup B", date:"2026-12-17", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Johor Darul Ta'zim", venue:null, city:null, country:"Indonesia", side:"Home" },
+  { id:"SHOPEE-05", competition:"Shopee Cup - ASEAN Club Championship 2026/27", competitionShort:"Shopee Cup", matchday:"Grup B", date:"2027-02-25", time:null, timezone:"Asia/Jakarta", home:"PKR Svay Rieng", away:"Persib Bandung", venue:null, city:null, country:"Cambodia", side:"Away" },
+  { id:"SHOPEE-06", competition:"Shopee Cup - ASEAN Club Championship 2026/27", competitionShort:"Shopee Cup", matchday:"Grup B", date:"2027-03-04", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Công An Hà Nội", venue:null, city:null, country:"Indonesia", side:"Home" },
+];
+// =====================================================
+// END OF MATCH DATA
+// =====================================================
+
+// Known club-badge images (verified Wikipedia/Wikimedia files).
+// Any club not listed here (or whose image fails to load) automatically
+// falls back to a colored initials badge — see teamBadgeHtml() below.
+const TEAM_LOGOS = {
+  "Persib Bandung": "https://id.wikipedia.org/wiki/Special:FilePath/Logo_Persib_Bandung.png",
+  "PSM Makassar": "https://en.wikipedia.org/wiki/Special:FilePath/PSM_Makassar_logo.svg",
+  "Dewa United": "https://en.wikipedia.org/wiki/Special:FilePath/Dewa_United_F.C._logo.svg",
+  "Madura United": "https://en.wikipedia.org/wiki/Special:FilePath/Madura_United_F.C._logo.png",
+};
+
+function teamInitials(name){
+  const words = name.replace(/\bFC\b|\bF\.C\.\b/gi,'').trim().split(/\s+/).filter(Boolean);
+  let ini = words.slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  if(!ini) ini = name.substring(0,2).toUpperCase();
+  return ini;
+}
+function teamColor(name){
+  let hash=0;
+  for(let i=0;i<name.length;i++){ hash = name.charCodeAt(i) + ((hash<<5)-hash); }
+  const hue = Math.abs(hash)%360;
+  return `hsl(${hue},50%,42%)`;
+}
+function badgeFallback(imgEl){
+  const span = imgEl.parentElement;
+  const name = span.getAttribute('data-team');
+  span.innerHTML = teamInitials(name);
+  span.style.background = teamColor(name);
+  span.classList.add('badge-fallback');
+}
+function teamBadgeHtml(name, size){
+  size = size || 22;
+  const url = TEAM_LOGOS[name];
+  if(url){
+    return `<span class="team-badge" data-team="${escapeHtml(name)}" style="width:${size}px;height:${size}px;"><img src="${url}" alt="" onerror="badgeFallback(this)"></span>`;
+  }
+  return `<span class="team-badge badge-fallback" data-team="${escapeHtml(name)}" style="width:${size}px;height:${size}px;background:${teamColor(name)};font-size:${Math.round(size*0.4)}px;">${teamInitials(name)}</span>`;
+}
+
+const MONTHS_ID = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const DOW_ID = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+const DOW_SHORT_ID = ["Sen","Sel","Rab","Kam","Jum","Sab","Min"];
+
+let currentFilter = "ALL";
+let currentHomeAway = "ALL";
+let currentSearch = "";
+let calYear = 2026;
+let calMonth = 8; // 0-indexed -> September
+
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function parseMatchDateTime(m){
+  // returns a Date object in local browser time approximating WIB (UTC+7)
+  if(!m.time) return null;
+  const [y,mo,da] = m.date.split("-").map(Number);
+  const [hh,mm] = m.time.split(":").map(Number);
+  // Construct as UTC+7 fixed offset for Asia/Jakarta
+  const utcMs = Date.UTC(y, mo-1, da, hh - 7, mm);
+  return new Date(utcMs);
+}
+
+function matchPassesFilter(m){
+  if(currentFilter !== "ALL" && m.competitionShort !== currentFilter) return false;
+  if(currentHomeAway !== "ALL" && m.side !== currentHomeAway) return false;
+  if(currentSearch){
+    const hay = (m.home+" "+m.away+" "+m.competition+" "+m.competitionShort+" "+(m.venue||"")+" "+(m.city||"")).toLowerCase();
+    if(!hay.includes(currentSearch.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function formatDateID(dateStr, withDow){
+  const [y,m,d] = dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y,m-1,d));
+  const dow = DOW_ID[(dt.getUTCDay()+6)%7];
+  const out = d + " " + MONTHS_ID[m-1] + " " + y;
+  return withDow ? (dow+", "+out) : out;
+}
+
+function timeLabel(m){
+  return m.time ? (m.time+" WIB") : "TBC";
+}
+
+function compClass(m){
+  if(m.competitionShort==="Super League") return "sl";
+  if(m.competitionShort==="ACL 2") return "acl";
+  return "shopee";
+}
+
+function venueLabel(m){
+  return m.venue ? m.venue : "TBC";
+}
+
+function cityCountryLabel(m){
+  if(m.city) return m.city + (m.country ? (", "+m.country) : "");
+  return "TBC";
+}
+
+// ---------- STATS ----------
+function renderStats(){
+  const total = matches.length;
+  const sl = matches.filter(m=>m.competitionShort==="Super League").length;
+  const acl = matches.filter(m=>m.competitionShort==="ACL 2").length;
+  const shopee = matches.filter(m=>m.competitionShort==="Shopee Cup").length;
+  const home = matches.filter(m=>m.side==="Home").length;
+  const away = matches.filter(m=>m.side==="Away").length;
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statSL").textContent = sl;
+  document.getElementById("statACL").textContent = acl;
+  document.getElementById("statShopee").textContent = shopee;
+  document.getElementById("statHome").textContent = home+" HOME";
+  document.getElementById("statAway").textContent = away+" AWAY";
+}
+
+// ---------- TODAY HIGHLIGHT ----------
+function renderTodayHighlight(){
+  const t = todayStr();
+  const card = document.getElementById("todayCard");
+  const todays = matches.filter(m=>m.date===t);
+  if(todays.length===0){
+    card.className = "today-card empty";
+    card.innerHTML = '<div class="card-tag">TODAY</div><div class="meta-line">No Persib match today.</div>';
+    return;
+  }
+  const m = todays[0];
+  card.className = "today-card";
+  card.innerHTML = `
+    <div class="card-tag">🔴 MATCHDAY TODAY</div>
+    <div class="matchup">${teamBadgeHtml(m.home,18)} ${escapeHtml(m.home)}<span class="vs">VS</span>${teamBadgeHtml(m.away,18)} ${escapeHtml(m.away)}</div>
+    <div class="meta-line">TODAY • ${timeLabel(m)}</div>
+  `;
+  card.style.cursor = "pointer";
+  card.onclick = ()=>openModalForDate(m.date);
+}
+
+// ---------- COUNTDOWN ----------
+let countdownInterval = null;
+function getNextMatch(){
+  const now = new Date();
+  const upcoming = matches
+    .filter(m=>{
+      if(m.time){
+        const dt = parseMatchDateTime(m);
+        return dt.getTime() >= now.getTime() - 2*60*60*1000; // small grace window
+      } else {
+        return m.date >= todayStr();
+      }
+    })
+    .sort((a,b)=> (a.date+((a.time)||"99:99")).localeCompare(b.date+((b.time)||"99:99")));
+  return upcoming[0] || null;
+}
+
+function renderCountdown(){
+  const m = getNextMatch();
+  const matchupEl = document.getElementById("nextMatchup");
+  const metaEl = document.getElementById("nextMeta");
+  const timerEl = document.getElementById("countdownTimer");
+
+  if(!m){
+    matchupEl.textContent = "Season complete";
+    metaEl.textContent = "";
+    timerEl.innerHTML = "";
+    if(countdownInterval) clearInterval(countdownInterval);
+    return;
+  }
+
+  matchupEl.innerHTML = `${teamBadgeHtml(m.home,18)} ${escapeHtml(m.home)}<span class="vs">VS</span>${teamBadgeHtml(m.away,18)} ${escapeHtml(m.away)}`;
+  metaEl.textContent = formatDateID(m.date,false) + (m.time ? (" • "+m.time+" WIB") : "");
+
+  if(countdownInterval) clearInterval(countdownInterval);
+
+  if(!m.time){
+    timerEl.innerHTML = '<div class="tbc-text">Kick-off: TBC</div>';
+    return;
+  }
+
+  function tick(){
+    const target = parseMatchDateTime(m).getTime();
+    const now = Date.now();
+    let diff = target - now;
+    if(diff <= 0){
+      renderCountdown(); // move to next match
+      return;
+    }
+    const days = Math.floor(diff/(1000*60*60*24));
+    diff -= days*(1000*60*60*24);
+    const hours = Math.floor(diff/(1000*60*60));
+    diff -= hours*(1000*60*60);
+    const mins = Math.floor(diff/(1000*60));
+    diff -= mins*(1000*60);
+    const secs = Math.floor(diff/1000);
+    timerEl.innerHTML = `
+      <div class="seg"><span class="n">${String(days).padStart(2,"0")}</span><span class="l">DAYS</span></div>
+      <div class="seg"><span class="n">${String(hours).padStart(2,"0")}</span><span class="l">HRS</span></div>
+      <div class="seg"><span class="n">${String(mins).padStart(2,"0")}</span><span class="l">MIN</span></div>
+      <div class="seg"><span class="n">${String(secs).padStart(2,"0")}</span><span class="l">SEC</span></div>
+    `;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+// ---------- CALENDAR (3-month rolling view) ----------
+function buildMonthPanelHtml(year, month){
+  const t = todayStr();
+  let html = `<div class="cal-month-panel">
+    <div class="mini-month-label">${MONTHS_ID[month]} ${year}</div>
+    <div class="cal-grid">${DOW_SHORT_ID.map(d=>`<div class="cal-dow">${d}</div>`).join("")}</div>
+    <div class="cal-grid" style="margin-top:5px;">`;
+
+  const firstDay = new Date(Date.UTC(year, month, 1));
+  const startOffset = (firstDay.getUTCDay()+6)%7;
+  const daysInMonth = new Date(Date.UTC(year, month+1, 0)).getUTCDate();
+
+  for(let i=0;i<startOffset;i++){
+    html += `<div class="cal-cell empty"></div>`;
+  }
+
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = year+"-"+String(month+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    const dayMatches = matches.filter(m=>m.date===dateStr);
+    const cellClass = "cal-cell" + (dayMatches.length ? " has-match":"") + (dateStr===t ? " today":"");
+    let inner = `<div class="daynum">${d}</div>`;
+    dayMatches.forEach(m=>{
+      const dim = !matchPassesFilter(m) ? " dim" : "";
+      const cls = compClass(m);
+      const opp = m.side==="Home" ? m.away : m.home;
+      inner += `<div class="match-chip ${cls}${dim}">⚽ ${escapeHtml(opp)}</div>`;
+    });
+    html += `<div class="${cellClass}" ${dayMatches.length?`data-date="${dateStr}"`:""}>${inner}</div>`;
+  }
+
+  html += `</div></div>`;
+  return html;
+}
+
+function renderCalendar(){
+  const months = [
+    {y: calYear, m: calMonth},
+    {y: calMonth===11 ? calYear+1 : calYear, m: (calMonth+1)%12},
+    {y: calMonth>=10 ? calYear+1 : calYear, m: (calMonth+2)%12},
+  ];
+  document.getElementById("calMonthLabel").textContent =
+    MONTHS_ID[months[0].m] + " " + months[0].y + " – " + MONTHS_ID[months[2].m] + " " + months[2].y;
+
+  const container = document.getElementById("calMonths");
+  container.innerHTML = months.map(mo=>buildMonthPanelHtml(mo.y, mo.m)).join("");
+
+  container.querySelectorAll(".cal-cell[data-date]").forEach(cell=>{
+    cell.addEventListener("click", ()=>openModalForDate(cell.getAttribute("data-date")));
+  });
+}
+
+// ---------- UPCOMING LIST ----------
+function renderUpcoming(){
+  const list = document.getElementById("upcomingList");
+  const now = todayStr();
+  const upcoming = matches
+    .filter(m=>m.date >= now)
+    .filter(matchPassesFilter)
+    .sort((a,b)=> (a.date+((a.time)||"99:99")).localeCompare(b.date+((b.time)||"99:99")))
+    .slice(0,7);
+
+  if(upcoming.length===0){
+    list.innerHTML = '<div class="no-results">No matches found.</div>';
+    return;
+  }
+
+  list.innerHTML = upcoming.map(m=>{
+    const [y,mo,da] = m.date.split("-");
+    const monShort = MONTHS_ID[parseInt(mo,10)-1].substring(0,3).toUpperCase();
+    const badgeCls = compClass(m);
+    return `
+      <div class="upcoming-item" data-id="${m.id}">
+        <div class="upcoming-date"><span class="dnum">${da}</span>${monShort} ${y}</div>
+        <div class="upcoming-main">
+          <div class="teams">${teamBadgeHtml(m.home,16)} ${escapeHtml(m.home)} vs ${teamBadgeHtml(m.away,16)} ${escapeHtml(m.away)}</div>
+          <div class="sub">${timeLabel(m)} • ${escapeHtml(venueLabel(m))}</div>
+          <span class="comp-badge ${badgeCls}">${m.competitionShort.toUpperCase()}</span>
+        </div>
+        <div class="side-tag">${m.side==="Home" ? "🏠" : "✈️"}</div>
+      </div>
+    `;
+  }).join("");
+
+  list.querySelectorAll(".upcoming-item").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const id = el.getAttribute("data-id");
+      const m = matches.find(mm=>mm.id===id);
+      if(m) openModal([m]);
+    });
+  });
+}
+
+// ---------- MODAL ----------
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[s]));
+}
+
+function buildGCalUrl(m){
+  const title = encodeURIComponent("⚽ " + m.home + " vs " + m.away);
+  const details = encodeURIComponent(
+    "Competition: " + m.competition + "\n" +
+    "Matchday: " + m.matchday + "\n" +
+    "Home/Away: " + m.side + "\n" +
+    "Venue: " + venueLabel(m) + "\n" +
+    "City: " + cityCountryLabel(m)
+  );
+  const location = encodeURIComponent(
+    (m.venue ? (m.venue+", ") : "") + (m.city ? (m.city+", ") : "") + (m.country || "")
+  );
+
+  if(!m.time){
+    // All-day event fallback for TBC matches
+    const [y,mo,da] = m.date.split("-");
+    const dateOnly = y+mo+da;
+    const nextDay = new Date(Date.UTC(parseInt(y),parseInt(mo)-1,parseInt(da)+1));
+    const nd = nextDay.getUTCFullYear()+String(nextDay.getUTCMonth()+1).padStart(2,"0")+String(nextDay.getUTCDate()).padStart(2,"0");
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateOnly}/${nd}&details=${details}%0A%0AKick-off%3A%20TBC&location=${location}`;
+  }
+
+  const [y,mo,da] = m.date.split("-").map(Number);
+  const [hh,mm] = m.time.split(":").map(Number);
+  const startUTC = new Date(Date.UTC(y,mo-1,da,hh-7,mm));
+  const endUTC = new Date(startUTC.getTime() + 2*60*60*1000);
+  const fmt = (d)=> d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,"0")+String(d.getUTCDate()).padStart(2,"0")+"T"+String(d.getUTCHours()).padStart(2,"0")+String(d.getUTCMinutes()).padStart(2,"0")+"00Z";
+
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${fmt(startUTC)}/${fmt(endUTC)}&details=${details}&location=${location}`;
+}
+
+function matchDetailHtml(m){
+  const badgeBgMap = { sl:"var(--sl-bg)", acl:"var(--acl-bg)", shopee:"var(--shopee-bg)" };
+  const badgeColorMap = { sl:"#1c4a8c", acl:"#8a6407", shopee:"#1f7a44" };
+  const cls = compClass(m);
+  const badgeBg = badgeBgMap[cls];
+  const badgeColor = badgeColorMap[cls];
+  return `
+    <div class="modal-single">
+      <span class="modal-comp-badge" style="background:${badgeBg};color:${badgeColor};">${escapeHtml(m.competition.toUpperCase())}</span>
+      <div class="modal-matchday">${escapeHtml(m.matchday)}</div>
+      <div class="modal-teams">
+        ${teamBadgeHtml(m.home,28)} ${escapeHtml(m.home.toUpperCase())}
+        <span class="vsline">VS</span>
+        ${teamBadgeHtml(m.away,28)} ${escapeHtml(m.away.toUpperCase())}
+      </div>
+      <div class="modal-detail-row"><span class="ico">📅</span><span>${formatDateID(m.date, true)}</span></div>
+      <div class="modal-detail-row"><span class="ico">🕐</span><span>${m.time ? (m.time+" WIB") : "Kick-off: TBC"}</span></div>
+      <div class="modal-detail-row"><span class="ico">🏟</span><span>${escapeHtml(venueLabel(m))}</span></div>
+      <div class="modal-detail-row"><span class="ico">📍</span><span>${escapeHtml(cityCountryLabel(m))}</span></div>
+      <div class="modal-detail-row"><span class="ico">${m.side==="Home"?"🏠":"✈️"}</span><span>${m.side}</span></div>
+      <a class="modal-gcal-btn" target="_blank" rel="noopener" href="${buildGCalUrl(m)}">＋ Add to Google Calendar</a>
+    </div>
+  `;
+}
+
+function openModal(matchList){
+  const content = document.getElementById("modalContent");
+  content.innerHTML = matchList.map(matchDetailHtml).join("<hr style='border:none;border-top:1px solid #f0f0f2;margin:16px 0;'>");
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+function openModalForDate(dateStr){
+  const list = matches.filter(m=>m.date===dateStr);
+  if(list.length) openModal(list);
+}
+
+function closeModal(){
+  document.getElementById("modalOverlay").classList.remove("open");
+}
+
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.getElementById("modalOverlay").addEventListener("click", (e)=>{
+  if(e.target.id === "modalOverlay") closeModal();
+});
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") closeModal();
+});
+
+// ---------- CONTROLS ----------
+document.getElementById("filterButtons").addEventListener("click",(e)=>{
+  const btn = e.target.closest(".filter-btn");
+  if(!btn) return;
+  document.querySelectorAll("#filterButtons .filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilter = btn.getAttribute("data-filter");
+  renderAll();
+});
+
+document.getElementById("homeAwayButtons").addEventListener("click",(e)=>{
+  const btn = e.target.closest(".filter-btn");
+  if(!btn) return;
+  document.querySelectorAll("#homeAwayButtons .filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentHomeAway = btn.getAttribute("data-homeaway");
+  renderAll();
+});
+
+document.getElementById("searchInput").addEventListener("input",(e)=>{
+  currentSearch = e.target.value.trim();
+  renderAll();
+});
+
+document.getElementById("prevMonth").addEventListener("click",()=>{
+  calMonth--;
+  if(calMonth<0){ calMonth=11; calYear--; }
+  renderCalendar();
+});
+document.getElementById("nextMonth").addEventListener("click",()=>{
+  calMonth++;
+  if(calMonth>11){ calMonth=0; calYear++; }
+  renderCalendar();
+});
+
+function renderAll(){
+  renderCalendar();
+  renderUpcoming();
+}
+
+// ---------- INIT ----------
+function init(){
+  renderStats();
+  renderTodayHighlight();
+  renderCountdown();
+  renderCalendar();
+  renderUpcoming();
+}
+init();
+</script>
+</body>
+</html>
