@@ -248,48 +248,35 @@ async def click_show_more(page) -> None:
 
 
 async def extract_rows(page) -> list[dict]:
-    """Extract match rows using both legacy and current Flashscore DOM variants.
+    """Extract matches from Flashscore.
 
-    Current Flashscore markup still exposes event__match rows, but participant
-    elements can use event__homeParticipant/event__awayParticipant instead of
-    the older event__participant--home/away classes.
+    Flashscore currently exposes the fixture data in the rendered page text,
+    while the CSS event-row classes are not necessarily present in the DOM
+    seen by a GitHub Actions browser. We therefore use two strategies:
+
+    1. DOM selectors when available.
+    2. A conservative text parser as a fallback. The fallback only accepts a
+       record when Persib is one of the two teams and a date/time is present.
     """
-    return await page.evaluate(
+    rows = await page.evaluate(
         """
         () => {
           const out = [];
-          let currentCompetition = '';
-          const nodes = document.querySelectorAll(
-            '[id^="g_1_"], .event__match'
-          );
+          const nodes = document.querySelectorAll('.event__match');
           for (const node of nodes) {
-            if (!node.matches('.event__match')) continue;
-
-            const title = node.previousElementSibling;
-            const parentText = node.parentElement?.innerText || '';
-            const header = node.closest('[class*="event__header"]')?.innerText || '';
-            const titleBox = node.parentElement?.querySelector('.event__titleBox, .event__title');
-            if (titleBox) currentCompetition = (titleBox.innerText || '').replace(/\\s+/g, ' ').trim();
-            else if (header) currentCompetition = header.replace(/\\s+/g, ' ').trim();
-
-            const home = node.querySelector(
-              '.event__participant--home, .event__homeParticipant'
-            );
-            const away = node.querySelector(
-              '.event__participant--away, .event__awayParticipant'
-            );
+            const home = node.querySelector('.event__participant--home, .event__homeParticipant');
+            const away = node.querySelector('.event__participant--away, .event__awayParticipant');
             const time = node.querySelector('.event__time');
             if (!home || !away || !time) continue;
-
             const scoreHome = node.querySelector('.event__score--home');
             const scoreAway = node.querySelector('.event__score--away');
             const scores = node.querySelector('.event__scores');
             const link = node.querySelector('a.eventRowLink') || node.querySelector('a[href*="/match/"]') || node.querySelector('a');
-
+            const titleBox = node.parentElement?.querySelector('.event__titleBox, .event__title');
             out.push({
               id: node.id || '',
               classes: typeof node.className === 'string' ? node.className : '',
-              competition: currentCompetition,
+              competition: titleBox ? (titleBox.innerText || '').replace(/\\s+/g, ' ').trim() : '',
               time: (time.innerText || time.textContent || '').replace(/\\s+/g, ' ').trim(),
               home: (home.innerText || home.textContent || '').replace(/\\s+/g, ' ').trim(),
               away: (away.innerText || away.textContent || '').replace(/\\s+/g, ' ').trim(),
@@ -303,6 +290,148 @@ async def extract_rows(page) -> list[dict]:
         }
         """
     )
+    if rows:
+        return rows
+
+    # Fallback: parse the rendered accessibility/body text. This is the path
+    # currently needed by the GitHub Actions runner.
+    body = await page.locator("body").inner_text(timeout=10000)
+    return parse_text_rows(body)
+
+
+def normalize_team_text(value: str) -> str:
+    value = clean(value)
+    value = re.sub(r"\s*\((?:Ina|Kor|Vie|IDN|KOR|VIE)\)\s*$", "", value, flags=re.I)
+    return clean(value)
+
+
+def strip_match_noise(value: str) -> str:
+    value = clean(value)
+    # Remove common competition/footer labels that can leak into a text slice.
+    value = re.sub(r"\b(?:Standings|Show more matches|Scheduled|Latest Scores)\b", " ", value, flags=re.I)
+    return clean(value.strip(" -–—|:"))
+
+
+def parse_text_rows(body: str) -> list[dict]:
+    """Parse Flashscore's current rendered text representation.
+
+    Example currently observed representation:
+      Super League INDONESIA: Standings
+      06.09. 19:00 Persib Bandung PSM Makassar - -
+      12.09. 15:30 Persija Jakarta Persib Bandung - -
+      AFC Champions League 2 ASIA: Standings
+      16.09. 17:00 Seoul (Kor) Persib Bandung (Ina) - -
+
+    The parser deliberately uses Persib as the anchor instead of trying to
+    split arbitrary club names into tokens.
+    """
+    text = clean(body)
+    date_re = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.\s*(?P<hour>\d{1,2}):(?P<minute>\d{2})")
+    matches = list(date_re.finditer(text))
+    out: list[dict] = []
+    current_competition = ""
+
+    for idx, m in enumerate(matches):
+        # Ignore old/current unrelated dates outside the actual list if the
+        # text parser reaches the page footer.
+        next_start = matches[idx + 1].start() if idx + 1 < len(matches) else len(text)
+        prefix = text[max(0, m.start() - 600):m.start()]
+        segment = clean(text[m.end():next_start])
+
+        # Competition headers are rendered as e.g. "Super League INDONESIA:
+        # Standings" or "AFC Champions League 2 ASIA: Standings". Use the
+        # portion after the previous match when possible so navigation text
+        # and the previous opponent cannot become the competition name.
+        header_matches = list(re.finditer(
+            r"(?P<comp>[A-Za-z0-9][A-Za-z0-9 &.\'-]{1,80}?)\s+(?:INDONESIA|ASIA):\s*Standings\b",
+            prefix
+        ))
+        if header_matches:
+            hm = header_matches[-1]
+            candidate = clean(hm.group("comp"))
+            # Only retain text after the last known UI/row boundary.
+            boundaries = [
+                candidate.upper().rfind(x) + len(x)
+                for x in ("SQUAD", "TRANSFERS", "FIXTURES", "RESULTS", "NEWS", "ODDS", "SUMMARY")
+                if x in candidate.upper()
+            ]
+            if boundaries:
+                candidate = candidate[max(boundaries):].strip()
+            # If a prior scheduled/result row leaked into the candidate, keep
+            # the text after its final row separator.
+            sep_positions = [candidate.rfind("- -"), candidate.rfind(" 2 1"), candidate.rfind(" 1 0"), candidate.rfind(" 0 0")]
+            sep = max(sep_positions)
+            if sep >= 0:
+                candidate = candidate[sep + 3:].strip()
+            candidate = re.sub(r"^\d{1,2}\s+\d{1,2}\s+", "", candidate).strip()
+            if candidate:
+                current_competition = candidate
+
+        persib_match = re.search(r"Persib\s+Bandung(?:\s+\((?:Ina|IDN)\))?", segment, flags=re.I)
+        if not persib_match:
+            continue
+
+        before = strip_match_noise(segment[:persib_match.start()])
+        after = strip_match_noise(segment[persib_match.end():])
+
+        # The match row ends with either "- -" for a scheduled fixture or
+        # two score numbers for a completed result. This lets us discard any
+        # following competition header before the next date.
+        score_h = score_a = ""
+        scheduled_marker = re.search(r"\s-\s-", after)
+        score_marker = re.search(r"(?:^|\s)(\d{1,2})\s+(\d{1,2})(?:\s|$)", after)
+        if scheduled_marker:
+            after = clean(after[:scheduled_marker.start()])
+        elif score_marker:
+            score_h, score_a = score_marker.group(1), score_marker.group(2)
+            after = clean(after[:score_marker.start()])
+
+        before = normalize_team_text(before)
+        after = normalize_team_text(after)
+        persib = TEAM_NAME
+
+        # Persib is the anchor. If text exists before Persib, it is the home
+        # opponent and Persib is away. If text exists after Persib, Persib is
+        # home and that text is the away opponent.
+        if before:
+            home, away = before, persib
+        elif after:
+            home, away = persib, after
+        else:
+            continue
+
+        # If the row is Persib home, the opponent is after Persib. If Persib is
+        # away, the opponent is before Persib. The branch above already covers
+        # that; this extra guard removes obvious leaked labels.
+        home = strip_match_noise(home)
+        away = strip_match_noise(away)
+        if not home or not away:
+            continue
+        if TEAM_NAME.lower() not in {normalize_team_text(home).lower(), normalize_team_text(away).lower()}:
+            continue
+
+        d = f"{infer_year(int(m.group('day')), int(m.group('month'))):04d}-{int(m.group('month')):02d}-{int(m.group('day')):02d}"
+        tm = f"{int(m.group('hour')):02d}:{int(m.group('minute')):02d}"
+        stable_id = re.sub(r"[^A-Za-z0-9]+", "-", f"{d}-{home}-{away}").strip("-").lower()
+        out.append({
+            "id": stable_id,
+            "classes": "",
+            "competition": current_competition,
+            "time": f"{m.group('day')}.{m.group('month')}. {tm}",
+            "home": normalize_team_text(home),
+            "away": normalize_team_text(away),
+            "homeScore": score_h,
+            "awayScore": score_a,
+            "score": f"{score_h} {score_a}".strip(),
+            "href": "",
+        })
+
+    # De-duplicate rows from repeated Flashscore sections.
+    unique: dict[str, dict] = {}
+    for row in out:
+        key = (row["id"], row["home"].lower(), row["away"].lower())
+        unique[str(key)] = row
+    return list(unique.values())
 
 
 async def dump_debug(page, label: str) -> None:
@@ -439,22 +568,31 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             if len(matches) < 3:
                 raise RuntimeError(f"Validation failed: only {len(matches)} valid Persib matches found.")
 
-            existing = read_existing(FIXTURES_FILE, "fixtures") | read_existing(RESULTS_FILE, "results")
+            existing_all = list(read_existing(FIXTURES_FILE, "fixtures").values()) + list(read_existing(RESULTS_FILE, "results").values())
+            existing_by_key = {
+                (x.date, normalize_team_text(x.home).lower(), normalize_team_text(x.away).lower()): x
+                for x in existing_all
+            }
             detail_page = await context.new_page()
             try:
+                normalized: dict[tuple[str, str, str], Match] = {}
                 for m in sorted(matches, key=lambda x: x.dt):
-                    old = existing.get(m.id)
+                    key = (m.date, normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
+                    old = existing_by_key.get(key)
                     m = merge_metadata(m, old)
                     if not m.venue and m.source_url:
                         meta = await detail_metadata(detail_page, m.source_url)
                         m.venue = clean(meta.get("venue"))
                         m.city = clean(meta.get("city"))
                         await detail_page.wait_for_timeout(DETAIL_DELAY_MS)
-                    existing[m.id] = m
+                    normalized[key] = m
             finally:
                 await detail_page.close()
 
-            all_matches = [m for m in existing.values() if m.date and date.fromisoformat(m.date) >= SEASON_START]
+            # Flashscore is authoritative for the current scrape. Do not keep
+            # stale baseline records merely because their old IDs differ from
+            # the stable IDs generated by the text fallback.
+            all_matches = [m for m in normalized.values() if m.date and date.fromisoformat(m.date) >= SEASON_START]
             all_matches.sort(key=lambda x: x.dt)
             fixtures = [m for m in all_matches if m.status != "finished"]
             results = [m for m in all_matches if m.status == "finished"]
