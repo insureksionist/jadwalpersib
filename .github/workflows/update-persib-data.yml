@@ -42,6 +42,8 @@ jobs:
           TEAM_ID: KpBjbPK1
           FLASHSCORE_BASE_URL: https://www.flashscore.com
           FLASHSCORE_TEAM_URL: https://www.flashscore.com/team/persib-bandung/KpBjbPK1/
+          FLASHSCORE_FIXTURES_URL: https://www.flashscore.com/team/persib-bandung/KpBjbPK1/fixtures/
+          FLASHSCORE_RESULTS_URL: https://www.flashscore.com/team/persib-bandung/KpBjbPK1/results/
           SEASON_START: '2026-07-01'
           TIMEZONE: Asia/Jakarta
           MAX_PAGES: '30'
@@ -49,6 +51,15 @@ jobs:
           PAGE_DELAY_MS: '1200'
           HEADLESS: 'true'
         run: python scraper.py
+
+      - name: Upload scraper diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: persib-scraper-debug
+          path: debug/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Show generated XML summary
         run: |
