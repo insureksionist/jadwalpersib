@@ -512,7 +512,16 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
 
             hs, as_ = clean(row.get("homeScore")), clean(row.get("awayScore"))
             if not hs and not as_:
-                hs, as_ = extract_score(row.get("score", ""))
+                # Some finished matches (especially penalty-shootout games)
+                # do not expose the score through .event__scores. Parse the
+                # complete rendered row text instead. Prefer the regular
+                # score (e.g. "1 - 1") before a later "PEN 5 - 6" marker.
+                raw_score_text = row.get("rowText", "") or row.get("score", "")
+                score_match = re.search(r"(?:^|\s)(\d{1,2})\s*[-–—:]\s*(\d{1,2})(?:\s|$)", raw_score_text)
+                if score_match:
+                    hs, as_ = score_match.group(1), score_match.group(2)
+                else:
+                    hs, as_ = extract_score(raw_score_text)
 
             fs_id = clean(row["id"]).replace("g_1_", "") or re.sub(
                 r"[^A-Za-z0-9_-]", "", row["home"] + "_" + row["away"] + "_" + d
@@ -613,7 +622,13 @@ def validate(fixtures: list[Match], results: list[Match]) -> None:
         if TEAM_NAME.lower() not in {m.home.lower(), m.away.lower()}:
             raise RuntimeError(f"Non-Persib record slipped through: {m.home} - {m.away}")
         if m.status == "finished" and (m.home_score == "" or m.away_score == ""):
-            raise RuntimeError(f"Finished match has no score: {m.id}")
+            # A penalty-shootout result can occasionally be represented by a
+            # special Flashscore row. Do not silently publish a blank score:
+            # fail with the complete record so the offending row is diagnosable.
+            raise RuntimeError(
+                f"Finished match has no score: {m.id} | {m.date} {m.time} "
+                f"{m.home} - {m.away} | source={m.source_url}"
+            )
 
 
 def main() -> int:
