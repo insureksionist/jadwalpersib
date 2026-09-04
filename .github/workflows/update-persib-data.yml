@@ -52,23 +52,38 @@ jobs:
           HEADLESS: 'true'
         run: python scraper.py
 
+      - name: Collect scraper diagnostics
+        if: always()
+        run: |
+          mkdir -p debug
+          echo "Workflow diagnostic timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > debug/workflow.txt
+          echo "Repository: $GITHUB_REPOSITORY" >> debug/workflow.txt
+          echo "Run: $GITHUB_RUN_ID" >> debug/workflow.txt
+          if [ -f data/last-update.xml ]; then
+            echo '--- last-update.xml ---' >> debug/workflow.txt
+            cat data/last-update.xml >> debug/workflow.txt
+          fi
+          echo '--- debug directory ---' >> debug/workflow.txt
+          find debug -maxdepth 1 -type f -printf '%f\n' | sort >> debug/workflow.txt
+
       - name: Upload scraper diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: persib-scraper-debug
+          name: persib-scraper-debug-${{ github.run_id }}
           path: debug/
-          if-no-files-found: ignore
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Show generated XML summary
+        if: always()
         run: |
           echo '--- fixtures.xml ---'
           grep -c '<match>' data/fixtures.xml || true
           echo '--- results.xml ---'
           grep -c '<match>' data/results.xml || true
           echo '--- last-update.xml ---'
-          cat data/last-update.xml
+          cat data/last-update.xml 2>/dev/null || true
 
       - name: Commit changed XML files
         run: |
