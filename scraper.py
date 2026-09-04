@@ -35,6 +35,8 @@ TEAM_URL = os.getenv(
     "FLASHSCORE_TEAM_URL",
     f"{BASE_URL}/team/persib-bandung/{TEAM_ID}/",
 )
+FIXTURES_URL = os.getenv("FLASHSCORE_FIXTURES_URL", TEAM_URL.rstrip("/") + "/fixtures/")
+RESULTS_URL = os.getenv("FLASHSCORE_RESULTS_URL", TEAM_URL.rstrip("/") + "/results/")
 SEASON_START = date.fromisoformat(os.getenv("SEASON_START", "2026-07-01"))
 TIMEZONE = os.getenv("TIMEZONE", "Asia/Jakarta")
 MAX_PAGES = int(os.getenv("MAX_PAGES", "30"))
@@ -185,7 +187,10 @@ def write_last_update(success: bool, message: str, fixture_count: int, result_co
     root = ET.Element("lastUpdate", {"version": "1.1", "source": "flashscore-rendered"})
     now = datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).isoformat(timespec="seconds")
     for key, value in [
+        # Keep snake_case aliases for the dashboard's current parser, while
+        # retaining camelCase fields for readability/compatibility.
         ("lastSuccess", now if success else ""),
+        ("last_success", now if success else ""),
         ("status", "ok" if success else "error"),
         ("message", message),
         ("fixtureCount", str(fixture_count)),
@@ -197,61 +202,100 @@ def write_last_update(success: bool, message: str, fixture_count: int, result_co
     LAST_UPDATE_FILE.write_bytes(pretty)
 
 
+async def dismiss_consent(page) -> None:
+    """Dismiss common cookie/consent dialogs without bypassing access controls."""
+    selectors = [
+        "button:has-text('Accept all')",
+        "button:has-text('Accept')",
+        "button:has-text('I agree')",
+        "button:has-text('Agree')",
+        "button:has-text('Consent')",
+    ]
+    for selector in selectors:
+        try:
+            loc = page.locator(selector)
+            for i in range(min(await loc.count(), 2)):
+                if await loc.nth(i).is_visible():
+                    await loc.nth(i).click(timeout=1500)
+                    await page.wait_for_timeout(300)
+        except Exception:
+            pass
+
+
 async def click_show_more(page) -> None:
     selectors = [
         "button:has-text('Show more matches')",
         "span:has-text('Show more matches')",
+        "a:has-text('Show more matches')",
         "button:has-text('Show more')",
+        "a:has-text('Show more')",
     ]
     for _ in range(MAX_PAGES):
         clicked = False
         for selector in selectors:
-            loc = page.locator(selector)
-            count = await loc.count()
-            if not count:
-                continue
-            for i in range(min(count, 3)):
-                try:
+            try:
+                loc = page.locator(selector)
+                count = await loc.count()
+                for i in range(min(count, 3)):
                     if await loc.nth(i).is_visible():
                         await loc.nth(i).click(timeout=2500)
                         clicked = True
                         await page.wait_for_timeout(PAGE_DELAY_MS)
-                except Exception:
-                    pass
+            except Exception:
+                pass
         if not clicked:
             break
 
 
 async def extract_rows(page) -> list[dict]:
-    # The class names below are stable enough to use as primary selectors, but
-    # participant data also has data-testid attributes on newer Flashscore DOMs.
+    """Extract match rows using both legacy and current Flashscore DOM variants.
+
+    Current Flashscore markup still exposes event__match rows, but participant
+    elements can use event__homeParticipant/event__awayParticipant instead of
+    the older event__participant--home/away classes.
+    """
     return await page.evaluate(
         """
         () => {
           const out = [];
           let currentCompetition = '';
-          const nodes = document.querySelectorAll('.event__title, .event__match');
+          const nodes = document.querySelectorAll(
+            '[id^="g_1_"], .event__match'
+          );
           for (const node of nodes) {
-            if (node.classList.contains('event__title')) {
-              currentCompetition = (node.innerText || '').replace(/\\s+/g, ' ').trim();
-              continue;
-            }
-            const home = node.querySelector('.event__participant--home, .event__homeParticipant');
-            const away = node.querySelector('.event__participant--away, .event__awayParticipant');
+            if (!node.matches('.event__match')) continue;
+
+            const title = node.previousElementSibling;
+            const parentText = node.parentElement?.innerText || '';
+            const header = node.closest('[class*="event__header"]')?.innerText || '';
+            const titleBox = node.parentElement?.querySelector('.event__titleBox, .event__title');
+            if (titleBox) currentCompetition = (titleBox.innerText || '').replace(/\\s+/g, ' ').trim();
+            else if (header) currentCompetition = header.replace(/\\s+/g, ' ').trim();
+
+            const home = node.querySelector(
+              '.event__participant--home, .event__homeParticipant'
+            );
+            const away = node.querySelector(
+              '.event__participant--away, .event__awayParticipant'
+            );
             const time = node.querySelector('.event__time');
             if (!home || !away || !time) continue;
+
             const scoreHome = node.querySelector('.event__score--home');
             const scoreAway = node.querySelector('.event__score--away');
-            const link = node.querySelector('a.eventRowLink') || node.querySelector('a');
+            const scores = node.querySelector('.event__scores');
+            const link = node.querySelector('a.eventRowLink') || node.querySelector('a[href*="/match/"]') || node.querySelector('a');
+
             out.push({
               id: node.id || '',
-              classes: node.className || '',
+              classes: typeof node.className === 'string' ? node.className : '',
               competition: currentCompetition,
-              time: (time.innerText || '').replace(/\\s+/g, ' ').trim(),
+              time: (time.innerText || time.textContent || '').replace(/\\s+/g, ' ').trim(),
               home: (home.innerText || home.textContent || '').replace(/\\s+/g, ' ').trim(),
               away: (away.innerText || away.textContent || '').replace(/\\s+/g, ' ').trim(),
-              homeScore: scoreHome ? (scoreHome.innerText || '').trim() : '',
-              awayScore: scoreAway ? (scoreAway.innerText || '').trim() : '',
+              homeScore: scoreHome ? (scoreHome.innerText || scoreHome.textContent || '').trim() : '',
+              awayScore: scoreAway ? (scoreAway.innerText || scoreAway.textContent || '').trim() : '',
+              score: scores ? (scores.innerText || scores.textContent || '').replace(/\\s+/g, ' ').trim() : '',
               href: link ? link.href : ''
             });
           }
@@ -259,6 +303,20 @@ async def extract_rows(page) -> list[dict]:
         }
         """
     )
+
+
+async def dump_debug(page, label: str) -> None:
+    """Save diagnostics so a future DOM/access change is immediately visible in Actions."""
+    try:
+        debug_dir = BASE_DIR / "debug"
+        debug_dir.mkdir(exist_ok=True)
+        await page.screenshot(path=str(debug_dir / f"{label}.png"), full_page=True)
+        (debug_dir / f"{label}.html").write_text(await page.content(), encoding="utf-8")
+        body = await page.locator("body").inner_text(timeout=5000)
+        (debug_dir / f"{label}.txt").write_text(body[:100000], encoding="utf-8")
+        print(f"DEBUG: saved debug/{label}.png, .html and .txt")
+    except Exception as exc:
+        print(f"DEBUG: could not save diagnostics: {exc}", file=sys.stderr)
 
 
 async def detail_metadata(page, url: str) -> dict[str, str]:
@@ -284,6 +342,75 @@ async def detail_metadata(page, url: str) -> dict[str, str]:
         return {}
 
 
+async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
+    print(f"Opening {url}")
+    await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+    await page.wait_for_timeout(2500)
+    await dismiss_consent(page)
+    await page.wait_for_timeout(500)
+    await click_show_more(page)
+
+    # Wait for a real event row. If none appears, capture diagnostics instead
+    # of silently producing an empty XML.
+    try:
+        await page.wait_for_selector('.event__match, [id^="g_1_"]', timeout=15000)
+    except PlaywrightTimeoutError:
+        await dump_debug(page, page_kind)
+
+    rows = await extract_rows(page)
+    print(f"{page_kind}: DOM match rows = {len(rows)}")
+    if not rows:
+        title = await page.title()
+        body = clean((await page.locator('body').inner_text())[:1000])
+        raise RuntimeError(
+            f"No match rows found on {page_kind}; page title={title!r}; body preview={body!r}"
+        )
+
+    matches: list[Match] = []
+    for row in rows:
+        try:
+            d, tm = parse_flashscore_date(row["time"])
+            if date.fromisoformat(d) < SEASON_START:
+                continue
+            home = clean(row["home"])
+            away = clean(row["away"])
+            if TEAM_NAME.lower() not in {home.lower(), away.lower()}:
+                continue
+
+            status = status_from_classes(row["classes"])
+            if page_kind == "results" and status == "scheduled":
+                status = "finished"
+
+            hs, as_ = clean(row.get("homeScore")), clean(row.get("awayScore"))
+            if not hs and not as_:
+                hs, as_ = extract_score(row.get("score", ""))
+
+            fs_id = clean(row["id"]).replace("g_1_", "") or re.sub(
+                r"[^A-Za-z0-9_-]", "", row["home"] + "_" + row["away"] + "_" + d
+            )
+            competition = clean(row.get("competition")) or "Unknown"
+            matches.append(Match(
+                id=fs_id,
+                competition=competition,
+                competition_short=slug_short(competition),
+                matchday="",
+                date=d,
+                time=tm,
+                timezone=TIMEZONE,
+                home=home,
+                away=away,
+                side="Home" if home.lower() == TEAM_NAME.lower() else "Away",
+                status=status,
+                home_score=hs,
+                away_score=as_,
+                source_url=urljoin(BASE_URL, row.get("href", "")),
+            ))
+        except ValueError as exc:
+            print(f"Skipping row: {exc}", file=sys.stderr)
+
+    return matches
+
+
 async def scrape() -> tuple[list[Match], list[Match]]:
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=HEADLESS)
@@ -292,60 +419,23 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             timezone_id=TIMEZONE,
             viewport={"width": 1440, "height": 1200},
             user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140 Safari/537.36"
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
             ),
         )
         page = await context.new_page()
         try:
-            print(f"Opening {TEAM_URL}")
-            await page.goto(TEAM_URL, wait_until="domcontentloaded", timeout=60000)
-            await page.wait_for_timeout(1500)
-            await click_show_more(page)
-            rows = await extract_rows(page)
-            if not rows:
-                raise RuntimeError("No match rows found; Flashscore DOM may have changed or access was denied.")
+            fixture_matches = await scrape_page(page, FIXTURES_URL, "fixtures")
+            await page.wait_for_timeout(PAGE_DELAY_MS)
+            result_matches = await scrape_page(page, RESULTS_URL, "results")
 
-            matches: list[Match] = []
-            for row in rows:
-                try:
-                    d, tm = parse_flashscore_date(row["time"])
-                    if date.fromisoformat(d) < SEASON_START:
-                        continue
-                    home = clean(row["home"])
-                    away = clean(row["away"])
-                    if TEAM_NAME.lower() not in {home.lower(), away.lower()}:
-                        continue
-                    status = status_from_classes(row["classes"])
-                    hs, as_ = clean(row.get("homeScore")), clean(row.get("awayScore"))
-                    if not hs and not as_:
-                        # Some newer DOM variants put the score in a generic score container.
-                        hs, as_ = extract_score(row.get("score", ""))
-                    fs_id = clean(row["id"]).replace("g_1_", "") or re.sub(r"[^A-Za-z0-9_-]", "", row["home"] + "_" + row["away"] + "_" + d)
-                    competition = clean(row.get("competition")) or "Unknown"
-                    m = Match(
-                        id=fs_id,
-                        competition=competition,
-                        competition_short=slug_short(competition),
-                        matchday="",
-                        date=d,
-                        time=tm,
-                        timezone=TIMEZONE,
-                        home=home,
-                        away=away,
-                        side="Home" if home.lower() == TEAM_NAME.lower() else "Away",
-                        status=status,
-                        home_score=hs,
-                        away_score=as_,
-                        source_url=urljoin(BASE_URL, row.get("href", "")),
-                    )
-                    matches.append(m)
-                except ValueError as exc:
-                    print(f"Skipping row: {exc}", file=sys.stderr)
-
-            # Deduplicate by match ID.
-            unique: dict[str, Match] = {m.id: m for m in matches}
+            matches = fixture_matches + result_matches
+            unique: dict[str, Match] = {}
+            for m in matches:
+                old = unique.get(m.id)
+                unique[m.id] = m if not old else merge_metadata(m, old)
             matches = list(unique.values())
+
             if len(matches) < 3:
                 raise RuntimeError(f"Validation failed: only {len(matches)} valid Persib matches found.")
 
@@ -364,8 +454,6 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             finally:
                 await detail_page.close()
 
-            # Keep only the requested season. A successful scrape replaces the
-            # source set, but preserves venue/city metadata via the merge above.
             all_matches = [m for m in existing.values() if m.date and date.fromisoformat(m.date) >= SEASON_START]
             all_matches.sort(key=lambda x: x.dt)
             fixtures = [m for m in all_matches if m.status != "finished"]
@@ -373,7 +461,6 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             return fixtures, results
         finally:
             await browser.close()
-
 
 def validate(fixtures: list[Match], results: list[Match]) -> None:
     all_matches = fixtures + results
