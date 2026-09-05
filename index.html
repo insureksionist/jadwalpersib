@@ -120,6 +120,10 @@ h1{margin:0;font-size:30px;line-height:1.1;letter-spacing:-1px;font-weight:800}
 .data-status{font-size:10px;color:#8d96a6;text-align:center;margin-top:2px}.data-status[data-state="ok"]{color:#4f7b62}.data-status[data-state="error"]{color:#b64242}.data-status[data-state="loading"]{color:#9a7a28}
 @media(max-width:1180px){.stats-grid{grid-template-columns:repeat(3,1fr)}.schedule-layout{grid-template-columns:1fr}.calendar-three{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;padding:16px;display:block}.brand{display:flex;text-align:left;padding-bottom:14px;margin-bottom:14px}.brand-mark{width:48px;height:48px;margin:0}.side-nav{display:flex;overflow:auto}.side-nav button{white-space:nowrap}.side-summary{display:none}.container{padding:20px 16px 32px}.stats-grid{grid-template-columns:repeat(2,1fr)}.schedule-layout{grid-template-columns:1fr}}
+
+.prematch-insights{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:18px}.insight-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.insight-title{font-size:18px;font-weight:900;color:var(--navy)}.insight-sub{font-size:11px;color:#8c95a3;margin-top:4px}.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.insight-panel{border:1px solid #edf0f4;border-radius:14px;padding:13px;min-width:0}.insight-panel.h2h{grid-column:1/-1}.insight-panel-title{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:900;color:#26344d;margin-bottom:10px}.form-team{display:flex;align-items:center;gap:7px}.form-strip{display:flex;gap:7px;flex-wrap:wrap}.form-dot{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:900;border:1px solid #e4e8ef}.form-dot.w{background:#eaf7ef;color:#23784a}.form-dot.d{background:#f5f6f8;color:#687180}.form-dot.l{background:#fff0f0;color:#b24747}.form-empty{font-size:11px;color:#98a0ad;padding:8px 0}.form-summary{font-size:10px;color:#8d95a2;margin-top:8px}.recent-list,.h2h-list{display:grid;gap:7px}.recent-item,.h2h-item{display:grid;grid-template-columns:62px minmax(0,1fr) 42px;align-items:center;gap:8px;padding:8px 9px;background:#fafbfc;border-radius:9px;font-size:10px}.recent-date{color:#8c95a3;font-size:9px}.recent-teams,.h2h-teams{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.recent-score,.h2h-score{font-weight:900;text-align:right;color:#26344d}.h2h-item{grid-template-columns:62px minmax(0,1fr) 48px}.h2h-note{font-size:9px;color:#9aa2ae;margin-top:8px}.insight-source{font-size:9px;color:#a1a8b5;margin-top:10px;text-align:right}
+@media(max-width:600px){.insight-grid{grid-template-columns:1fr}.insight-panel.h2h{grid-column:auto}.prematch-insights{padding:14px}.insight-title{font-size:16px}.recent-item,.h2h-item{grid-template-columns:54px minmax(0,1fr) 42px}}
+
 @media(max-width:600px){.page-head{align-items:flex-start;flex-direction:column}.stats-grid{grid-template-columns:1fr 1fr}.hero-match{grid-template-columns:1fr 48px 1fr}.hero-team{font-size:12px}.hero-vs .time{font-size:16px}.filter-label{width:100%;flex-basis:100%}.search-wrap{min-width:100%;max-width:none;margin-left:0}.match-row{grid-template-columns:55px minmax(0,1fr);gap:9px}.side-tag{grid-column:2;justify-self:start;margin-top:-2px}.teams-line{font-size:11px}.calendar-three{grid-template-columns:1fr}.cal-cell{min-height:42px}}
 
 /* ===== Accessibility & Readability Upgrade v4 ===== */
@@ -220,6 +224,16 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
     <div class="countdown"><div><div class="countdown-label">Kick-off countdown</div><div id="countdownNote" style="font-size:9px;color:rgba(255,255,255,.48);margin-top:3px">—</div></div><div class="timer" id="timer"></div></div>
   </section>
 
+  <section class="prematch-insights" id="prematchInsights" hidden>
+    <div class="insight-head"><div><div class="insight-title">📊 Statistik Pertandingan Berikutnya</div><div class="insight-sub" id="insightSub">Form 5 pertandingan terakhir &amp; head to head</div></div></div>
+    <div class="insight-grid">
+      <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="homeFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="homeFormStrip"></div><div class="form-summary" id="homeFormSummary"></div><div class="recent-list" id="homeRecentList"></div></div>
+      <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="awayFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="awayFormStrip"></div><div class="form-summary" id="awayFormSummary"></div><div class="recent-list" id="awayRecentList"></div></div>
+      <div class="insight-panel h2h"><div class="insight-panel-title"><span>🤝 Head to Head</span><span>5 pertemuan terakhir</span></div><div class="h2h-list" id="h2hList"></div><div class="h2h-note" id="h2hNote"></div></div>
+    </div>
+    <div class="insight-source">Data diperbarui otomatis oleh GitHub Actions dari data publik Flashscore.</div>
+  </section>
+
   <section class="section" id="schedule">
     <div class="section-head"><div><h2 class="section-title">Filter Jadwal Pertandingan</h2><div class="section-meta">Gunakan filter untuk mempersempit jadwal tanpa mengubah kalender.</div></div><button class="clear-btn" id="clearSearch" type="button">Reset filter</button></div>
     <div class="filter-panel">
@@ -265,10 +279,12 @@ const COMP_LOGOS = {"sl":{"short":"BRI Super League","data":"data:image/png;base
 // Put XML files in ./data/ on the same GitHub repository.
 // =====================================================
 let matches = [];
+let prematchData = null;
 
 const DATA_FILES = {
   fixtures: './data/fixtures.xml',
   results: './data/results.xml',
+  form: './data/form.xml',
   team: './data/team.xml',
   lastUpdate: './data/last-update.xml'
 };
@@ -333,6 +349,20 @@ function parseLocalMatches(xml){
     };
   }).filter(m => m.date && m.home && m.away);
 }
+
+function parsePrematchXML(xml){
+  if(!xml) return null;
+  const text=n=>n?.textContent?.trim()||"";
+  const next=xml.querySelector('nextMatch');
+  const teams=[...xml.querySelectorAll('team')].map(t=>({name:t.getAttribute('name')||"",matches:[...t.querySelectorAll(':scope > match')].map(m=>({date:text(m.querySelector('date')),time:text(m.querySelector('time')),home:text(m.querySelector('home')),away:text(m.querySelector('away')),homeScore:text(m.querySelector('homeScore')),awayScore:text(m.querySelector('awayScore')),outcome:text(m.querySelector('outcome')),competition:text(m.querySelector('competition')),penHomeScore:text(m.querySelector('penHomeScore')),penAwayScore:text(m.querySelector('penAwayScore'))}))}));
+  const h2h=[...xml.querySelectorAll('headToHead > match')].map(m=>({date:text(m.querySelector('date')),time:text(m.querySelector('time')),home:text(m.querySelector('home')),away:text(m.querySelector('away')),homeScore:text(m.querySelector('homeScore')),awayScore:text(m.querySelector('awayScore')),competition:text(m.querySelector('competition')),penHomeScore:text(m.querySelector('penHomeScore')),penAwayScore:text(m.querySelector('penAwayScore'))}));
+  return {next:next?{id:next.getAttribute('id')||"",home:text(next.querySelector('home')),away:text(next.querySelector('away'))}:null,teams,h2h};
+}
+function formDots(items){return items.map(x=>`<span class="form-dot ${String(x.outcome||'').toLowerCase()}" title="${escapeHtml(x.home)} ${x.homeScore}-${x.awayScore} ${escapeHtml(x.away)}">${escapeHtml(x.outcome||'?')}</span>`).join('')}
+function formSummary(items){const w=items.filter(x=>x.outcome==='W').length,d=items.filter(x=>x.outcome==='D').length,l=items.filter(x=>x.outcome==='L').length;return `${w} Menang · ${d} Seri · ${l} Kalah`}
+function recentListHtml(items){return items.map(x=>`<div class="recent-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="recent-teams">${escapeHtml(x.home)} ${x.penHomeScore&&x.penAwayScore?'':''} vs ${escapeHtml(x.away)}</div><div class="recent-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
+function h2hListHtml(items){return items.map(x=>`<div class="h2h-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="h2h-teams">${escapeHtml(x.home)} vs ${escapeHtml(x.away)}</div><div class="h2h-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
+function renderPrematchInsights(){const next=getNextMatch();const box=$('prematchInsights');if(!next||!prematchData||!prematchData.next){box.hidden=true;return}const teams=prematchData.teams;const home=teams.find(t=>t.name.toLowerCase()===next.home.toLowerCase())||teams[0];const away=teams.find(t=>t.name.toLowerCase()===next.away.toLowerCase())||teams[1];$('insightSub').textContent=`${next.home} vs ${next.away} · Form 5 pertandingan terakhir & head to head`;$('homeFormTitle').innerHTML=teamBadgeHtml(next.home,20)+`<span>${escapeHtml(next.home)}</span>`;$('awayFormTitle').innerHTML=teamBadgeHtml(next.away,20)+`<span>${escapeHtml(next.away)}</span>`;const hm=home?.matches||[],am=away?.matches||[],hh=prematchData.h2h||[];$('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';$('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L pada form dihitung dari sudut pandang masing-masing tim. Untuk adu penalti, pemenang shootout dihitung sebagai W.':'H2H akan muncul setelah scraper memperoleh halaman pertandingan detail.';box.hidden=false}
 
 function mergeMatchSets(fixtures, results){
   const map = new Map();
@@ -476,6 +506,7 @@ document.querySelectorAll('.side-nav button').forEach(b=>b.onclick=()=>document.
   if(!loaded) return;
   renderStats();
   renderHero();
+  renderPrematchInsights();
   renderUpcoming();
   renderList();
   populateCalendarSelectors();

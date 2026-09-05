@@ -87,3 +87,14 @@ changes, the scraper should fail safely rather than publish an incomplete XML.
 
 Check Flashscore's current terms and robots/access rules before enabling the
 scheduled collector for a public repository.
+
+## Pre-match form & H2H
+
+The dashboard now generates `data/form.xml` during the GitHub Actions scrape. For the next upcoming Persib match it attempts to collect:
+
+- Persib's last 5 completed matches with W/D/L from Persib's perspective.
+- Opponent's last 5 completed matches with W/D/L from the opponent's perspective.
+- The last 5 head-to-head meetings between the two teams.
+- Penalty-shootout matches use the shootout winner for W/L while retaining the regular-time score.
+
+This data is optional and fail-safe: if Flashscore does not expose the required team or H2H page, the normal fixtures/results pipeline remains the primary dataset and the dashboard shows an unavailable-data message.

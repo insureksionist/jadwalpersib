@@ -27,6 +27,7 @@ DATA_DIR = BASE_DIR / "data"
 FIXTURES_FILE = DATA_DIR / "fixtures.xml"
 RESULTS_FILE = DATA_DIR / "results.xml"
 LAST_UPDATE_FILE = DATA_DIR / "last-update.xml"
+FORM_FILE = DATA_DIR / "form.xml"
 
 TEAM_NAME = os.getenv("TEAM_NAME", "Persib Bandung")
 TEAM_ID = os.getenv("TEAM_ID", "KpBjbPK1")
@@ -64,6 +65,8 @@ class Match:
     home_score: str = ""
     away_score: str = ""
     source_url: str = ""
+    home_team_url: str = ""
+    away_team_url: str = ""
 
     @property
     def dt(self) -> datetime:
@@ -247,7 +250,7 @@ async def click_show_more(page) -> None:
             break
 
 
-async def extract_rows(page) -> list[dict]:
+async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
     """Extract matches from Flashscore.
 
     Flashscore currently exposes the fixture data in the rendered page text,
@@ -272,6 +275,8 @@ async def extract_rows(page) -> list[dict]:
             const scoreAway = node.querySelector('.event__score--away');
             const scores = node.querySelector('.event__scores');
             const link = node.querySelector('a.eventRowLink') || node.querySelector('a[href*="/match/"]') || node.querySelector('a');
+            const homeLink = home.closest('a') || home.querySelector('a');
+            const awayLink = away.closest('a') || away.querySelector('a');
             const titleBox = node.parentElement?.querySelector('.event__titleBox, .event__title');
             out.push({
               id: node.id || '',
@@ -284,7 +289,9 @@ async def extract_rows(page) -> list[dict]:
               awayScore: scoreAway ? (scoreAway.innerText || scoreAway.textContent || '').trim() : '',
               score: scores ? (scores.innerText || scores.textContent || '').replace(/\\s+/g, ' ').trim() : '',
               rowText: (node.innerText || node.textContent || '').replace(/\\s+/g, ' ').trim(),
-              href: link ? link.href : ''
+              href: link ? link.href : '',
+              homeHref: homeLink ? homeLink.href : '',
+              awayHref: awayLink ? awayLink.href : ''
             });
           }
           return out;
@@ -297,7 +304,7 @@ async def extract_rows(page) -> list[dict]:
     # Fallback: parse the rendered accessibility/body text. This is the path
     # currently needed by the GitHub Actions runner.
     body = await page.locator("body").inner_text(timeout=10000)
-    return parse_text_rows(body)
+    return parse_text_rows(body, anchor_team=anchor_team)
 
 
 def normalize_team_text(value: str) -> str:
@@ -313,7 +320,7 @@ def strip_match_noise(value: str) -> str:
     return clean(value.strip(" -–—|:"))
 
 
-def parse_text_rows(body: str) -> list[dict]:
+def parse_text_rows(body: str, anchor_team: str = TEAM_NAME) -> list[dict]:
     """Parse Flashscore's current rendered text representation.
 
     Example currently observed representation:
@@ -323,8 +330,8 @@ def parse_text_rows(body: str) -> list[dict]:
       AFC Champions League 2 ASIA: Standings
       16.09. 17:00 Seoul (Kor) Persib Bandung (Ina) - -
 
-    The parser deliberately uses Persib as the anchor instead of trying to
-    split arbitrary club names into tokens.
+    The parser deliberately uses the requested team as the anchor instead of
+    trying to split arbitrary club names into tokens.
     """
     text = clean(body)
     date_re = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.\s*(?P<hour>\d{1,2}):(?P<minute>\d{2})")
@@ -368,12 +375,12 @@ def parse_text_rows(body: str) -> list[dict]:
             if candidate:
                 current_competition = candidate
 
-        persib_match = re.search(r"Persib\s+Bandung(?:\s+\((?:Ina|IDN)\))?", segment, flags=re.I)
-        if not persib_match:
+        anchor_match = re.search(re.escape(anchor_team) + r"(?:\s+\((?:Ina|IDN|Kor|KOR|Vie|VIE)\))?", segment, flags=re.I)
+        if not anchor_match:
             continue
 
-        before = strip_match_noise(segment[:persib_match.start()])
-        after = strip_match_noise(segment[persib_match.end():])
+        before = strip_match_noise(segment[:anchor_match.start()])
+        after = strip_match_noise(segment[anchor_match.end():])
 
         # The match row ends with either "- -" for a scheduled fixture or
         # two score numbers for a completed result. This lets us discard any
@@ -389,15 +396,15 @@ def parse_text_rows(body: str) -> list[dict]:
 
         before = normalize_team_text(before)
         after = normalize_team_text(after)
-        persib = TEAM_NAME
+        anchor = anchor_team
 
-        # Persib is the anchor. If text exists before Persib, it is the home
+        # The requested team is the anchor. If text exists before Persib, it is the home
         # opponent and Persib is away. If text exists after Persib, Persib is
         # home and that text is the away opponent.
         if before:
-            home, away = before, persib
+            home, away = before, anchor
         elif after:
-            home, away = persib, after
+            home, away = anchor, after
         else:
             continue
 
@@ -408,7 +415,7 @@ def parse_text_rows(body: str) -> list[dict]:
         away = strip_match_noise(away)
         if not home or not away:
             continue
-        if TEAM_NAME.lower() not in {normalize_team_text(home).lower(), normalize_team_text(away).lower()}:
+        if anchor_team.lower() not in {normalize_team_text(home).lower(), normalize_team_text(away).lower()}:
             continue
 
         d = f"{infer_year(int(m.group('day')), int(m.group('month'))):04d}-{int(m.group('month')):02d}-{int(m.group('day')):02d}"
@@ -425,6 +432,8 @@ def parse_text_rows(body: str) -> list[dict]:
             "awayScore": score_a,
             "score": f"{score_h} {score_a}".strip(),
             "href": "",
+            "homeHref": "",
+            "awayHref": "",
         })
 
     # De-duplicate rows from repeated Flashscore sections.
@@ -566,6 +575,8 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
                 home_score=hs,
                 away_score=as_,
                 source_url=urljoin(BASE_URL, row.get("href", "")),
+                home_team_url=clean(row.get("homeHref", "")),
+                away_team_url=clean(row.get("awayHref", "")),
             ))
         except ValueError as exc:
             print(f"Skipping row: {exc}", file=sys.stderr)
@@ -629,9 +640,159 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             all_matches.sort(key=lambda x: x.dt)
             fixtures = [m for m in all_matches if m.status != "finished"]
             results = [m for m in all_matches if m.status == "finished"]
+            next_match = next((m for m in all_matches if m.time and m.dt.timestamp() >= datetime.now().timestamp()), None)
+            await update_prematch_insights(context, next_match, results)
             return fixtures, results
         finally:
             await browser.close()
+
+
+def penalty_score_from_text(text: str) -> tuple[str, str]:
+    text = clean(text)
+    m = re.search(r'\bPEN\b[^0-9]{0,8}(\d{1,2})\s*[-–—:]?\s*(\d{1,2})', text, flags=re.I)
+    return (m.group(1), m.group(2)) if m else ("", "")
+
+
+def result_outcome(team: str, m: Match, pen_home: str = "", pen_away: str = "") -> str:
+    try:
+        hs, aws = int(m.home_score), int(m.away_score)
+    except (TypeError, ValueError):
+        return "?"
+    if pen_home and pen_away:
+        hs, aws = int(pen_home), int(pen_away)
+    if hs == aws:
+        return "D"
+    team_is_home = normalize_team_text(m.home).lower() == normalize_team_text(team).lower()
+    won = hs > aws if team_is_home else aws > hs
+    return "W" if won else "L"
+
+
+def form_xml_write(next_match: Match | None, home_results: list[dict], away_results: list[dict], h2h_results: list[dict], source: str = "flashscore-rendered") -> None:
+    root = ET.Element("preMatch", {"version": "1.0", "source": source})
+    if next_match:
+        nm = ET.SubElement(root, "nextMatch", {"id": next_match.id})
+        for k, v in [("date", next_match.date), ("time", next_match.time), ("home", next_match.home), ("away", next_match.away), ("competition", next_match.competition), ("sourceUrl", next_match.source_url)]:
+            if v: ET.SubElement(nm, k).text = v
+    for team, items in [(next_match.home if next_match else TEAM_NAME, home_results), (next_match.away if next_match else "Opponent", away_results)]:
+        tn = ET.SubElement(root, "team", {"name": team})
+        for item in items[:5]:
+            mn = ET.SubElement(tn, "match")
+            for k in ("date","time","home","away","homeScore","awayScore","outcome","competition","sourceUrl","penHomeScore","penAwayScore"):
+                v = item.get(k, "")
+                if v != "": ET.SubElement(mn, k).text = str(v)
+    h2h = ET.SubElement(root, "headToHead")
+    for item in h2h_results[:5]:
+        mn = ET.SubElement(h2h, "match")
+        for k in ("date","time","home","away","homeScore","awayScore","competition","sourceUrl","penHomeScore","penAwayScore"):
+            v = item.get(k, "")
+            if v != "": ET.SubElement(mn, k).text = str(v)
+    rough = ET.tostring(root, encoding="utf-8")
+    pretty = minidom.parseString(rough).toprettyxml(indent="  ", encoding="utf-8")
+    FORM_FILE.write_bytes(pretty)
+
+
+async def scrape_recent_team_results(page, team_name: str, team_url: str, limit: int = 5) -> list[dict]:
+    if not team_url:
+        return []
+    results_url = team_url.rstrip("/") + "/results/"
+    print(f"Opening recent results for {team_name}: {results_url}")
+    await page.goto(results_url, wait_until="domcontentloaded", timeout=60000)
+    await page.wait_for_timeout(2200)
+    await dismiss_consent(page)
+    await page.wait_for_timeout(500)
+    await click_show_more(page)
+    rows = await extract_rows(page, anchor_team=team_name)
+    out = []
+    for row in rows:
+        if is_pseudo_penalty_row(row):
+            continue
+        try:
+            d, tm = parse_flashscore_date(row["time"])
+        except ValueError:
+            continue
+        hs, aws = clean(row.get("homeScore")), clean(row.get("awayScore"))
+        raw = row.get("rowText", "") or row.get("score", "")
+        if not hs or not aws:
+            hs, aws = extract_score(raw)
+        if not hs or not aws:
+            continue
+        m = Match(id=row.get("id", ""), competition=clean(row.get("competition")) or "Unknown", competition_short=slug_short(row.get("competition", "")), matchday="", date=d, time=tm, timezone=TIMEZONE, home=normalize_team_text(row.get("home", "")), away=normalize_team_text(row.get("away", "")), status="finished", home_score=hs, away_score=aws, source_url=urljoin(BASE_URL, row.get("href", "")))
+        ph, pa = penalty_score_from_text(raw)
+        out.append({"date":d,"time":tm,"home":m.home,"away":m.away,"homeScore":hs,"awayScore":aws,"outcome":result_outcome(team_name,m,ph,pa),"competition":m.competition,"sourceUrl":m.source_url,"penHomeScore":ph,"penAwayScore":pa})
+        if len(out) >= limit:
+            break
+    return out
+
+
+async def scrape_h2h(page, match_url: str, home_team: str, away_team: str, limit: int = 5) -> list[dict]:
+    if not match_url or "/match/" not in match_url:
+        return []
+    base = match_url.split("?", 1)[0].rstrip("/")
+    h2h_url = base + "/h2h/overall/"
+    if "?" in match_url:
+        h2h_url += "?" + match_url.split("?", 1)[1]
+    print(f"Opening H2H: {h2h_url}")
+    await page.goto(h2h_url, wait_until="domcontentloaded", timeout=60000)
+    await page.wait_for_timeout(2500)
+    await dismiss_consent(page)
+    await page.wait_for_timeout(500)
+    for _ in range(4):
+        try:
+            loc = page.locator(".h2h__showMore, .showMore")
+            clicked = False
+            for i in range(min(await loc.count(), 5)):
+                if await loc.nth(i).is_visible():
+                    await loc.nth(i).click(timeout=1500)
+                    clicked = True
+                    await page.wait_for_timeout(700)
+            if not clicked: break
+        except Exception: break
+    rows = await page.evaluate("""
+    () => Array.from(document.querySelectorAll('.h2h__row')).map(row => ({
+      date: row.querySelector('.h2h__date')?.innerText?.trim() || '',
+      result: row.querySelector('.h2h__regularTimeResult, .h2h__result')?.innerText?.trim() || '',
+      home: row.querySelector('.h2h__homeParticipant')?.innerText?.trim() || '',
+      away: row.querySelector('.h2h__awayParticipant')?.innerText?.trim() || '',
+      text: (row.innerText || '').replace(/\\s+/g,' ').trim(),
+      href: row.querySelector('a[href*="/match/"]')?.href || ''
+    }))
+    """)
+    def norm(n): return normalize_team_text(n).lower()
+    target = {norm(home_team), norm(away_team)}
+    out=[]
+    for r in rows:
+        if {norm(r.get("home","")), norm(r.get("away",""))} != target:
+            continue
+        dm = re.search(r"(\d{1,2})\.(\d{1,2})\.(\d{2,4})", clean(r.get("date","")))
+        sm = re.search(r"(\d{1,2})\s*[:\-–—]\s*(\d{1,2})", clean(r.get("result","")))
+        if not dm or not sm: continue
+        y=int(dm.group(3)); y += 2000 if y < 100 else 0
+        ph,pa=penalty_score_from_text(r.get("text",""))
+        out.append({"date":f"{y:04d}-{int(dm.group(2)):02d}-{int(dm.group(1)):02d}","time":"","home":normalize_team_text(r.get("home","")),"away":normalize_team_text(r.get("away","")),"homeScore":sm.group(1),"awayScore":sm.group(2),"competition":"","sourceUrl":r.get("href","") or h2h_url,"penHomeScore":ph,"penAwayScore":pa})
+        if len(out)>=limit: break
+    return out
+
+
+async def update_prematch_insights(context, next_match: Match | None, current_results: list[Match]) -> None:
+    if not next_match:
+        form_xml_write(None, [], [], [])
+        return
+    home_team, away_team = next_match.home, next_match.away
+    home_url = next_match.home_team_url if home_team.lower() == TEAM_NAME.lower() else next_match.home_team_url
+    away_url = next_match.away_team_url
+    # If the next fixture was created by text fallback, URLs may be absent.
+    # Keep the feature fail-safe rather than inventing team IDs.
+    recent_page = await context.new_page()
+    h2h_page = await context.new_page()
+    try:
+        home_recent = await scrape_recent_team_results(recent_page, home_team, home_url, 5) if home_url else []
+        away_recent = await scrape_recent_team_results(recent_page, away_team, away_url, 5) if away_url else []
+        h2h = await scrape_h2h(h2h_page, next_match.source_url, home_team, away_team, 5) if next_match.source_url else []
+        form_xml_write(next_match, home_recent, away_recent, h2h)
+        print(f"Pre-match insights: {len(home_recent)} {home_team} recent, {len(away_recent)} {away_team} recent, {len(h2h)} H2H")
+    finally:
+        await recent_page.close(); await h2h_page.close()
+
 
 def validate(fixtures: list[Match], results: list[Match]) -> None:
     all_matches = fixtures + results
