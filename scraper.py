@@ -283,6 +283,7 @@ async def extract_rows(page) -> list[dict]:
               homeScore: scoreHome ? (scoreHome.innerText || scoreHome.textContent || '').trim() : '',
               awayScore: scoreAway ? (scoreAway.innerText || scoreAway.textContent || '').trim() : '',
               score: scores ? (scores.innerText || scores.textContent || '').replace(/\\s+/g, ' ').trim() : '',
+              rowText: (node.innerText || node.textContent || '').replace(/\\s+/g, ' ').trim(),
               href: link ? link.href : ''
             });
           }
@@ -471,6 +472,22 @@ async def detail_metadata(page, url: str) -> dict[str, str]:
         return {}
 
 
+def is_pseudo_penalty_row(row: dict) -> bool:
+    """Return True for Flashscore's synthetic penalty-shootout row.
+
+    Flashscore can expose an additional DOM row for a shootout where one of
+    the
+    participants is literally rendered as ``Pen``. It is not a football
+    fixture and must not enter the Persib dataset. The real match row (e.g.
+    Persib Bandung - Persebaya, 1-1) is kept separately.
+    """
+    rid = clean(row.get("id", "")).lower()
+    home = normalize_team_text(row.get("home", "")).lower()
+    away = normalize_team_text(row.get("away", "")).lower()
+    pseudo = {"pen", "pen.", "penalty", "penalties"}
+    return ("-pen-" in rid or rid.endswith("-pen") or rid.startswith("pen-")) or home in pseudo or away in pseudo
+
+
 async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
     print(f"Opening {url}")
     await page.goto(url, wait_until="domcontentloaded", timeout=60000)
@@ -487,7 +504,7 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
         await dump_debug(page, page_kind)
 
     rows = await extract_rows(page)
-    print(f"{page_kind}: DOM match rows = {len(rows)}")
+    print(f"{page_kind}: extracted match rows = {len(rows)}")
     if not rows:
         title = await page.title()
         body = clean((await page.locator('body').inner_text())[:1000])
@@ -498,6 +515,13 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
     matches: list[Match] = []
     for row in rows:
         try:
+            # Flashscore may expose a synthetic shootout row such as
+            # ``2026-08-06-pen-persib-bandung | Pen - Persib Bandung``.
+            # It is not a second match; the real match row contains the
+            # regular score (1-1). Exclude the synthetic row before validation.
+            if is_pseudo_penalty_row(row):
+                print(f"Skipping Flashscore synthetic penalty row: {row.get('id', '')} | {row.get('home', '')} - {row.get('away', '')}")
+                continue
             d, tm = parse_flashscore_date(row["time"])
             if date.fromisoformat(d) < SEASON_START:
                 continue
@@ -617,6 +641,8 @@ def validate(fixtures: list[Match], results: list[Match]) -> None:
     if len(ids) != len(set(ids)):
         raise RuntimeError("Refusing to write XML: duplicate match IDs detected.")
     for m in all_matches:
+        if normalize_team_text(m.home).lower() in {"pen", "pen.", "penalty", "penalties"} or normalize_team_text(m.away).lower() in {"pen", "pen.", "penalty", "penalties"}:
+            raise RuntimeError(f"Synthetic penalty row slipped through: {m.id} | {m.home} - {m.away}")
         if not m.home or not m.away or not m.date or not m.time:
             raise RuntimeError(f"Invalid match record: {asdict(m)}")
         if TEAM_NAME.lower() not in {m.home.lower(), m.away.lower()}:
