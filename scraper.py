@@ -159,7 +159,7 @@ def merge_metadata(new: Match, old: Match | None) -> Match:
     if not old:
         return new
     # Keep useful metadata if Flashscore's list view does not expose it.
-    for field in ("venue", "city", "country", "matchday", "competition_short"):
+    for field in ("venue", "city", "country", "matchday", "competition_short", "home_team_url", "away_team_url"):
         if not getattr(new, field):
             setattr(new, field, getattr(old, field))
     if not new.source_url:
@@ -471,10 +471,25 @@ async def detail_metadata(page, url: str) -> dict[str, str]:
               const venueMatch = body.match(/Venue:\\s*([^\\n]+)/i);
               const venue = venueMatch ? venueMatch[1].trim() : '';
               let city = '';
-              const cm = venue.match(/\\(([^)]+)\\)$/);
+              const cm = venue.match(/\(([^)]+)\)$/);
               if (cm) city = cm[1].trim();
-              return { venue, city };
-            }
+              const directHome = document.querySelector('.duelParticipant__home a[href*="/team/"]')?.href || '';
+              const directAway = document.querySelector('.duelParticipant__away a[href*="/team/"]')?.href || '';
+              const teamLinks = Array.from(document.querySelectorAll('a[href*="/team/"]')).map(a => ({
+                href: a.href,
+                text: (a.innerText || a.textContent || '').replace(/\s+/g, ' ').trim()
+              })).filter(x => x.href);
+              const homeName = document.querySelector('.duelParticipant__home .participant__participantName')?.innerText?.replace(/\s+/g,' ').trim() || '';
+              const awayName = document.querySelector('.duelParticipant__away .participant__participantName')?.innerText?.replace(/\s+/g,' ').trim() || '';
+              const pick = (name, direct) => {
+                if (direct) return direct;
+                if (!name) return '';
+                const exact = teamLinks.find(x => x.text.toLowerCase() === name.toLowerCase());
+                if (exact) return exact.href;
+                const partial = teamLinks.find(x => x.text.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(x.text.toLowerCase()));
+                return partial ? partial.href : '';
+              };
+              return { venue, city, homeTeamUrl: pick(homeName, directHome), awayTeamUrl: pick(awayName, directAway) };            }
             """
         )
     except Exception:
@@ -624,10 +639,12 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                     key = (m.date, normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
                     old = existing_by_key.get(key)
                     m = merge_metadata(m, old)
-                    if not m.venue and m.source_url:
+                    if m.source_url and (not m.venue or not m.home_team_url or not m.away_team_url):
                         meta = await detail_metadata(detail_page, m.source_url)
-                        m.venue = clean(meta.get("venue"))
-                        m.city = clean(meta.get("city"))
+                        m.venue = m.venue or clean(meta.get("venue"))
+                        m.city = m.city or clean(meta.get("city"))
+                        m.home_team_url = m.home_team_url or clean(meta.get("homeTeamUrl"))
+                        m.away_team_url = m.away_team_url or clean(meta.get("awayTeamUrl"))
                         await detail_page.wait_for_timeout(DETAIL_DELAY_MS)
                     normalized[key] = m
             finally:
@@ -785,11 +802,15 @@ async def update_prematch_insights(context, next_match: Match | None, current_re
     recent_page = await context.new_page()
     h2h_page = await context.new_page()
     try:
-        home_recent = await scrape_recent_team_results(recent_page, home_team, home_url, 5) if home_url else []
-        away_recent = await scrape_recent_team_results(recent_page, away_team, away_url, 5) if away_url else []
-        h2h = await scrape_h2h(h2h_page, next_match.source_url, home_team, away_team, 5) if next_match.source_url else []
-        form_xml_write(next_match, home_recent, away_recent, h2h)
-        print(f"Pre-match insights: {len(home_recent)} {home_team} recent, {len(away_recent)} {away_team} recent, {len(h2h)} H2H")
+        try:
+            home_recent = await scrape_recent_team_results(recent_page, home_team, home_url, 5) if home_url else []
+            away_recent = await scrape_recent_team_results(recent_page, away_team, away_url, 5) if away_url else []
+            h2h = await scrape_h2h(h2h_page, next_match.source_url, home_team, away_team, 5) if next_match.source_url else []
+            form_xml_write(next_match, home_recent, away_recent, h2h)
+            print(f"Pre-match insights: {len(home_recent)} {home_team} recent, {len(away_recent)} {away_team} recent, {len(h2h)} H2H")
+        except Exception as exc:
+            print(f"WARNING: pre-match insights failed; keeping scraper primary data intact: {exc}", file=sys.stderr)
+            form_xml_write(next_match, [], [], [])
     finally:
         await recent_page.close(); await h2h_page.close()
 

@@ -376,13 +376,15 @@ function mergeMatchSets(fixtures, results){
 async function loadLocalData(){
   setDataStatus('Memuat data lokal XML…', 'loading');
   try{
-    const [fixturesXML, resultsXML] = await Promise.all([
+    const [fixturesXML, resultsXML, formXML] = await Promise.all([
       fetchLocalXML(DATA_FILES.fixtures),
-      fetchLocalXML(DATA_FILES.results).catch(()=>null)
+      fetchLocalXML(DATA_FILES.results).catch(()=>null),
+      fetchLocalXML(DATA_FILES.form).catch(()=>null)
     ]);
 
     const fixtures = parseLocalMatches(fixturesXML);
     const results = resultsXML ? parseLocalMatches(resultsXML) : [];
+    prematchData = formXML ? parsePrematchXML(formXML) : null;
     matches = mergeMatchSets(fixtures, results);
 
     if(!matches.length) throw new Error('Tidak ada pertandingan valid di fixtures.xml/results.xml.');
