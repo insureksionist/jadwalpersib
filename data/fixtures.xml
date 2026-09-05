@@ -1,8 +1,8 @@
-<?xml version='1.0' encoding='utf-8'?>
-<fixtures version="1.0" source="local-dashboard">
+<?xml version="1.0" encoding="utf-8"?>
+<fixtures version="1.1" source="flashscore-rendered">
   <match>
-    <id>SL-01</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-09-06-persib-bandung-psm-makassar</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 1</matchday>
     <date>2026-09-06</date>
@@ -14,10 +14,12 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-02</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-09-12-persija-jakarta-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 2</matchday>
     <date>2026-09-12</date>
@@ -29,10 +31,26 @@
     <city>Jakarta</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-03</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-09-16-seoul-persib-bandung</id>
+    <competition>AFC Champions League 2</competition>
+    <competitionShort>AFC Champions League 2</competitionShort>
+    <date>2026-09-16</date>
+    <time>17:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Seoul</home>
+    <away>Persib Bandung</away>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-09-20-persijap-jepara-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 3</matchday>
     <date>2026-09-20</date>
@@ -44,10 +62,26 @@
     <city>Jepara</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-04</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-10-08-port-mti-fc-persib-bandung</id>
+    <competition>ASEAN Club Championship</competition>
+    <competitionShort>ASEAN Club Championship</competitionShort>
+    <date>2026-10-08</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Port MTI FC</home>
+    <away>Persib Bandung</away>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-10-11-persib-bandung-dewa-united</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 4</matchday>
     <date>2026-10-11</date>
@@ -59,10 +93,26 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-05</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-10-14-persib-bandung-viettel</id>
+    <competition>AFC Champions League 2</competition>
+    <competitionShort>AFC Champions League 2</competitionShort>
+    <date>2026-10-14</date>
+    <time>19:15</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Viettel</away>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-10-18-persib-bandung-persik-kediri</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 5</matchday>
     <date>2026-10-18</date>
@@ -74,10 +124,12 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-06</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-10-22-madura-united-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 6</matchday>
     <date>2026-10-22</date>
@@ -89,40 +141,68 @@
     <city>Pamekasan</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-07</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-10-26-garudayaksa-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 7</matchday>
     <date>2026-10-26</date>
     <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
-    <home>Garudayaksa FC</home>
+    <home>Garudayaksa</home>
     <away>Persib Bandung</away>
-    <venue>Pakansari Stadium</venue>
-    <city>Bogor</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-08</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-10-28-persib-bandung-melbourne-victory-aus</id>
+    <competition>AFC Champions League 2</competition>
+    <competitionShort>AFC Champions League 2</competitionShort>
+    <date>2026-10-28</date>
+    <time>19:15</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Melbourne Victory (Aus)</away>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-11-01-persib-bandung-isenmulang-kalteng</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 8</matchday>
     <date>2026-11-01</date>
     <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
-    <away>Isenmulang Kalteng FC</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
+    <away>Isenmulang Kalteng</away>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-09</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-11-04-melbourne-victory-aus-persib-bandung</id>
+    <competition>AFC Champions League 2</competition>
+    <competitionShort>AFC Champions League 2</competitionShort>
+    <date>2026-11-04</date>
+    <time>14:45</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Melbourne Victory (Aus)</home>
+    <away>Persib Bandung</away>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-11-08-java-united-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 9</matchday>
     <date>2026-11-08</date>
@@ -134,10 +214,12 @@
     <city>Semarang</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-10</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-11-22-persib-bandung-bali-united</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 10</matchday>
     <date>2026-11-22</date>
@@ -149,10 +231,26 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-11</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-11-25-persib-bandung-seoul</id>
+    <competition>AFC Champions League 2</competition>
+    <competitionShort>AFC Champions League 2</competitionShort>
+    <date>2026-11-25</date>
+    <time>19:15</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Seoul</away>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-11-29-persita-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 11</matchday>
     <date>2026-11-29</date>
@@ -164,25 +262,54 @@
     <city>Tangerang</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-12</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-12-02-viettel-persib-bandung</id>
+    <competition>AFC Champions League 2</competition>
+    <competitionShort>AFC Champions League 2</competitionShort>
+    <date>2026-12-02</date>
+    <time>17:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Viettel</home>
+    <away>Persib Bandung</away>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-12-06-persebaya-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 12</matchday>
     <date>2026-12-06</date>
     <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
-    <home>Persebaya Surabaya</home>
+    <home>Persebaya</home>
     <away>Persib Bandung</away>
-    <venue>Gelora Bung Tomo</venue>
-    <city>Surabaya</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-13</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-12-10-lion-city-persib-bandung</id>
+    <competition>ASEAN Club Championship</competition>
+    <competitionShort>ASEAN Club Championship</competitionShort>
+    <date>2026-12-10</date>
+    <time>18:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Lion City</home>
+    <away>Persib Bandung</away>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-12-14-persib-bandung-pss-sleman</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 14</matchday>
     <date>2026-12-14</date>
@@ -194,10 +321,26 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-14</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-12-17-persib-bandung-johor-dt</id>
+    <competition>ASEAN Club Championship</competition>
+    <competitionShort>ASEAN Club Championship</competitionShort>
+    <date>2026-12-17</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Johor DT</away>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
+  </match>
+  <match>
+    <id>2026-12-20-arema-fc-persib-bandung</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 15</matchday>
     <date>2026-12-20</date>
@@ -209,25 +352,26 @@
     <city>Malang</city>
     <country>Indonesia</country>
     <side>Away</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-15</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-12-23-persib-bandung-fc-bhayangkara</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 16</matchday>
     <date>2026-12-23</date>
     <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
-    <away>Bhayangkara Presisi Lampung FC</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
+    <away>FC Bhayangkara</away>
     <country>Indonesia</country>
     <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
   <match>
-    <id>SL-16</id>
-    <competition>BRI Super League 2026/27</competition>
+    <id>2026-12-27-persib-bandung-psim-yogyakarta</id>
+    <competition>Super League</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 17</matchday>
     <date>2026-12-27</date>
@@ -239,434 +383,7 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
-  </match>
-  <match>
-    <id>SL-17</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 13</matchday>
-    <date>2027-02-03</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Borneo FC Samarinda</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-18</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 18</matchday>
-    <date>2027-02-07</date>
-    <time>20:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Dewa United</home>
-    <away>Persib Bandung</away>
-    <venue>Banten International Stadium</venue>
-    <city>Serang</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-19</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 19</matchday>
-    <date>2027-02-14</date>
-    <time>20:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Madura United</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-20</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 20</matchday>
-    <date>2027-02-21</date>
-    <time>20:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Isenmulang Kalteng FC</home>
-    <away>Persib Bandung</away>
-    <venue>Tuah Pahoe</venue>
-    <city>Palangka Raya</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-21</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 21</matchday>
-    <date>2027-02-28</date>
-    <time>20:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Persijap Jepara</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-22</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 22</matchday>
-    <date>2027-03-14</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Java United</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-23</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 23</matchday>
-    <date>2027-03-21</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>PSS Sleman</home>
-    <away>Persib Bandung</away>
-    <venue>Maguwoharjo</venue>
-    <city>Sleman</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-24</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 24</matchday>
-    <date>2027-04-03</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>PSIM Yogyakarta</home>
-    <away>Persib Bandung</away>
-    <venue>Sultan Agung</venue>
-    <city>Bantul</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-25</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 25</matchday>
-    <date>2027-04-10</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Arema FC</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-26</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 26</matchday>
-    <date>2027-04-17</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Bali United</home>
-    <away>Persib Bandung</away>
-    <venue>Kapten I Wayan Dipta</venue>
-    <city>Gianyar</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-27</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 27</matchday>
-    <date>2027-04-24</date>
-    <time>15:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Persija Jakarta</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-28</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 28</matchday>
-    <date>2027-04-30</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Borneo FC Samarinda</home>
-    <away>Persib Bandung</away>
-    <venue>Segiri</venue>
-    <city>Samarinda</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-29</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 29</matchday>
-    <date>2027-05-04</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Garudayaksa FC</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-30</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 30</matchday>
-    <date>2027-05-08</date>
-    <time>15:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>PSM Makassar</home>
-    <away>Persib Bandung</away>
-    <venue>Gelora B.J. Habibie</venue>
-    <city>Parepare</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-31</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 31</matchday>
-    <date>2027-05-13</date>
-    <time>15:30</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Persebaya Surabaya</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SL-32</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 32</matchday>
-    <date>2027-05-23</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persik Kediri</home>
-    <away>Persib Bandung</away>
-    <venue>Brawijaya</venue>
-    <city>Kediri</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-33</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 33</matchday>
-    <date>2027-05-29</date>
-    <time>19:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Bhayangkara Presisi Lampung FC</home>
-    <away>Persib Bandung</away>
-    <venue>PKOR Sumpah Pemuda</venue>
-    <city>Bandar Lampung</city>
-    <country>Indonesia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SL-34</id>
-    <competition>BRI Super League 2026/27</competition>
-    <competitionShort>Super League</competitionShort>
-    <matchday>Matchday 34</matchday>
-    <date>2027-06-05</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Persita</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>ACL2-01</id>
-    <competition>AFC Champions League Two 2026/27</competition>
-    <competitionShort>ACL 2</competitionShort>
-    <matchday>Matchday 1 (Grup E)</matchday>
-    <date>2026-09-16</date>
-    <time>17:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>FC Seoul</home>
-    <away>Persib Bandung</away>
-    <venue>Seoul World Cup Stadium</venue>
-    <city>Seoul</city>
-    <country>South Korea</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>ACL2-02</id>
-    <competition>AFC Champions League Two 2026/27</competition>
-    <competitionShort>ACL 2</competitionShort>
-    <matchday>Matchday 2 (Grup E)</matchday>
-    <date>2026-10-14</date>
-    <time>17:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Viettel FC</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>ACL2-03</id>
-    <competition>AFC Champions League Two 2026/27</competition>
-    <competitionShort>ACL 2</competitionShort>
-    <matchday>Matchday 3 (Grup E)</matchday>
-    <date>2026-10-28</date>
-    <time>18:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Melbourne Victory</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>ACL2-04</id>
-    <competition>AFC Champions League Two 2026/27</competition>
-    <competitionShort>ACL 2</competitionShort>
-    <matchday>Matchday 4 (Grup E)</matchday>
-    <date>2026-11-04</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Melbourne Victory</home>
-    <away>Persib Bandung</away>
-    <venue>AAMI Park</venue>
-    <city>Melbourne</city>
-    <country>Australia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>ACL2-05</id>
-    <competition>AFC Champions League Two 2026/27</competition>
-    <competitionShort>ACL 2</competitionShort>
-    <matchday>Matchday 5 (Grup E)</matchday>
-    <date>2026-11-25</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>FC Seoul</away>
-    <venue>Gelora Bandung Lautan Api</venue>
-    <city>Bandung</city>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>ACL2-06</id>
-    <competition>AFC Champions League Two 2026/27</competition>
-    <competitionShort>ACL 2</competitionShort>
-    <matchday>Matchday 6 (Grup E)</matchday>
-    <date>2026-12-02</date>
-    <time>17:00</time>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Viettel FC</home>
-    <away>Persib Bandung</away>
-    <venue>Hang Day Stadium</venue>
-    <city>Hanoi</city>
-    <country>Vietnam</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SHOPEE-01</id>
-    <competition>Shopee Cup - ASEAN Club Championship 2026/27</competition>
-    <competitionShort>Shopee Cup</competitionShort>
-    <matchday>Grup B</matchday>
-    <date>2026-10-08</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Port</home>
-    <away>Persib Bandung</away>
-    <country>Thailand</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SHOPEE-02</id>
-    <competition>Shopee Cup - ASEAN Club Championship 2026/27</competition>
-    <competitionShort>Shopee Cup</competitionShort>
-    <matchday>Grup B</matchday>
-    <date>2026-11-19</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Pemenang Play-Off 2</away>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SHOPEE-03</id>
-    <competition>Shopee Cup - ASEAN Club Championship 2026/27</competition>
-    <competitionShort>Shopee Cup</competitionShort>
-    <matchday>Grup B</matchday>
-    <date>2026-12-10</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Lion City Sailors</home>
-    <away>Persib Bandung</away>
-    <country>Singapore</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SHOPEE-04</id>
-    <competition>Shopee Cup - ASEAN Club Championship 2026/27</competition>
-    <competitionShort>Shopee Cup</competitionShort>
-    <matchday>Grup B</matchday>
-    <date>2026-12-17</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>Johor Darul Ta'zim</away>
-    <country>Indonesia</country>
-    <side>Home</side>
-  </match>
-  <match>
-    <id>SHOPEE-05</id>
-    <competition>Shopee Cup - ASEAN Club Championship 2026/27</competition>
-    <competitionShort>Shopee Cup</competitionShort>
-    <matchday>Grup B</matchday>
-    <date>2027-02-25</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>PKR Svay Rieng</home>
-    <away>Persib Bandung</away>
-    <country>Cambodia</country>
-    <side>Away</side>
-  </match>
-  <match>
-    <id>SHOPEE-06</id>
-    <competition>Shopee Cup - ASEAN Club Championship 2026/27</competition>
-    <competitionShort>Shopee Cup</competitionShort>
-    <matchday>Grup B</matchday>
-    <date>2027-03-04</date>
-    <timezone>Asia/Jakarta</timezone>
-    <home>Persib Bandung</home>
-    <away>CÃ´ng An HÃ  Ná»i</away>
-    <country>Indonesia</country>
-    <side>Home</side>
+    <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com</sourceUrl>
   </match>
 </fixtures>
