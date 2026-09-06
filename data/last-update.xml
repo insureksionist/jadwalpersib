@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lastUpdate version="1.1" source="flashscore-rendered">
-  <lastSuccess>2026-09-06T18:25:13+07:00</lastSuccess>
-  <last_success>2026-09-06T18:25:13+07:00</last_success>
-  <status>ok</status>
-  <message>Scrape and validation succeeded</message>
-  <fixtureCount>25</fixtureCount>
-  <resultCount>28</resultCount>
+  <lastSuccess/>
+  <last_success/>
+  <status>error</status>
+  <message>BrowserType.launch: Executable doesn't exist at /home/oai/.cache/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ &lt;3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝</message>
+  <fixtureCount>46</fixtureCount>
+  <resultCount>0</resultCount>
   <sourceUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</sourceUrl>
 </lastUpdate>
