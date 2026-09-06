@@ -1,2 +1,121 @@
-<?xml version='1.0' encoding='utf-8'?>
-<results version="1.0" source="local-dashboard" />
+<?xml version="1.0" encoding="utf-8"?>
+<results version="1.1" source="flashscore-rendered">
+  <match>
+    <id>2026-07-25-persib-bandung-arema-fc</id>
+    <competition>1 W President Cup</competition>
+    <competitionShort>President Cup</competitionShort>
+    <date>2026-07-25</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Arema FC</away>
+    <venue>Gelora Bandung Lautan Api Stadium</venue>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/arema-fc-dpH3oK85/persib-bandung-KpBjbPK1/?mid=ptLGWHrQ</sourceUrl>
+  </match>
+  <match>
+    <id>2026-07-28-dpmm-persib-bandung</id>
+    <competition>1 W President Cup</competition>
+    <competitionShort>President Cup</competitionShort>
+    <date>2026-07-28</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>DPMM</home>
+    <away>Persib Bandung</away>
+    <venue>Sultan Hassanal Bolkiah Stadium</venue>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>finished</status>
+    <homeScore>0</homeScore>
+    <awayScore>1</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/dpmm-K2cZL3G5/persib-bandung-KpBjbPK1/?mid=vs9kYUJU</sourceUrl>
+  </match>
+  <match>
+    <id>2026-07-31-persib-bandung-tampines</id>
+    <competition>1 W President Cup</competition>
+    <competitionShort>President Cup</competitionShort>
+    <date>2026-07-31</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Tampines</away>
+    <venue>Gelora Bandung Lautan Api Stadium</venue>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/tampines-KbVkFR8P/?mid=rwU4zL0b</sourceUrl>
+  </match>
+  <match>
+    <id>2026-08-04-persib-bandung-persija-jakarta</id>
+    <competition>Unknown</competition>
+    <competitionShort>Unknown</competitionShort>
+    <date>2026-08-04</date>
+    <time>15:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Persija Jakarta</away>
+    <venue>Kapten I Wayan Dipta Stadium</venue>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>2</homeScore>
+    <awayScore>1</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=zP8wGDit</sourceUrl>
+  </match>
+  <match>
+    <id>2026-08-15-sabah-mys-persib-bandung</id>
+    <competition>Unknown</competition>
+    <competitionShort>Unknown</competitionShort>
+    <date>2026-08-15</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Sabah (Mys)</home>
+    <away>Persib Bandung</away>
+    <venue>Kapten I Wayan Dipta Stadium</venue>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>finished</status>
+    <homeScore>0</homeScore>
+    <awayScore>3</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/sabah-WUPN62XK/?mid=rFcpo254</sourceUrl>
+  </match>
+  <match>
+    <id>2026-08-18-persib-bandung-bali-united</id>
+    <competition>Unknown</competition>
+    <competitionShort>Unknown</competitionShort>
+    <date>2026-08-18</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Bali United</away>
+    <venue>Kapten I Wayan Dipta Stadium</venue>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>3</homeScore>
+    <awayScore>2</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=ju1hqtzH</sourceUrl>
+  </match>
+  <match>
+    <id>2026-08-31-persib-bandung-manila-digger-phl</id>
+    <competition>Unknown</competition>
+    <competitionShort>Unknown</competitionShort>
+    <date>2026-08-31</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Manila Digger (Phl)</away>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/manila-digger-0retwjin/persib-bandung-KpBjbPK1/?mid=8Y48rpJ7</sourceUrl>
+  </match>
+</results>
