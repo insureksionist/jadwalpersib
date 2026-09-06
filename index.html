@@ -91,7 +91,7 @@ h1{margin:0;font-size:30px;line-height:1.1;letter-spacing:-1px;font-weight:800}
 .match-row:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(20,39,86,.07)}
 .match-row.sl{background:linear-gradient(90deg,var(--sl-soft),#fff 42%);border-color:var(--sl-border);border-left-color:var(--sl)}
 .match-row.acl{background:linear-gradient(90deg,var(--acl-soft),#fff 42%);border-color:var(--acl-border);border-left-color:var(--acl)}
-.match-row.shopee{background:linear-gradient(90deg,var(--shopee-soft),#fff 42%);border-color:var(--shopee-border);border-left-color:var(--shopee)}
+.match-row.shopee{background:linear-gradient(90deg,var(--shopee-soft),#fff 42%);border-color:var(--shopee-border);border-left-color:var(--shopee)}.match-row.other{background:#fafbfc;border-color:#e3e7ef;border-left-color:#9aa3b3}
 .match-row.is-away{border-right:3px solid var(--away);}.match-row.is-home{border-right:3px solid var(--home)}
 .date-box{border-radius:10px;background:rgba(255,255,255,.72);border:1px solid rgba(120,130,150,.12);padding:7px 4px;text-align:center;line-height:1.05}
 .date-box .day{font-size:18px;font-weight:800;color:var(--navy)}.date-box .mon{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:800;margin-top:2px}.date-box .dow{font-size:7px;color:#a1a8b5;margin-top:4px;font-weight:700}
@@ -112,7 +112,7 @@ h1{margin:0;font-size:30px;line-height:1.1;letter-spacing:-1px;font-weight:800}
 .cal-cell.empty{background:#fafbfc;border-color:transparent}.cal-cell.has-match{cursor:pointer}.cal-cell.has-match:hover{border-color:#bcc7d8;background:#fbfcff}.cal-cell.today{box-shadow:inset 0 0 0 1px var(--navy-2)}
 .daynum{font-size:8px;color:#687184;font-weight:750;text-align:right;line-height:1;margin-bottom:4px}.cal-cell.today .daynum{color:var(--navy);font-weight:900}
 .cal-match{display:flex;align-items:center;gap:4px;border-radius:5px;padding:3px 4px;margin-top:2px;font-size:7px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cal-match.sl{background:var(--sl-soft);color:#1557ad}.cal-match.acl{background:var(--acl-soft);color:#8b6200}.cal-match.shopee{background:var(--shopee-soft);color:#247847}.cal-match.away{border-left:3px solid var(--away)}.cal-match.home{border-left:3px solid var(--home)}
+.cal-match.sl{background:var(--sl-soft);color:#1557ad}.cal-match.acl{background:var(--acl-soft);color:#8b6200}.cal-match.shopee{background:var(--shopee-soft);color:#247847}.cal-match.other{background:#f3f5f8;color:#667085}.cal-match.away{border-left:3px solid var(--away)}.cal-match.home{border-left:3px solid var(--home)}
 .cal-match .mini-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex:0 0 auto}.cal-match .mini-side{font-size:6px;text-transform:uppercase;opacity:.75}
 .legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #edf0f4}.legend-item{display:flex;align-items:center;gap:5px;font-size:8px;color:#5f6878;font-weight:700}.legend-item img{width:18px;height:18px;object-fit:contain}.legend-dot{width:7px;height:7px;border-radius:50%}.legend-home{color:var(--home)}.legend-away{color:var(--away)}
 .modal-overlay{position:fixed;inset:0;background:rgba(7,17,42,.52);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal-overlay.open{display:flex}.modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:22px;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.22)}.close{position:absolute;right:12px;top:10px;border:0;background:#f2f4f8;width:30px;height:30px;border-radius:50%;font-size:18px;color:#6c7482}.modal-head{display:flex;justify-content:space-between;gap:10px;padding-right:35px}.modal-comp{font-size:11px;font-weight:800;color:var(--navy)}.modal-day{font-size:9px;color:var(--muted)}.modal-teams{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:8px;margin:20px 0}.modal-team{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-weight:800;font-size:12px}.modal-vs{text-align:center;font-size:10px;color:#9aa2b0;font-weight:800}.detail{display:grid;gap:8px;border-top:1px solid #edf0f4;padding-top:13px}.detail-row{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:10px;color:#596375}.gcal{display:block;text-align:center;text-decoration:none;margin-top:15px;padding:10px;background:var(--navy);color:#fff;border-radius:9px;font-size:10px;font-weight:800}
@@ -177,6 +177,23 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
   .teams-line{font-size:13px}.comp-badge{font-size:9px}.matchday{font-size:9px}
 }
 
+
+/* ===== V9: standings + compact prematch readability ===== */
+.standings-card{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:18px;margin-top:18px}
+.standings-wrap{overflow:auto;border:1px solid #edf0f4;border-radius:13px}
+.standings-table{width:100%;border-collapse:collapse;min-width:760px;font-size:12px}
+.standings-table th{background:#f7f9fc;color:#7d8798;text-transform:uppercase;letter-spacing:.7px;font-size:9px;font-weight:800;padding:10px 9px;text-align:center;border-bottom:1px solid #e9edf3}
+.standings-table th:nth-child(2),.standings-table td:nth-child(2){text-align:left}
+.standings-table td{padding:10px 9px;border-bottom:1px solid #eef1f5;text-align:center;color:#445067;font-weight:600}
+.standings-table tbody tr:last-child td{border-bottom:0}
+.standings-table tbody tr:hover{background:#fafcff}
+.standings-table tbody tr.persib{background:#edf5ff;font-weight:800}
+.standings-table td.pos{width:42px;font-weight:900;color:#718096}
+.standings-table td.club{font-weight:800;color:#1d2b45;white-space:nowrap}
+.standings-table .form-pill{display:inline-flex;gap:3px}
+.standings-table .form-mini{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:900}
+.standings-table .form-mini.w{background:#eaf7ef;color:#23784a}.standings-table .form-mini.d{background:#f1f3f6;color:#687180}.standings-table .form-mini.l{background:#fff0f0;color:#b24747}
+@media(max-width:600px){.standings-card{padding:14px}.standings-table{font-size:11px}.standings-table td{padding:9px 7px}}
 </style>
 </head>
 <body>
@@ -191,6 +208,7 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
     <button class="active" data-scroll="top"><span>⌂</span><span>Dashboard</span></button>
     <button data-scroll="schedule"><span>▤</span><span>Jadwal</span></button>
     <button data-scroll="calendar"><span>□</span><span>Kalender</span></button>
+    <button data-scroll="standings"><span>♛</span><span>Standings</span></button>
   </nav>
   <div class="side-summary">
     <div class="side-summary-title">Kompetisi</div>
@@ -231,7 +249,7 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
       <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="awayFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="awayFormStrip"></div><div class="form-summary" id="awayFormSummary"></div><div class="recent-list" id="awayRecentList"></div></div>
       <div class="insight-panel h2h"><div class="insight-panel-title"><span>🤝 Head to Head</span><span>5 pertemuan terakhir</span></div><div class="h2h-list" id="h2hList"></div><div class="h2h-note" id="h2hNote"></div></div>
     </div>
-    <div class="insight-source">Data diperbarui otomatis oleh GitHub Actions. Sumber data: Flashscore · Persib.co.id · Liga.id.</div>
+    <div class="insight-source">Data diperbarui otomatis oleh GitHub Actions. Sumber utama: Flashscore · Referensi: I.League / Persib.co.id / Liga.id.</div>
   </section>
 
   <section class="section" id="schedule">
@@ -257,8 +275,8 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
     </section>
 
     <section class="calendar-card" id="calendar">
-      <div class="panel-head"><div><h2 class="panel-title">Kalender Pertandingan</h2><div class="panel-sub">3 bulan ditampilkan vertikal agar tanggal dan jadwal tetap terbaca.</div></div><div class="cal-range" id="calRange">—</div></div>
-      <div class="cal-toolbar"><div class="cal-controls"><button class="cal-nav-btn" id="prevMonth" aria-label="Tiga bulan sebelumnya">‹</button><select class="cal-select" id="calMonthSelect" aria-label="Pilih bulan"></select><select class="cal-select" id="calYearSelect" aria-label="Pilih tahun"></select><button class="cal-nav-btn" id="nextMonth" aria-label="Tiga bulan berikutnya">›</button></div></div>
+      <div class="panel-head"><div><h2 class="panel-title">Kalender Pertandingan</h2><div class="panel-sub">Tampilkan satu bulan agar tanggal dan jadwal tetap fokus.</div></div><div class="cal-range" id="calRange">—</div></div>
+      <div class="cal-toolbar"><div class="cal-controls"><button class="cal-nav-btn" id="prevMonth" aria-label="Bulan sebelumnya">‹</button><select class="cal-select" id="calMonthSelect" aria-label="Pilih bulan"></select><select class="cal-select" id="calYearSelect" aria-label="Pilih tahun"></select><button class="cal-nav-btn" id="nextMonth" aria-label="Bulan berikutnya">›</button></div></div>
       <div class="calendar-three" id="calendarGrid"></div>
       <div class="legend">
         <span class="legend-item"><img data-comp-logo="sl" alt=""> BRI Super League</span><span class="legend-item"><img data-comp-logo="acl" alt=""> ACL Two</span><span class="legend-item"><img data-comp-logo="shopee" alt=""> Shopee Cup</span><span class="legend-item legend-home">🏠 Home</span><span class="legend-item legend-away">✈️ Away</span>
@@ -266,8 +284,13 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
     </section>
   </div>
 
-  <div class="section" id="allSchedule" style="margin-top:18px"><div class="section-head"><div><h2 class="section-title">Semua Jadwal</h2><div class="section-meta" id="resultMeta">—</div></div></div><div class="match-list" id="matchList"></div></div>
-  <div class="footer">⚽ <strong>PERSIB BANDUNG 2026/27</strong> · Jadwal dapat berubah mengikuti pengumuman resmi kompetisi.<div class="data-status" id="dataStatus">Memuat data lokal XML…</div><div class="source-note">Sources: <span>Flashscore</span> · <span>Persib.co.id</span> · <span>Liga.id</span></div></div>
+  <section class="standings-card" id="standings">
+  <div class="section-head"><div><h2 class="section-title">🏆 Klasemen BRI Super League</h2><div class="section-meta" id="standingsMeta">Klasemen diperbarui otomatis dari I.League.</div></div><a class="panel-link" href="https://ileague.id/table/index/BRI_SUPER_LEAGUE_2026-27" target="_blank" rel="noopener">Lihat sumber resmi →</a></div>
+  <div class="standings-wrap"><table class="standings-table"><thead><tr><th>#</th><th>Klub</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
+</section>
+
+<div class="section" id="allSchedule" style="margin-top:18px"><div class="section-head"><div><h2 class="section-title">Semua Jadwal</h2><div class="section-meta" id="resultMeta">—</div></div></div><div class="match-list" id="matchList"></div></div>
+  <div class="footer">⚽ <strong>PERSIB BANDUNG 2026/27</strong> · Jadwal dapat berubah mengikuti pengumuman resmi kompetisi.<div class="data-status" id="dataStatus">Memuat data lokal XML…</div><div class="source-note">Primary source: <span>Flashscore</span> · References: <span>I.League</span> · <span>Persib.co.id</span> · <span>Liga.id</span></div></div>
 </div>
 </main></div>
 <div class="modal-overlay" id="modalOverlay"><div class="modal"><button class="close" id="modalClose" aria-label="Tutup">×</button><div id="modalContent"></div></div></div>
@@ -286,7 +309,8 @@ const DATA_FILES = {
   results: './data/results.xml',
   form: './data/form.xml',
   team: './data/team.xml',
-  lastUpdate: './data/last-update.xml'
+  lastUpdate: './data/last-update.xml',
+  standings: './data/standings.xml'
 };
 
 async function fetchLocalXML(path){
@@ -350,6 +374,28 @@ function parseLocalMatches(xml){
   }).filter(m => m.date && m.home && m.away);
 }
 
+
+function parseStandingsXML(xml){
+  if(!xml) return null;
+  const text=n=>n?.textContent?.trim()||"";
+  return [...xml.querySelectorAll('standings > team')].map(t=>({
+    position:Number(t.getAttribute('position')||text(t.querySelector('position'))||0),
+    club:text(t.querySelector('club')),
+    played:Number(text(t.querySelector('played'))||0), wins:Number(text(t.querySelector('wins'))||0), draws:Number(text(t.querySelector('draws'))||0), losses:Number(text(t.querySelector('losses'))||0),
+    gf:Number(text(t.querySelector('gf'))||0), ga:Number(text(t.querySelector('ga'))||0), gd:Number(text(t.querySelector('gd'))||0), points:Number(text(t.querySelector('points'))||0),
+    form:text(t.querySelector('form'))
+  })).filter(x=>x.club).sort((a,b)=>a.position-b.position);
+}
+function renderStandings(){
+  const body=$('standingsBody'); if(!body) return;
+  const rows=standingsData||[];
+  $('standingsMeta').textContent=rows.length?`Update otomatis · ${rows.length} klub · Sumber: I.League`:'Menunggu data klasemen dari scraper.';
+  body.innerHTML=rows.length?rows.map(r=>{
+    const form=String(r.form||'').split('').filter(x=>/[WDL]/i.test(x)).slice(-5);
+    return `<tr class="${/persib/i.test(r.club)?'persib':''}"><td class="pos">${r.position}</td><td class="club">${teamBadgeHtml(r.club,22)}${escapeHtml(r.club)}</td><td>${r.played}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.gd}</td><td><strong>${r.points}</strong></td><td><span class="form-pill">${form.map(x=>`<span class="form-mini ${x.toLowerCase()}">${x.toUpperCase()}</span>`).join('')}</span></td></tr>`
+  }).join(''):'<tr><td colspan="11" style="padding:18px;color:#8d96a6">Data klasemen belum tersedia.</td></tr>';
+}
+
 function parsePrematchXML(xml){
   if(!xml) return null;
   const text=n=>n?.textContent?.trim()||"";
@@ -362,7 +408,7 @@ function formDots(items){return items.map(x=>`<span class="form-dot ${String(x.o
 function formSummary(items){const w=items.filter(x=>x.outcome==='W').length,d=items.filter(x=>x.outcome==='D').length,l=items.filter(x=>x.outcome==='L').length;return `${w} Menang · ${d} Seri · ${l} Kalah`}
 function recentListHtml(items){return items.map(x=>`<div class="recent-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="recent-teams">${escapeHtml(x.home)} ${x.penHomeScore&&x.penAwayScore?'':''} vs ${escapeHtml(x.away)}</div><div class="recent-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
 function h2hListHtml(items){return items.map(x=>`<div class="h2h-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="h2h-teams">${escapeHtml(x.home)} vs ${escapeHtml(x.away)}</div><div class="h2h-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
-function renderPrematchInsights(){const next=getNextMatch();const box=$('prematchInsights');if(!next||!prematchData||!prematchData.next){box.hidden=true;return}const teams=prematchData.teams;const home=teams.find(t=>t.name.toLowerCase()===next.home.toLowerCase())||teams[0];const away=teams.find(t=>t.name.toLowerCase()===next.away.toLowerCase())||teams[1];$('insightSub').textContent=`${next.home} vs ${next.away} · Form 5 pertandingan terakhir & head to head`;$('homeFormTitle').innerHTML=teamBadgeHtml(next.home,20)+`<span>${escapeHtml(next.home)}</span>`;$('awayFormTitle').innerHTML=teamBadgeHtml(next.away,20)+`<span>${escapeHtml(next.away)}</span>`;const hm=home?.matches||[],am=away?.matches||[],hh=prematchData.h2h||[];$('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';$('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L pada form dihitung dari sudut pandang masing-masing tim. Untuk adu penalti, pemenang shootout dihitung sebagai W.':'H2H akan muncul setelah scraper memperoleh halaman pertandingan detail.';box.hidden=false}
+function renderPrematchInsights(){const next=getNextMatch();const box=$('prematchInsights');if(!next){box.hidden=true;return}const teams=prematchData?.teams||[];const home=teams.find(t=>t.name.toLowerCase()===next.home.toLowerCase())||teams[0];const away=teams.find(t=>t.name.toLowerCase()===next.away.toLowerCase())||teams[1];$('insightSub').textContent=`${next.home} vs ${next.away} · Form 5 pertandingan terakhir & head to head`;$('homeFormTitle').innerHTML=teamBadgeHtml(next.home,20)+`<span>${escapeHtml(next.home)}</span>`;$('awayFormTitle').innerHTML=teamBadgeHtml(next.away,20)+`<span>${escapeHtml(next.away)}</span>`;const hm=home?.matches||[],am=away?.matches||[],hh=prematchData.h2h||[];$('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';$('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L pada form dihitung dari sudut pandang masing-masing tim. Untuk adu penalti, pemenang shootout dihitung sebagai W.':'H2H akan muncul setelah scraper memperoleh halaman pertandingan detail.';box.hidden=false}
 
 function mergeMatchSets(fixtures, results){
   const map = new Map();
@@ -379,12 +425,14 @@ async function loadLocalData(){
     const [fixturesXML, resultsXML, formXML] = await Promise.all([
       fetchLocalXML(DATA_FILES.fixtures),
       fetchLocalXML(DATA_FILES.results).catch(()=>null),
-      fetchLocalXML(DATA_FILES.form).catch(()=>null)
+      fetchLocalXML(DATA_FILES.form).catch(()=>null),
+      fetchLocalXML(DATA_FILES.standings).catch(()=>null)
     ]);
 
     const fixtures = parseLocalMatches(fixturesXML);
     const results = resultsXML ? parseLocalMatches(resultsXML) : [];
     prematchData = formXML ? parsePrematchXML(formXML) : null;
+    standingsData = standingsXML ? parseStandingsXML(standingsXML) : [];
     matches = mergeMatchSets(fixtures, results);
 
     if(!matches.length) throw new Error('Tidak ada pertandingan valid di fixtures.xml/results.xml.');
@@ -462,15 +510,15 @@ const TEAM_LOGOS = {
   "Công An Hà Nội":"https://en.wikipedia.org/wiki/Special:FilePath/Cong_An_Ha_Noi_FC_logo.svg",
   "Pemenang Play-Off 2":""
 };
-const MONTHS_ID=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"],DOW_ID=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"],DOW_SHORT=["Min","Sen","Sel","Rab","Kam","Jum","Sab"];let currentFilter="ALL",currentHomeAway="ALL",currentSearch="",calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),countdownInterval=null,showAllMonth=false;
+const MONTHS_ID=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"],DOW_ID=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"],DOW_SHORT=["Min","Sen","Sel","Rab","Kam","Jum","Sab"];let currentFilter="ALL",currentHomeAway="ALL",currentSearch="",calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),countdownInterval=null,showAllMonth=false,standingsData=[];
 const $=id=>document.getElementById(id);
 function escapeHtml(str){return String(str??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]))}
 function teamInitials(name){const a=String(name).replace(/[^A-Za-z0-9À-ÿ ]/g," ").trim().split(/\s+/);return(a[0]?.[0]||"")+((a[1]?.[0])||"")}
 function teamColor(name){let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;return`hsl(${h%360} 52% 42%)`}
 function teamBadgeHtml(name,size=22){const url=TEAM_LOGOS[name];if(url)return`<span class="team-badge" data-team="${escapeHtml(name)}" style="width:${size}px;height:${size}px"><img src="${url}" alt="${escapeHtml(name)}" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="badge-fallback" style="display:none;width:100%;height:100%;background:${teamColor(name)}">${teamInitials(name)}</span></span>`;return`<span class="team-badge badge-fallback" style="width:${size}px;height:${size}px;background:${teamColor(name)}">${teamInitials(name)}</span>`}
-function compClass(m){return m.competitionShort==="Super League"?"sl":m.competitionShort==="ACL 2"?"acl":"shopee"}
+function compClass(m){return m.competitionShort==="Super League"?"sl":m.competitionShort==="ACL 2"?"acl":m.competitionShort==="Shopee Cup"?"shopee":"other"}
 function compLogo(className){return COMP_LOGOS[className]?.data||""}
-function compName(className){return COMP_LOGOS[className]?.short||""}
+function compName(className){return COMP_LOGOS[className]?.short||(className==="other"?"Lainnya":"")}
 function compBadgeHtml(m){const c=compClass(m);return`<span class="comp-badge ${c}"><img class="comp-logo" src="${compLogo(c)}" alt="">${escapeHtml(m.competitionShort)}</span>`}
 function venueLabel(m){return m.venue||"Venue TBC"}function cityLabel(m){return m.city?(m.city+(m.country?", "+m.country:"")):(m.country||"Location TBC")}function timeLabel(m){return m.time?m.time+" WIB":"TBC"}
 function dateObj(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
@@ -489,8 +537,8 @@ function getCurrentMonthMatches(){const key=currentMonthKey();return matches.fil
 function renderUpcoming(){const all=getCurrentMonthMatches();const now=Date.now();let future=all.filter(m=>m.time?parseMatchDateTime(m).getTime()>=now-7200000:m.date>=todayStr());let display=future.length?future:all;display=showAllMonth?display:display.slice(0,6);$('upcomingMeta').textContent=`${MONTHS_ID[new Date().getMonth()]} ${new Date().getFullYear()} · ${all.length} pertandingan`;$('upcomingList').innerHTML=display.length?display.map(m=>matchRowHtml(m,m.date<todayStr())).join(''):`<div class="empty">Tidak ada pertandingan bulan ini yang sesuai filter.</div>`;$('upcomingFooter').hidden=display.length>=all.length||all.length===0;bindMatchRows($('upcomingList'));}
 function renderList(){const list=matches.filter(m=>{if(!matchPassesFilter(m))return false;if(m.time){const dt=parseMatchDateTime(m);return dt?dt.getTime()>=Date.now()-7200000:m.date>=todayStr()}return m.date>=todayStr()}).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));$('resultMeta').textContent=`${list.length} pertandingan mendatang ditampilkan`;$('matchList').innerHTML=list.length?list.map(m=>matchRowHtml(m,false)).join(''):'<div class="empty">Tidak ada pertandingan mendatang yang sesuai dengan filter.</div>';bindMatchRows($('matchList'))}
 function populateCalendarSelectors(){const monthSelect=$('calMonthSelect'),yearSelect=$('calYearSelect');monthSelect.innerHTML=MONTHS_ID.map((m,i)=>`<option value="${i}">${m}</option>`).join('');const years=[...new Set(matches.flatMap(m=>[Number(m.date.slice(0,4)),Number(m.date.slice(0,4))+1]).concat([new Date().getFullYear()]))].sort((a,b)=>a-b);yearSelect.innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');monthSelect.value=String(calMonth);yearSelect.value=String(calYear);monthSelect.onchange=()=>{calMonth=Number(monthSelect.value);buildCalendar()};yearSelect.onchange=()=>{calYear=Number(yearSelect.value);buildCalendar()}}
-function buildMonthCalendar(year,month,index){const first=new Date(year,month,1),days=new Date(year,month+1,0).getDate(),filtered=matches.filter(matchPassesFilter),isCurrent=(year===new Date().getFullYear()&&month===new Date().getMonth());let html=`<div class="month-card ${isCurrent?'current':''}"><div class="month-card-title"><span>${MONTHS_ID[month]} ${year}</span><span class="month-index">Bulan ${index+1} / 3</span></div><div class="cal-grid">${DOW_SHORT.map(x=>`<div class="cal-dow">${x}</div>`).join('')}`;for(let i=0;i<first.getDay();i++)html+='<div class="cal-cell empty"></div>';for(let day=1;day<=days;day++){const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,ms=filtered.filter(m=>m.date===ds);html+=`<div class="cal-cell ${ms.length?'has-match':''} ${ds===todayStr()?'today':''}" ${ms.length?`data-date="${ds}"`:''}><div class="daynum">${day}</div>${ms.slice(0,3).map(m=>`<div class="cal-match ${compClass(m)} ${m.side.toLowerCase()}"><span class="mini-dot"></span><span>${escapeHtml(m.side==='Home'?m.away:m.home)}</span><span class="mini-side">${m.side==='Home'?'H':'A'}</span></div>`).join('')}${ms.length>3?`<div class="cal-match-label">+${ms.length-3} lagi</div>`:''}</div>`}html+='</div></div>';return html}
-function buildCalendar(){const grid=$('calendarGrid');let html='';for(let i=0;i<3;i++){const d=new Date(calYear,calMonth+i,1);html+=buildMonthCalendar(d.getFullYear(),d.getMonth(),i)}grid.innerHTML=html;const start=new Date(calYear,calMonth,1),end=new Date(calYear,calMonth+2,1);$('calRange').textContent=`${MONTHS_ID[start.getMonth()]} ${start.getFullYear()} – ${MONTHS_ID[end.getMonth()]} ${end.getFullYear()}`;$('calMonthSelect').value=String(calMonth);$('calYearSelect').value=String(calYear);grid.querySelectorAll('.cal-cell[data-date]').forEach(el=>el.onclick=()=>openModal(matches.filter(m=>m.date===el.dataset.date)))}
+function buildMonthCalendar(year,month,index){const first=new Date(year,month,1),days=new Date(year,month+1,0).getDate(),filtered=matches.filter(matchPassesFilter),isCurrent=(year===new Date().getFullYear()&&month===new Date().getMonth());let html=`<div class="month-card ${isCurrent?'current':''}"><div class="month-card-title"><span>${MONTHS_ID[month]} ${year}</span><span class="month-index">Bulan terpilih</span></div><div class="cal-grid">${DOW_SHORT.map(x=>`<div class="cal-dow">${x}</div>`).join('')}`;for(let i=0;i<first.getDay();i++)html+='<div class="cal-cell empty"></div>';for(let day=1;day<=days;day++){const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,ms=filtered.filter(m=>m.date===ds);html+=`<div class="cal-cell ${ms.length?'has-match':''} ${ds===todayStr()?'today':''}" ${ms.length?`data-date="${ds}"`:''}><div class="daynum">${day}</div>${ms.slice(0,3).map(m=>`<div class="cal-match ${compClass(m)} ${m.side.toLowerCase()}"><span class="mini-dot"></span><span>${escapeHtml(m.side==='Home'?m.away:m.home)}</span><span class="mini-side">${m.side==='Home'?'H':'A'}</span></div>`).join('')}${ms.length>3?`<div class="cal-match-label">+${ms.length-3} lagi</div>`:''}</div>`}html+='</div></div>';return html}
+function buildCalendar(){const grid=$('calendarGrid');const d=new Date(calYear,calMonth,1);grid.innerHTML=buildMonthCalendar(d.getFullYear(),d.getMonth(),0);$('calRange').textContent=`${MONTHS_ID[d.getMonth()]} ${d.getFullYear()}`;$('calMonthSelect').value=String(calMonth);$('calYearSelect').value=String(calYear);grid.querySelectorAll('.cal-cell[data-date]').forEach(el=>el.onclick=()=>openModal(matches.filter(m=>m.date===el.dataset.date)))}
 function buildGCalUrl(m){const title=encodeURIComponent("⚽ "+m.home+" vs "+m.away),details=encodeURIComponent(`Competition: ${m.competition}\nMatchday: ${m.matchday}\nHome/Away: ${m.side}\nVenue: ${venueLabel(m)}\nCity: ${cityLabel(m)}`),location=encodeURIComponent([m.venue,m.city,m.country].filter(Boolean).join(", "));if(!m.time){const next=new Date(dateObj(m.date).getTime()+86400000),dateOnly=m.date.replaceAll("-",""),nd=next.getFullYear()+String(next.getMonth()+1).padStart(2,"0")+String(next.getDate()).padStart(2,"0");return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateOnly}/${nd}&details=${details}%0A%0AKick-off%3A%20TBC&location=${location}`}const[y,mo,da]=m.date.split("-").map(Number),[hh,mm]=m.time.split(":").map(Number),start=new Date(Date.UTC(y,mo-1,da,hh-7,mm)),end=new Date(start.getTime()+7200000),fmt=d=>d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,"0")+String(d.getUTCDate()).padStart(2,"0")+"T"+String(d.getUTCHours()).padStart(2,"0")+String(d.getUTCMinutes()).padStart(2,"0")+"00Z";return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`}
 function openModal(list){$('modalContent').innerHTML=list.map(m=>`<div class="modal-head"><div class="modal-comp">${escapeHtml(m.competition)}</div><div class="modal-day">${escapeHtml(m.matchday||"")}</div></div><div class="modal-teams"><div class="modal-team">${teamBadgeHtml(m.home,42)}<div>${escapeHtml(m.home)}</div></div><div class="modal-vs">VS</div><div class="modal-team">${teamBadgeHtml(m.away,42)}<div>${escapeHtml(m.away)}</div></div></div><div class="detail"><div class="detail-row"><span>📅</span><span>${formatDateID(m.date,true)}</span></div><div class="detail-row"><span>🕐</span><span>${timeLabel(m)}</span></div><div class="detail-row"><span>🏟</span><span>${escapeHtml(venueLabel(m))}</span></div><div class="detail-row"><span>📍</span><span>${escapeHtml(cityLabel(m))}</span></div><div class="detail-row"><span>${m.side==="Home"?'🏠':'✈️'}</span><span>${m.side==="Home"?'Kandang':'Tandang'}</span></div></div><a class="gcal" target="_blank" rel="noopener" href="${buildGCalUrl(m)}">＋ Tambahkan ke Google Calendar</a>`).join('<hr style="border:0;border-top:1px solid #eee;margin:18px 0">');$('modalOverlay').classList.add('open')}
 function closeModal(){$('modalOverlay').classList.remove('open')}
@@ -500,8 +548,8 @@ $('searchInput').oninput=e=>{currentSearch=e.target.value.trim();showAllMonth=fa
 $('clearSearch').onclick=()=>{currentSearch="";$('searchInput').value="";currentFilter="ALL";currentHomeAway="ALL";showAllMonth=false;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelector('#filterButtons [data-filter="ALL"]').classList.add('active');document.querySelector('#homeAwayButtons [data-homeaway="ALL"]').classList.add('active');renderUpcoming();renderList();buildCalendar()};
 $('showAllMonth').onclick=()=>{showAllMonth=true;renderUpcoming();$('upcomingList').scrollIntoView({behavior:'smooth',block:'start'})};
 $('viewAllMonth').onclick=()=>{showAllMonth=true;renderUpcoming();$('upcomingList').scrollIntoView({behavior:'smooth',block:'start'})};
-$('prevMonth').onclick=()=>{const d=new Date(calYear,calMonth-3,1);calYear=d.getFullYear();calMonth=d.getMonth();buildCalendar()};
-$('nextMonth').onclick=()=>{const d=new Date(calYear,calMonth+3,1);calYear=d.getFullYear();calMonth=d.getMonth();buildCalendar()};
+$('prevMonth').onclick=()=>{const d=new Date(calYear,calMonth-1,1);calYear=d.getFullYear();calMonth=d.getMonth();buildCalendar()};
+$('nextMonth').onclick=()=>{const d=new Date(calYear,calMonth+1,1);calYear=d.getFullYear();calMonth=d.getMonth();buildCalendar()};
 $('modalClose').onclick=closeModal;$('modalOverlay').onclick=e=>{if(e.target===$('modalOverlay'))closeModal()};document.onkeydown=e=>{if(e.key==='Escape')closeModal()};
 document.querySelectorAll('.side-nav button').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.scroll).scrollIntoView({behavior:'smooth',block:'start'}));
 (async function initDashboard(){
@@ -510,6 +558,7 @@ document.querySelectorAll('.side-nav button').forEach(b=>b.onclick=()=>document.
   renderStats();
   renderHero();
   renderPrematchInsights();
+  renderStandings();
   renderUpcoming();
   renderList();
   populateCalendarSelectors();

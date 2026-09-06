@@ -28,6 +28,7 @@ FIXTURES_FILE = DATA_DIR / "fixtures.xml"
 RESULTS_FILE = DATA_DIR / "results.xml"
 LAST_UPDATE_FILE = DATA_DIR / "last-update.xml"
 FORM_FILE = DATA_DIR / "form.xml"
+STANDINGS_FILE = DATA_DIR / "standings.xml"
 
 TEAM_NAME = os.getenv("TEAM_NAME", "Persib Bandung")
 TEAM_ID = os.getenv("TEAM_ID", "KpBjbPK1")
@@ -81,9 +82,18 @@ def clean(value: str | None) -> str:
 
 def slug_short(value: str) -> str:
     value = clean(value)
-    if not value:
-        return ""
-    # Flashscore competition headers often include country + competition + season.
+    low = value.lower()
+    # Normalize Flashscore/ILeague naming variants to the dashboard filters.
+    if "afc champions league 2" in low or "afc champions league two" in low or "acl two" in low or "acl 2" in low:
+        return "ACL 2"
+    if "shopee cup" in low or "asean club championship" in low or "asean club championship" in low:
+        return "Shopee Cup"
+    if "super league" in low or low.strip() in {"liga 1", "liga indonesia"}:
+        return "Super League"
+    if "piala presiden" in low or "president cup" in low:
+        return "President Cup"
+    if "friendlies" in low or "club friendly" in low:
+        return "Friendlies"
     parts = [p.strip() for p in re.split(r"\s*[|•]\s*", value) if p.strip()]
     value = parts[-1] if parts else value
     value = re.sub(r"\b\d{4}/\d{2,4}\b", "", value).strip(" -")
@@ -96,14 +106,26 @@ def infer_year(day: int, month: int) -> int:
     return SEASON_START.year if month >= SEASON_START.month else SEASON_START.year + 1
 
 
-def parse_flashscore_date(raw: str) -> tuple[str, str]:
+def parse_flashscore_date(raw: str, year_mode: str = "fixtures") -> tuple[str, str]:
     raw = clean(raw)
     # Typical values: "06.09. 19:00", "06.09.19:00", "06.09. 2026 19:00"
     m = re.search(r"(\d{1,2})\.(\d{1,2})\.?\s*(?:(\d{4})\s*)?(\d{1,2}):(\d{2})", raw)
     if not m:
         raise ValueError(f"Unrecognised Flashscore date/time: {raw!r}")
     day, month, explicit_year, hour, minute = m.groups()
-    year = int(explicit_year) if explicit_year else infer_year(int(day), int(month))
+    if explicit_year:
+        year = int(explicit_year)
+    elif year_mode == "results":
+        # The results tab is showing completed/current-season matches. Using
+        # the current Jakarta calendar year here prevents May/June 2026
+        # matches from being misread as May/June 2027 and leaking the previous
+        # season into the 2026/27 dataset.
+        now_local = datetime.now(ZoneInfo(TIMEZONE))
+        # Results are always on/before today. If the displayed month is later
+        # than the current month, it belongs to the previous calendar year.
+        year = now_local.year if int(month) <= now_local.month else now_local.year - 1
+    else:
+        year = infer_year(int(day), int(month))
     return f"{year:04d}-{int(month):02d}-{int(day):02d}", f"{int(hour):02d}:{int(minute):02d}"
 
 
@@ -250,7 +272,7 @@ async def click_show_more(page) -> None:
             break
 
 
-async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
+async def extract_rows(page, anchor_team: str = TEAM_NAME, year_mode: str = "fixtures") -> list[dict]:
     """Extract matches from Flashscore.
 
     Flashscore currently exposes the fixture data in the rendered page text,
@@ -304,7 +326,7 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
     # Fallback: parse the rendered accessibility/body text. This is the path
     # currently needed by the GitHub Actions runner.
     body = await page.locator("body").inner_text(timeout=10000)
-    parsed = parse_text_rows(body, anchor_team=anchor_team)
+    parsed = parse_text_rows(body, anchor_team=anchor_team, year_mode=year_mode)
 
     # The GitHub Actions browser can expose Flashscore's rendered text while
     # hiding the usual .event__match nodes. The links themselves are often
@@ -313,12 +335,14 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
     try:
         links = await page.evaluate("""
         () => ({
-          teams: Array.from(document.querySelectorAll('a[href*=\"/team/\"]')).map(a => ({
-            href: a.href, text: (a.innerText || a.textContent || '').replace(/\\s+/g,' ').trim()
-          })).filter(x => x.href),
-          matches: Array.from(document.querySelectorAll('a[href*=\"/match/\"]')).map(a => ({
-            href: a.href, text: (a.innerText || a.textContent || a.parentElement?.innerText || '').replace(/\\s+/g,' ').trim()
-          })).filter(x => x.href)
+          teams: Array.from(document.querySelectorAll('a[href*="/team/"]')).map(a => {
+            const parent = a.closest('[id^="g_1_"], .event__match, article, div');
+            return { href: a.href, text: (a.innerText || a.textContent || a.getAttribute('title') || a.querySelector('img')?.alt || parent?.innerText || '').replace(/\s+/g,' ').trim() };
+          }).filter(x => x.href),
+          matches: Array.from(document.querySelectorAll('a[href*="/match/"]')).map(a => {
+            const parent = a.closest('[id^="g_1_"], .event__match, article, div');
+            return { href: a.href, text: (a.innerText || a.textContent || '').replace(/\s+/g,' ').trim(), context: (parent?.innerText || a.parentElement?.innerText || '').replace(/\s+/g,' ').trim() };
+          }).filter(x => x.href)
         })
         """)
         def norm(v): return normalize_team_text(v).lower()
@@ -334,7 +358,7 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
                     row['awayHref'] = tl['href']
             if not row.get('href'):
                 for ml in match_links:
-                    mt = norm(ml.get('text',''))
+                    mt = norm((ml.get('text','') or '') + ' ' + (ml.get('context','') or ''))
                     if hn and an and hn in mt and an in mt:
                         row['href'] = ml['href']
                         break
@@ -343,7 +367,7 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
                     # normally contains the date plus both participants.
                     target_date = row.get('time','')
                     for ml in match_links:
-                        mt = norm(ml.get('text',''))
+                        mt = norm((ml.get('text','') or '') + ' ' + (ml.get('context','') or ''))
                         if hn and an and hn in mt and an in mt and target_date and target_date in mt:
                             row['href'] = ml['href']
                             break
@@ -365,7 +389,7 @@ def strip_match_noise(value: str) -> str:
     return clean(value.strip(" -–—|:"))
 
 
-def parse_text_rows(body: str, anchor_team: str = TEAM_NAME) -> list[dict]:
+def parse_text_rows(body: str, anchor_team: str = TEAM_NAME, year_mode: str = "fixtures") -> list[dict]:
     """Parse Flashscore's current rendered text representation.
 
     Example currently observed representation:
@@ -463,7 +487,12 @@ def parse_text_rows(body: str, anchor_team: str = TEAM_NAME) -> list[dict]:
         if anchor_team.lower() not in {normalize_team_text(home).lower(), normalize_team_text(away).lower()}:
             continue
 
-        d = f"{infer_year(int(m.group('day')), int(m.group('month'))):04d}-{int(m.group('month')):02d}-{int(m.group('day')):02d}"
+        if year_mode == "results":
+            now_local = datetime.now(ZoneInfo(TIMEZONE))
+            row_year = now_local.year if int(m.group('month')) <= now_local.month else now_local.year - 1
+        else:
+            row_year = infer_year(int(m.group('day')), int(m.group('month')))
+        d = f"{row_year:04d}-{int(m.group('month')):02d}-{int(m.group('day')):02d}"
         tm = f"{int(m.group('hour')):02d}:{int(m.group('minute')):02d}"
         stable_id = re.sub(r"[^A-Za-z0-9]+", "-", f"{d}-{home}-{away}").strip("-").lower()
         out.append({
@@ -572,7 +601,7 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
     except PlaywrightTimeoutError:
         await dump_debug(page, page_kind)
 
-    rows = await extract_rows(page)
+    rows = await extract_rows(page, year_mode=page_kind)
     print(f"{page_kind}: extracted match rows = {len(rows)}")
     if not rows:
         title = await page.title()
@@ -591,7 +620,7 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
             if is_pseudo_penalty_row(row):
                 print(f"Skipping Flashscore synthetic penalty row: {row.get('id', '')} | {row.get('home', '')} - {row.get('away', '')}")
                 continue
-            d, tm = parse_flashscore_date(row["time"])
+            d, tm = parse_flashscore_date(row["time"], year_mode=page_kind)
             if date.fromisoformat(d) < SEASON_START:
                 continue
             home = clean(row["home"])
@@ -703,6 +732,17 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             fixtures = [m for m in all_matches if m.status != "finished"]
             results = [m for m in all_matches if m.status == "finished"]
             next_match = next((m for m in all_matches if m.time and m.dt.timestamp() >= datetime.now().timestamp()), None)
+            standings_page = await context.new_page()
+            try:
+                try:
+                    standings = await scrape_standings(standings_page)
+                    if standings:
+                        standings_xml_write(standings)
+                        print(f"Standings: {len(standings)} clubs")
+                except Exception as exc:
+                    print(f"WARNING: standings scrape failed; keeping existing standings.xml: {exc}", file=sys.stderr)
+            finally:
+                await standings_page.close()
             await update_prematch_insights(context, next_match, results)
             return fixtures, results
         finally:
@@ -763,13 +803,13 @@ async def scrape_recent_team_results(page, team_name: str, team_url: str, limit:
     await dismiss_consent(page)
     await page.wait_for_timeout(500)
     await click_show_more(page)
-    rows = await extract_rows(page, anchor_team=team_name)
+    rows = await extract_rows(page, anchor_team=team_name, year_mode="results")
     out = []
     for row in rows:
         if is_pseudo_penalty_row(row):
             continue
         try:
-            d, tm = parse_flashscore_date(row["time"])
+            d, tm = parse_flashscore_date(row["time"], year_mode="results")
         except ValueError:
             continue
         hs, aws = clean(row.get("homeScore")), clean(row.get("awayScore"))
@@ -835,19 +875,42 @@ async def scrape_h2h(page, match_url: str, home_team: str, away_team: str, limit
     return out
 
 
+async def find_team_url_from_match_page(page, match_url: str, team_name: str) -> str:
+    if not match_url or not team_name:
+        return ""
+    try:
+        await page.goto(match_url, wait_until="domcontentloaded", timeout=60000)
+        await page.wait_for_timeout(1200)
+        data = await page.evaluate("""
+        (target) => {
+          const norm = s => (s || '').replace(/\s+/g,' ').trim().toLowerCase();
+          const links = Array.from(document.querySelectorAll('a[href*="/team/"]')).map(a => ({href:a.href,text:(a.innerText||a.textContent||a.getAttribute('title')||a.querySelector('img')?.alt||'').replace(/\s+/g,' ').trim()}));
+          const exact = links.find(x => norm(x.text) === norm(target));
+          const partial = links.find(x => norm(x.text).includes(norm(target)) || norm(target).includes(norm(x.text)));
+          return (exact || partial || {}).href || '';
+        }
+        """, team_name)
+        return clean(data)
+    except Exception:
+        return ""
+
+
 async def update_prematch_insights(context, next_match: Match | None, current_results: list[Match]) -> None:
     if not next_match:
         form_xml_write(None, [], [], [])
         return
     home_team, away_team = next_match.home, next_match.away
-    home_url = next_match.home_team_url if home_team.lower() == TEAM_NAME.lower() else next_match.home_team_url
-    away_url = next_match.away_team_url
-    # If the next fixture was created by text fallback, URLs may be absent.
-    # Keep the feature fail-safe rather than inventing team IDs.
     recent_page = await context.new_page()
     h2h_page = await context.new_page()
     try:
         try:
+            home_url = next_match.home_team_url or (TEAM_URL if home_team.lower() == TEAM_NAME.lower() else '')
+            away_url = next_match.away_team_url or (TEAM_URL if away_team.lower() == TEAM_NAME.lower() else '')
+            if not home_url and next_match.source_url:
+                home_url = await find_team_url_from_match_page(h2h_page, next_match.source_url, home_team)
+            if not away_url and next_match.source_url:
+                away_url = await find_team_url_from_match_page(h2h_page, next_match.source_url, away_team)
+
             home_recent = await scrape_recent_team_results(recent_page, home_team, home_url, 5) if home_url else []
             away_recent = await scrape_recent_team_results(recent_page, away_team, away_url, 5) if away_url else []
             h2h = await scrape_h2h(h2h_page, next_match.source_url, home_team, away_team, 5) if next_match.source_url else []
@@ -855,9 +918,51 @@ async def update_prematch_insights(context, next_match: Match | None, current_re
             print(f"Pre-match insights: {len(home_recent)} {home_team} recent, {len(away_recent)} {away_team} recent, {len(h2h)} H2H")
         except Exception as exc:
             print(f"WARNING: pre-match insights failed; keeping scraper primary data intact: {exc}", file=sys.stderr)
+            # Preserve the next match context even when secondary pages fail.
             form_xml_write(next_match, [], [], [])
     finally:
         await recent_page.close(); await h2h_page.close()
+
+
+async def scrape_standings(page) -> list[dict]:
+    url = os.getenv("ILEAGUE_STANDINGS_URL", "https://ileague.id/table/index/BRI_SUPER_LEAGUE_2026-27")
+    print(f"Opening standings: {url}")
+    await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+    await page.wait_for_timeout(1800)
+    rows = await page.evaluate("""
+    () => {
+      const tables = Array.from(document.querySelectorAll('table'));
+      const norm = s => (s || '').replace(/\s+/g,' ').trim();
+      const pick = (root, selectors) => { for (const sel of selectors) { const el=root.querySelector(sel); if(el) return norm(el.innerText || el.textContent); } return ''; };
+      const table = tables.find(t => /Posisi/i.test(norm(t.innerText)) && /Klub/i.test(norm(t.innerText))) || tables[0];
+      if (!table) return [];
+      return Array.from(table.querySelectorAll('tbody tr')).map(tr => {
+        const cells = Array.from(tr.querySelectorAll('th,td')).map(td => norm(td.innerText || td.textContent));
+        if (cells.length < 10) return null;
+        const club = cells[1] || '';
+        const form = cells[10] || '';
+        return {position:cells[0],club,played:cells[2],wins:cells[3],draws:cells[4],losses:cells[5],gf:cells[6],ga:cells[7],gd:cells[8],points:cells[9],form};
+      }).filter(Boolean);
+    }
+    """)
+    if not rows:
+        # Fallback to row text parsing if table markup changes.
+        text = clean(await page.locator('body').inner_text(timeout=10000))
+        rows = []
+        pat = re.compile(r'(?m)^(\d{1,2})\s*\|?\s*([A-Z][A-Z0-9 .&\-()]+?)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(-?\d+)\s*\|\s*(-?\d+)')
+        for m in pat.finditer(text):
+            rows.append(dict(position=m.group(1),club=clean(m.group(2)),played=m.group(3),wins=m.group(4),draws=m.group(5),losses=m.group(6),gf=m.group(7),ga=m.group(8),gd=m.group(9),points=m.group(10),form=''))
+    return rows[:18]
+
+
+def standings_xml_write(rows: list[dict], source: str = "ileague-rendered") -> None:
+    root = ET.Element("standings", {"version":"1.0", "source":source, "competition":"BRI Super League 2026/27"})
+    for row in rows:
+        t=ET.SubElement(root,"team",{"position":str(row.get("position", ""))})
+        for key in ("club","played","wins","draws","losses","gf","ga","gd","points","form"):
+            v=clean(str(row.get(key,"")))
+            if v != "": ET.SubElement(t,key).text=v
+    STANDINGS_FILE.write_bytes(minidom.parseString(ET.tostring(root,encoding="utf-8")).toprettyxml(indent="  ",encoding="utf-8"))
 
 
 def validate(fixtures: list[Match], results: list[Match]) -> None:

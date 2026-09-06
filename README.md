@@ -98,3 +98,12 @@ The dashboard now generates `data/form.xml` during the GitHub Actions scrape. Fo
 - Penalty-shootout matches use the shootout winner for W/L while retaining the regular-time score.
 
 This data is optional and fail-safe: if Flashscore does not expose the required team or H2H page, the normal fixtures/results pipeline remains the primary dataset and the dashboard shows an unavailable-data message.
+
+
+## V9 changes
+- Canonical competition mapping fixes BRI Super League / ACL Two / Shopee Cup labels even when Flashscore renders longer competition names.
+- Calendar shows one month at a time; month/year selectors remain.
+- Pre-match form/H2H is fail-safe and retains the next-match context while secondary data is loading.
+- Added `data/standings.xml`, automatically refreshed from I.League's BRI Super League 2026/27 standings page.
+- Added a responsive standings table to the dashboard.
+- GitHub Actions now commits `form.xml` and `standings.xml` together with fixtures/results.
