@@ -53,8 +53,8 @@
   </match>
   <match>
     <id>2026-08-04-persib-bandung-persija-jakarta</id>
-    <competition>Unknown</competition>
-    <competitionShort>Unknown</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-08-04</date>
     <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
@@ -70,8 +70,8 @@
   </match>
   <match>
     <id>2026-08-15-sabah-mys-persib-bandung</id>
-    <competition>Unknown</competition>
-    <competitionShort>Unknown</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-08-15</date>
     <time>19:30</time>
     <timezone>Asia/Jakarta</timezone>
@@ -87,8 +87,8 @@
   </match>
   <match>
     <id>2026-08-18-persib-bandung-bali-united</id>
-    <competition>Unknown</competition>
-    <competitionShort>Unknown</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-08-18</date>
     <time>19:30</time>
     <timezone>Asia/Jakarta</timezone>
@@ -104,8 +104,8 @@
   </match>
   <match>
     <id>2026-08-31-persib-bandung-manila-digger-phl</id>
-    <competition>Unknown</competition>
-    <competitionShort>Unknown</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-08-31</date>
     <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
@@ -117,5 +117,22 @@
     <homeScore>1</homeScore>
     <awayScore>0</awayScore>
     <sourceUrl>https://www.flashscore.com/match/football/manila-digger-0retwjin/persib-bandung-KpBjbPK1/?mid=8Y48rpJ7</sourceUrl>
+  </match>
+  <match>
+    <id>2026-09-06-persib-bandung-psm-makassar</id>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
+    <date>2026-09-06</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>PSM Makassar</away>
+    <venue>Gelora Bandung Lautan Api Stadium</venue>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>3</homeScore>
+    <awayScore>1</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
   </match>
 </results>

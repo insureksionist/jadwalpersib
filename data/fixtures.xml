@@ -2,8 +2,8 @@
 <fixtures version="1.1" source="flashscore-rendered">
   <match>
     <id>2026-09-12-persija-jakarta-persib-bandung</id>
-    <competition>Unknown</competition>
-    <competitionShort>Unknown</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 2</matchday>
     <date>2026-09-12</date>
     <time>15:30</time>
@@ -34,8 +34,8 @@
   </match>
   <match>
     <id>2026-09-20-persijap-jepara-persib-bandung</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 3</matchday>
     <date>2026-09-20</date>
     <time>19:00</time>
@@ -66,8 +66,8 @@
   </match>
   <match>
     <id>2026-10-11-persib-bandung-dewa-united</id>
-    <competition>ASEAN Club Championship</competition>
-    <competitionShort>Shopee Cup</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 4</matchday>
     <date>2026-10-11</date>
     <time>19:00</time>
@@ -98,8 +98,8 @@
   </match>
   <match>
     <id>2026-10-18-persib-bandung-persik-kediri</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 5</matchday>
     <date>2026-10-18</date>
     <time>19:00</time>
@@ -115,8 +115,8 @@
   </match>
   <match>
     <id>2026-10-22-madura-united-persib-bandung</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 6</matchday>
     <date>2026-10-22</date>
     <time>19:00</time>
@@ -132,8 +132,8 @@
   </match>
   <match>
     <id>2026-10-26-garudayaksa-persib-bandung</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-10-26</date>
     <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
@@ -161,8 +161,8 @@
   </match>
   <match>
     <id>2026-11-01-persib-bandung-isenmulang-kalteng</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-11-01</date>
     <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
@@ -191,8 +191,8 @@
   </match>
   <match>
     <id>2026-11-08-java-united-persib-bandung</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 9</matchday>
     <date>2026-11-08</date>
     <time>19:00</time>
@@ -208,8 +208,8 @@
   </match>
   <match>
     <id>2026-11-22-persib-bandung-bali-united</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 10</matchday>
     <date>2026-11-22</date>
     <time>19:00</time>
@@ -240,8 +240,8 @@
   </match>
   <match>
     <id>2026-11-29-persita-persib-bandung</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 11</matchday>
     <date>2026-11-29</date>
     <time>19:00</time>
@@ -272,8 +272,8 @@
   </match>
   <match>
     <id>2026-12-06-persebaya-persib-bandung</id>
-    <competition>AFC Champions League 2</competition>
-    <competitionShort>ACL 2</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-12-06</date>
     <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
@@ -302,8 +302,8 @@
   </match>
   <match>
     <id>2026-12-14-persib-bandung-pss-sleman</id>
-    <competition>ASEAN Club Championship</competition>
-    <competitionShort>Shopee Cup</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 14</matchday>
     <date>2026-12-14</date>
     <time>19:00</time>
@@ -334,8 +334,8 @@
   </match>
   <match>
     <id>2026-12-20-arema-fc-persib-bandung</id>
-    <competition>ASEAN Club Championship</competition>
-    <competitionShort>Shopee Cup</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 15</matchday>
     <date>2026-12-20</date>
     <time>19:00</time>
@@ -351,8 +351,8 @@
   </match>
   <match>
     <id>2026-12-23-persib-bandung-fc-bhayangkara</id>
-    <competition>ASEAN Club Championship</competition>
-    <competitionShort>Shopee Cup</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <date>2026-12-23</date>
     <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
@@ -366,8 +366,8 @@
   </match>
   <match>
     <id>2026-12-27-persib-bandung-psim-yogyakarta</id>
-    <competition>ASEAN Club Championship</competition>
-    <competitionShort>Shopee Cup</competitionShort>
+    <competition>Super League</competition>
+    <competitionShort>Super League</competitionShort>
     <matchday>Matchday 17</matchday>
     <date>2026-12-27</date>
     <time>19:00</time>

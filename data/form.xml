@@ -1,71 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preMatch version="1.0" source="flashscore-rendered">
-  <nextMatch id="2026-09-12-persija-jakarta-persib-bandung">
-    <date>2026-09-12</date>
-    <time>15:30</time>
-    <home>Persija Jakarta</home>
-    <away>Persib Bandung</away>
-    <competition>Unknown</competition>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=KpIFXYk2</sourceUrl>
+  <nextMatch id="2026-09-06-persib-bandung-psm-makassar">
+    <date>2026-09-06</date>
+    <time>19:00</time>
+    <home>Persib Bandung</home>
+    <away>PSM Makassar</away>
+    <competition>Super League</competition>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
   </nextMatch>
-  <team name="Persija Jakarta">
+  <team name="Persib Bandung">
     <match>
-      <date>2026-09-05</date>
+      <date>2026-09-06</date>
       <time>19:00</time>
-      <home>Borneo</home>
-      <away>Persija Jakarta</away>
-      <homeScore>0</homeScore>
-      <awayScore>1</awayScore>
-      <outcome>W</outcome>
-      <competition>Unknown</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/borneo-nwyOlpIL/persija-jakarta-dWeXDE5i/?mid=lt4KjnlU</sourceUrl>
-    </match>
-    <match>
-      <date>2026-08-29</date>
-      <time>20:00</time>
-      <home>Persija Jakarta</home>
-      <away>Brisbane Roar (Aus)</away>
-      <homeScore>4</homeScore>
-      <awayScore>0</awayScore>
-      <outcome>W</outcome>
-      <competition>Unknown</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/brisbane-roar-SSr7kDGC/persija-jakarta-dWeXDE5i/?mid=4phsycem</sourceUrl>
-    </match>
-    <match>
-      <date>2026-08-06</date>
-      <time>15:30</time>
-      <home>Persija Jakarta</home>
-      <away>Arema FC</away>
+      <home>Persib Bandung</home>
+      <away>PSM Makassar</away>
       <homeScore>3</homeScore>
       <awayScore>1</awayScore>
       <outcome>W</outcome>
-      <competition>Unknown</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/arema-fc-dpH3oK85/persija-jakarta-dWeXDE5i/?mid=jLKWJehB</sourceUrl>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
     </match>
-    <match>
-      <date>2026-08-04</date>
-      <time>15:30</time>
-      <home>Persib Bandung</home>
-      <away>Persija Jakarta</away>
-      <homeScore>2</homeScore>
-      <awayScore>1</awayScore>
-      <outcome>L</outcome>
-      <competition>Unknown</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=zP8wGDit</sourceUrl>
-    </match>
-    <match>
-      <date>2026-08-01</date>
-      <time>15:30</time>
-      <home>Persija Jakarta</home>
-      <away>PSMS Medan</away>
-      <homeScore>4</homeScore>
-      <awayScore>1</awayScore>
-      <outcome>W</outcome>
-      <competition>1 L President Cup</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/persija-jakarta-dWeXDE5i/psms-medan-b9V8m77e/?mid=Oj2ZyDK5</sourceUrl>
-    </match>
-  </team>
-  <team name="Persib Bandung">
     <match>
       <date>2026-08-31</date>
       <time>19:00</time>
@@ -74,7 +28,7 @@
       <homeScore>1</homeScore>
       <awayScore>0</awayScore>
       <outcome>W</outcome>
-      <competition>Unknown</competition>
+      <competition>Super League</competition>
       <sourceUrl>https://www.flashscore.com/match/football/manila-digger-0retwjin/persib-bandung-KpBjbPK1/?mid=8Y48rpJ7</sourceUrl>
     </match>
     <match>
@@ -85,7 +39,7 @@
       <homeScore>3</homeScore>
       <awayScore>2</awayScore>
       <outcome>W</outcome>
-      <competition>Unknown</competition>
+      <competition>Super League</competition>
       <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=ju1hqtzH</sourceUrl>
     </match>
     <match>
@@ -96,7 +50,7 @@
       <homeScore>0</homeScore>
       <awayScore>3</awayScore>
       <outcome>W</outcome>
-      <competition>Unknown</competition>
+      <competition>Super League</competition>
       <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/sabah-WUPN62XK/?mid=rFcpo254</sourceUrl>
     </match>
     <match>
@@ -107,19 +61,65 @@
       <homeScore>2</homeScore>
       <awayScore>1</awayScore>
       <outcome>W</outcome>
-      <competition>Unknown</competition>
+      <competition>Super League</competition>
       <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=zP8wGDit</sourceUrl>
     </match>
+  </team>
+  <team name="PSM Makassar">
     <match>
-      <date>2026-07-31</date>
-      <time>19:30</time>
+      <date>2026-09-06</date>
+      <time>19:00</time>
       <home>Persib Bandung</home>
-      <away>Tampines</away>
-      <homeScore>1</homeScore>
+      <away>PSM Makassar</away>
+      <homeScore>3</homeScore>
+      <awayScore>1</awayScore>
+      <outcome>L</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-23</date>
+      <time>16:00</time>
+      <home>Madura United</home>
+      <away>PSM Makassar</away>
+      <homeScore>2</homeScore>
       <awayScore>0</awayScore>
+      <outcome>L</outcome>
+      <competition>00 Persib Bandung PSM Makassar 3 1 L Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/madura-united-6i1jCnP9/psm-makassar-IaeYYTE4/?mid=vPx1wPqI</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-17</date>
+      <time>19:00</time>
+      <home>PSM Makassar</home>
+      <away>Persib Bandung</away>
+      <homeScore>1</homeScore>
+      <awayScore>2</awayScore>
+      <outcome>L</outcome>
+      <competition>00 Persib Bandung PSM Makassar 3 1 L Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-09</date>
+      <time>15:30</time>
+      <home>Arema FC</home>
+      <away>PSM Makassar</away>
+      <homeScore>3</homeScore>
+      <awayScore>0</awayScore>
+      <outcome>L</outcome>
+      <competition>00 Persib Bandung PSM Makassar 3 1 L Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/arema-fc-dpH3oK85/psm-makassar-IaeYYTE4/?mid=ryjDNLm3</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-04</date>
+      <time>15:30</time>
+      <home>PSM Makassar</home>
+      <away>FC Bhayangkara</away>
+      <homeScore>2</homeScore>
+      <awayScore>1</awayScore>
       <outcome>W</outcome>
-      <competition>1 W President Cup</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/tampines-KbVkFR8P/?mid=rwU4zL0b</sourceUrl>
+      <competition>00 Persib Bandung PSM Makassar 3 1 L Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/fc-bhayangkara-6gEuDIDT/psm-makassar-IaeYYTE4/?mid=CtRKh1lT</sourceUrl>
     </match>
   </team>
   <headToHead/>

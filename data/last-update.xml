@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lastUpdate version="1.1" source="flashscore-rendered">
-  <lastSuccess>2026-09-06T19:08:41+07:00</lastSuccess>
-  <last_success>2026-09-06T19:08:41+07:00</last_success>
+  <lastSuccess>2026-09-07T01:01:11+07:00</lastSuccess>
+  <last_success>2026-09-07T01:01:11+07:00</last_success>
   <status>ok</status>
   <message>Scrape and validation succeeded</message>
   <fixtureCount>24</fixtureCount>
-  <resultCount>7</resultCount>
+  <resultCount>8</resultCount>
   <sourceUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</sourceUrl>
 </lastUpdate>
