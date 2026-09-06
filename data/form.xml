@@ -1,2 +1,126 @@
-<?xml version='1.0' encoding='utf-8'?>
-<preMatch version="1.1" source="ileague-and-flashscore-rendered"><nextMatch id="baseline-next"><date>2026-09-06</date><time>19:00</time><home>Persib Bandung</home><away>PSM Makassar</away><competition>BRI Super League 2026/27</competition></nextMatch><team name="Persib Bandung"><match><date>2026-05-10</date><time /><home>Persija Jakarta</home><away>Persib Bandung</away><homeScore>2</homeScore><awayScore>1</awayScore><outcome>L</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-05-04</date><time /><home>Persib Bandung</home><away>PSIM Yogyakarta</away><homeScore>1</homeScore><awayScore>0</awayScore><outcome>W</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-04-30</date><time /><home>Bhayangkara Presisi Lampung FC</home><away>Persib Bandung</away><homeScore>2</homeScore><awayScore>4</awayScore><outcome>W</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-04-24</date><time /><home>Persib Bandung</home><away>Arema FC</away><homeScore>0</homeScore><awayScore>0</awayScore><outcome>D</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-04-20</date><time /><home>Dewa United Banten FC</home><away>Persib Bandung</away><homeScore>2</homeScore><awayScore>2</awayScore><outcome>D</outcome><competition>BRI Super League 2025/26</competition></match></team><team name="PSM Makassar"><match><date>2026-05-09</date><time /><home>Arema FC</home><away>PSM Makassar</away><homeScore>0</homeScore><awayScore>3</awayScore><outcome>W</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-05-04</date><time /><home>Bhayangkara Presisi Lampung FC</home><away>PSM Makassar</away><homeScore>2</homeScore><awayScore>1</awayScore><outcome>L</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-04-27</date><time /><home>Bali United</home><away>PSM Makassar</away><homeScore>0</homeScore><awayScore>2</awayScore><outcome>W</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-04-23</date><time /><home>PSM Makassar</home><away>Persik Kediri</away><homeScore>3</homeScore><awayScore>1</awayScore><outcome>W</outcome><competition>BRI Super League 2025/26</competition></match><match><date>2026-04-18</date><time /><home>Borneo FC Samarinda</home><away>PSM Makassar</away><homeScore>1</homeScore><awayScore>2</awayScore><outcome>W</outcome><competition>BRI Super League 2025/26</competition></match></team><headToHead><match><date>2026-05-17</date><time /><home>PSM Makassar</home><away>Persib Bandung</away><homeScore>1</homeScore><awayScore>2</awayScore><competition /></match><match><date>2025-12-27</date><time /><home>Persib Bandung</home><away>PSM Makassar</away><homeScore>1</homeScore><awayScore>0</awayScore><competition /></match><match><date>2025-02-01</date><time /><home>Persib Bandung</home><away>PSM Makassar</away><homeScore>1</homeScore><awayScore>0</awayScore><competition /></match><match><date>2024-09-11</date><time /><home>PSM Makassar</home><away>Persib Bandung</away><homeScore>0</homeScore><awayScore>0</awayScore><competition /></match><match><date>2024-07-19</date><time /><home>Persib Bandung</home><away>PSM Makassar</away><homeScore>2</homeScore><awayScore>0</awayScore><competition /></match></headToHead></preMatch>
+<?xml version="1.0" encoding="utf-8"?>
+<preMatch version="1.0" source="flashscore-rendered">
+  <nextMatch id="2026-09-06-persib-bandung-psm-makassar">
+    <date>2026-09-06</date>
+    <time>19:00</time>
+    <home>Persib Bandung</home>
+    <away>PSM Makassar</away>
+    <competition>Super League</competition>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
+  </nextMatch>
+  <team name="Persib Bandung">
+    <match>
+      <date>2026-08-31</date>
+      <time>19:00</time>
+      <home>Persib Bandung</home>
+      <away>Manila Digger (Phl)</away>
+      <homeScore>1</homeScore>
+      <awayScore>0</awayScore>
+      <outcome>W</outcome>
+      <competition>Unknown</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/manila-digger-0retwjin/persib-bandung-KpBjbPK1/?mid=8Y48rpJ7</sourceUrl>
+    </match>
+    <match>
+      <date>2026-08-18</date>
+      <time>19:30</time>
+      <home>Persib Bandung</home>
+      <away>Bali United</away>
+      <homeScore>3</homeScore>
+      <awayScore>2</awayScore>
+      <outcome>W</outcome>
+      <competition>Unknown</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=ju1hqtzH</sourceUrl>
+    </match>
+    <match>
+      <date>2026-08-15</date>
+      <time>19:30</time>
+      <home>Sabah (Mys)</home>
+      <away>Persib Bandung</away>
+      <homeScore>0</homeScore>
+      <awayScore>3</awayScore>
+      <outcome>W</outcome>
+      <competition>Unknown</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/sabah-WUPN62XK/?mid=rFcpo254</sourceUrl>
+    </match>
+    <match>
+      <date>2026-08-04</date>
+      <time>15:30</time>
+      <home>Persib Bandung</home>
+      <away>Persija Jakarta</away>
+      <homeScore>2</homeScore>
+      <awayScore>1</awayScore>
+      <outcome>W</outcome>
+      <competition>Unknown</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=zP8wGDit</sourceUrl>
+    </match>
+    <match>
+      <date>2026-07-31</date>
+      <time>19:30</time>
+      <home>Persib Bandung</home>
+      <away>Tampines</away>
+      <homeScore>1</homeScore>
+      <awayScore>0</awayScore>
+      <outcome>W</outcome>
+      <competition>1 W President Cup</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/tampines-KbVkFR8P/?mid=rwU4zL0b</sourceUrl>
+    </match>
+  </team>
+  <team name="PSM Makassar">
+    <match>
+      <date>2026-05-23</date>
+      <time>16:00</time>
+      <home>Madura United</home>
+      <away>PSM Makassar</away>
+      <homeScore>2</homeScore>
+      <awayScore>0</awayScore>
+      <outcome>L</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/madura-united-6i1jCnP9/psm-makassar-IaeYYTE4/?mid=vPx1wPqI</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-17</date>
+      <time>19:00</time>
+      <home>PSM Makassar</home>
+      <away>Persib Bandung</away>
+      <homeScore>1</homeScore>
+      <awayScore>2</awayScore>
+      <outcome>L</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=jsVrqTFt</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-09</date>
+      <time>15:30</time>
+      <home>Arema FC</home>
+      <away>PSM Makassar</away>
+      <homeScore>3</homeScore>
+      <awayScore>0</awayScore>
+      <outcome>L</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/arema-fc-dpH3oK85/psm-makassar-IaeYYTE4/?mid=ryjDNLm3</sourceUrl>
+    </match>
+    <match>
+      <date>2026-05-04</date>
+      <time>15:30</time>
+      <home>PSM Makassar</home>
+      <away>FC Bhayangkara</away>
+      <homeScore>2</homeScore>
+      <awayScore>1</awayScore>
+      <outcome>W</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/fc-bhayangkara-6gEuDIDT/psm-makassar-IaeYYTE4/?mid=CtRKh1lT</sourceUrl>
+    </match>
+    <match>
+      <date>2026-04-27</date>
+      <time>15:30</time>
+      <home>Bali United</home>
+      <away>PSM Makassar</away>
+      <homeScore>2</homeScore>
+      <awayScore>0</awayScore>
+      <outcome>L</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/psm-makassar-IaeYYTE4/?mid=QNcFkyxK</sourceUrl>
+    </match>
+  </team>
+  <headToHead/>
+</preMatch>
