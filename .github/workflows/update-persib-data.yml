@@ -2,8 +2,8 @@ name: Update Persib XML data
 
 on:
   schedule:
-    # Every 6 hours. GitHub may delay scheduled workflows during load.
-    - cron: '17 */6 * * *'
+    # Every day at 23:00 WIB (16:00 UTC). GitHub may delay scheduled workflows during load.
+    - cron: '0 16 * * *'
   workflow_dispatch:
 
 permissions:
@@ -33,8 +33,10 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Install Playwright Chromium
-        run: python -m playwright install --with-deps chromium
+      - name: Install Playwright Chromium and headless shell
+        run: |
+          python -m playwright install --with-deps chromium chromium-headless-shell
+          python -m playwright install --list
 
       - name: Scrape and validate Flashscore
         env:
