@@ -117,7 +117,7 @@ h1{margin:0;font-size:30px;line-height:1.1;letter-spacing:-1px;font-weight:800}
 .legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #edf0f4}.legend-item{display:flex;align-items:center;gap:5px;font-size:8px;color:#5f6878;font-weight:700}.legend-item img{width:18px;height:18px;object-fit:contain}.legend-dot{width:7px;height:7px;border-radius:50%}.legend-home{color:var(--home)}.legend-away{color:var(--away)}
 .modal-overlay{position:fixed;inset:0;background:rgba(7,17,42,.52);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal-overlay.open{display:flex}.modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:22px;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.22)}.close{position:absolute;right:12px;top:10px;border:0;background:#f2f4f8;width:30px;height:30px;border-radius:50%;font-size:18px;color:#6c7482}.modal-head{display:flex;justify-content:space-between;gap:10px;padding-right:35px}.modal-comp{font-size:11px;font-weight:800;color:var(--navy)}.modal-day{font-size:9px;color:var(--muted)}.modal-teams{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:8px;margin:20px 0}.modal-team{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-weight:800;font-size:12px}.modal-vs{text-align:center;font-size:10px;color:#9aa2b0;font-weight:800}.detail{display:grid;gap:8px;border-top:1px solid #edf0f4;padding-top:13px}.detail-row{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:10px;color:#596375}.gcal{display:block;text-align:center;text-decoration:none;margin-top:15px;padding:10px;background:var(--navy);color:#fff;border-radius:9px;font-size:10px;font-weight:800}
 .footer{font-size:9px;color:#9aa2b0;text-align:center;padding:2px 0 8px}
-.data-status{font-size:10px;color:#8d96a6;text-align:center;margin-top:2px}.data-status[data-state="ok"]{color:#4f7b62}.data-status[data-state="error"]{color:#b64242}.data-status[data-state="loading"]{color:#9a7a28}
+.source-note{font-size:9px;color:#9aa2ae;margin-top:5px}.source-note span{font-weight:700;color:#687184}.data-status{font-size:10px;color:#8d96a6;text-align:center;margin-top:2px}.data-status[data-state="ok"]{color:#4f7b62}.data-status[data-state="error"]{color:#b64242}.data-status[data-state="loading"]{color:#9a7a28}
 @media(max-width:1180px){.stats-grid{grid-template-columns:repeat(3,1fr)}.schedule-layout{grid-template-columns:1fr}.calendar-three{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;padding:16px;display:block}.brand{display:flex;text-align:left;padding-bottom:14px;margin-bottom:14px}.brand-mark{width:48px;height:48px;margin:0}.side-nav{display:flex;overflow:auto}.side-nav button{white-space:nowrap}.side-summary{display:none}.container{padding:20px 16px 32px}.stats-grid{grid-template-columns:repeat(2,1fr)}.schedule-layout{grid-template-columns:1fr}}
 
@@ -134,7 +134,7 @@ h1{margin:0;font-size:30px;line-height:1.1;letter-spacing:-1px;font-weight:800}
 html{font-size:16px}
 body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .brand-title{font-size:19px}.brand-sub{font-size:13px}.side-label,.side-summary-title{font-size:11px}.side-nav button{font-size:14px;padding:12px 13px}.side-summary-row{font-size:13px;padding:10px 4px}
-.eyebrow{font-size:12px}.page-head h1,h1{font-size:clamp(30px,2.6vw,38px)}.head-sub{font-size:14px}.today-pill{font-size:13px;padding:10px 13px}
+.eyebrow{font-size:12px}.page-head h1,h1{font-size:clamp(30px,2.6vw,38px)}.head-sub{font-size:14px}.today-pill{font-size:13px;padding:10px 13px;text-align:right}.refresh-meta{font-size:9px;color:#8c95a3;margin-top:3px}.refresh-meta strong{color:#687184;font-weight:800}
 .stat-label{font-size:11px}.stat-num{font-size:26px}.stat-sub{font-size:11px}
 .hero-label{font-size:11px}.hero-comp{font-size:11px;padding:6px 9px}.hero-date{font-size:13px}.hero-team{font-size:18px}.hero-vs .vs{font-size:10px}.hero-vs .time{font-size:21px}.hero-info{font-size:12px}.countdown-label{font-size:10px}.timer-num{font-size:21px}.timer-unit{font-size:8px}
 .section-title{font-size:18px}.section-meta{font-size:12px}.filter-label{font-size:11px}.filter-btn{font-size:12px;padding:10px 12px}.search-wrap input{font-size:12px;padding:11px 13px 11px 34px}.search-icon{font-size:15px}.clear-btn{font-size:12px}
@@ -205,7 +205,7 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
 <div class="container">
   <div class="page-head">
     <div><div class="eyebrow">Persib Bandung · Season 2026/27</div><h1>Match Center</h1><div class="head-sub">Jadwal pertandingan yang ringkas, jelas, dan mudah dipindai.</div></div>
-    <div class="today-pill">Hari ini <strong id="todayLabel">—</strong></div>
+    <div class="today-pill"><div>Hari ini <strong id="todayLabel">—</strong></div><div class="refresh-meta">Last data refresh <strong id="lastRefreshLabel">—</strong></div></div>
   </div>
 
   <div class="stats-grid">
@@ -231,7 +231,7 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
       <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="awayFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="awayFormStrip"></div><div class="form-summary" id="awayFormSummary"></div><div class="recent-list" id="awayRecentList"></div></div>
       <div class="insight-panel h2h"><div class="insight-panel-title"><span>🤝 Head to Head</span><span>5 pertemuan terakhir</span></div><div class="h2h-list" id="h2hList"></div><div class="h2h-note" id="h2hNote"></div></div>
     </div>
-    <div class="insight-source">Data diperbarui otomatis oleh GitHub Actions dari data publik Flashscore.</div>
+    <div class="insight-source">Data diperbarui otomatis oleh GitHub Actions. Sumber data: Flashscore · Persib.co.id · Liga.id.</div>
   </section>
 
   <section class="section" id="schedule">
@@ -267,7 +267,7 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
   </div>
 
   <div class="section" id="allSchedule" style="margin-top:18px"><div class="section-head"><div><h2 class="section-title">Semua Jadwal</h2><div class="section-meta" id="resultMeta">—</div></div></div><div class="match-list" id="matchList"></div></div>
-  <div class="footer">⚽ <strong>PERSIB BANDUNG 2026/27</strong> · Jadwal dapat berubah mengikuti pengumuman resmi kompetisi.<div class="data-status" id="dataStatus">Memuat data lokal XML…</div></div>
+  <div class="footer">⚽ <strong>PERSIB BANDUNG 2026/27</strong> · Jadwal dapat berubah mengikuti pengumuman resmi kompetisi.<div class="data-status" id="dataStatus">Memuat data lokal XML…</div><div class="source-note">Sources: <span>Flashscore</span> · <span>Persib.co.id</span> · <span>Liga.id</span></div></div>
 </div>
 </main></div>
 <div class="modal-overlay" id="modalOverlay"><div class="modal"><button class="close" id="modalClose" aria-label="Tutup">×</button><div id="modalContent"></div></div></div>
@@ -396,6 +396,7 @@ async function loadLocalData(){
     }catch(_){ }
 
     setDataStatus(`Data lokal XML · ${matches.length} pertandingan${updateText ? ' · Update '+formatLocalTimestamp(updateText) : ''}`, 'ok');
+    $('lastRefreshLabel').textContent = updateText ? formatLocalTimestamp(updateText) : '—';
     return true;
   }catch(error){
     console.error('[Persib Match Center] Local XML error:', error);
@@ -486,7 +487,7 @@ function matchRowHtml(m,past=false){const d=dateObj(m.date),c=compClass(m);retur
 function bindMatchRows(root){root.querySelectorAll('.match-row').forEach(el=>el.onclick=()=>{const m=matches.find(x=>x.id===el.dataset.id);if(m)openModal([m])})}
 function getCurrentMonthMatches(){const key=currentMonthKey();return matches.filter(m=>m.date.slice(0,7)===key&&matchPassesFilter(m)).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)))}
 function renderUpcoming(){const all=getCurrentMonthMatches();const now=Date.now();let future=all.filter(m=>m.time?parseMatchDateTime(m).getTime()>=now-7200000:m.date>=todayStr());let display=future.length?future:all;display=showAllMonth?display:display.slice(0,6);$('upcomingMeta').textContent=`${MONTHS_ID[new Date().getMonth()]} ${new Date().getFullYear()} · ${all.length} pertandingan`;$('upcomingList').innerHTML=display.length?display.map(m=>matchRowHtml(m,m.date<todayStr())).join(''):`<div class="empty">Tidak ada pertandingan bulan ini yang sesuai filter.</div>`;$('upcomingFooter').hidden=display.length>=all.length||all.length===0;bindMatchRows($('upcomingList'));}
-function renderList(){const list=matches.filter(matchPassesFilter).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));$('resultMeta').textContent=`${list.length} pertandingan ditampilkan`;$('matchList').innerHTML=list.length?list.map(m=>matchRowHtml(m,m.date<todayStr())).join(''):'<div class="empty">Tidak ada pertandingan yang sesuai dengan filter.</div>';bindMatchRows($('matchList'))}
+function renderList(){const list=matches.filter(m=>{if(!matchPassesFilter(m))return false;if(m.time){const dt=parseMatchDateTime(m);return dt?dt.getTime()>=Date.now()-7200000:m.date>=todayStr()}return m.date>=todayStr()}).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));$('resultMeta').textContent=`${list.length} pertandingan mendatang ditampilkan`;$('matchList').innerHTML=list.length?list.map(m=>matchRowHtml(m,false)).join(''):'<div class="empty">Tidak ada pertandingan mendatang yang sesuai dengan filter.</div>';bindMatchRows($('matchList'))}
 function populateCalendarSelectors(){const monthSelect=$('calMonthSelect'),yearSelect=$('calYearSelect');monthSelect.innerHTML=MONTHS_ID.map((m,i)=>`<option value="${i}">${m}</option>`).join('');const years=[...new Set(matches.flatMap(m=>[Number(m.date.slice(0,4)),Number(m.date.slice(0,4))+1]).concat([new Date().getFullYear()]))].sort((a,b)=>a-b);yearSelect.innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');monthSelect.value=String(calMonth);yearSelect.value=String(calYear);monthSelect.onchange=()=>{calMonth=Number(monthSelect.value);buildCalendar()};yearSelect.onchange=()=>{calYear=Number(yearSelect.value);buildCalendar()}}
 function buildMonthCalendar(year,month,index){const first=new Date(year,month,1),days=new Date(year,month+1,0).getDate(),filtered=matches.filter(matchPassesFilter),isCurrent=(year===new Date().getFullYear()&&month===new Date().getMonth());let html=`<div class="month-card ${isCurrent?'current':''}"><div class="month-card-title"><span>${MONTHS_ID[month]} ${year}</span><span class="month-index">Bulan ${index+1} / 3</span></div><div class="cal-grid">${DOW_SHORT.map(x=>`<div class="cal-dow">${x}</div>`).join('')}`;for(let i=0;i<first.getDay();i++)html+='<div class="cal-cell empty"></div>';for(let day=1;day<=days;day++){const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,ms=filtered.filter(m=>m.date===ds);html+=`<div class="cal-cell ${ms.length?'has-match':''} ${ds===todayStr()?'today':''}" ${ms.length?`data-date="${ds}"`:''}><div class="daynum">${day}</div>${ms.slice(0,3).map(m=>`<div class="cal-match ${compClass(m)} ${m.side.toLowerCase()}"><span class="mini-dot"></span><span>${escapeHtml(m.side==='Home'?m.away:m.home)}</span><span class="mini-side">${m.side==='Home'?'H':'A'}</span></div>`).join('')}${ms.length>3?`<div class="cal-match-label">+${ms.length-3} lagi</div>`:''}</div>`}html+='</div></div>';return html}
 function buildCalendar(){const grid=$('calendarGrid');let html='';for(let i=0;i<3;i++){const d=new Date(calYear,calMonth+i,1);html+=buildMonthCalendar(d.getFullYear(),d.getMonth(),i)}grid.innerHTML=html;const start=new Date(calYear,calMonth,1),end=new Date(calYear,calMonth+2,1);$('calRange').textContent=`${MONTHS_ID[start.getMonth()]} ${start.getFullYear()} – ${MONTHS_ID[end.getMonth()]} ${end.getFullYear()}`;$('calMonthSelect').value=String(calMonth);$('calYearSelect').value=String(calYear);grid.querySelectorAll('.cal-cell[data-date]').forEach(el=>el.onclick=()=>openModal(matches.filter(m=>m.date===el.dataset.date)))}

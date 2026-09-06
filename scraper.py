@@ -304,7 +304,52 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME) -> list[dict]:
     # Fallback: parse the rendered accessibility/body text. This is the path
     # currently needed by the GitHub Actions runner.
     body = await page.locator("body").inner_text(timeout=10000)
-    return parse_text_rows(body, anchor_team=anchor_team)
+    parsed = parse_text_rows(body, anchor_team=anchor_team)
+
+    # The GitHub Actions browser can expose Flashscore's rendered text while
+    # hiding the usual .event__match nodes. The links themselves are often
+    # still present in the DOM, so enrich the text-parser rows with team and
+    # match URLs. This is required by the pre-match form/H2H collector.
+    try:
+        links = await page.evaluate("""
+        () => ({
+          teams: Array.from(document.querySelectorAll('a[href*=\"/team/\"]')).map(a => ({
+            href: a.href, text: (a.innerText || a.textContent || '').replace(/\\s+/g,' ').trim()
+          })).filter(x => x.href),
+          matches: Array.from(document.querySelectorAll('a[href*=\"/match/\"]')).map(a => ({
+            href: a.href, text: (a.innerText || a.textContent || a.parentElement?.innerText || '').replace(/\\s+/g,' ').trim()
+          })).filter(x => x.href)
+        })
+        """)
+        def norm(v): return normalize_team_text(v).lower()
+        team_links = links.get('teams', [])
+        match_links = links.get('matches', [])
+        for row in parsed:
+            hn, an = norm(row.get('home','')), norm(row.get('away',''))
+            for tl in team_links:
+                tn = norm(tl.get('text',''))
+                if not row.get('homeHref') and tn and (tn == hn or hn in tn or tn in hn):
+                    row['homeHref'] = tl['href']
+                if not row.get('awayHref') and tn and (tn == an or an in tn or tn in an):
+                    row['awayHref'] = tl['href']
+            if not row.get('href'):
+                for ml in match_links:
+                    mt = norm(ml.get('text',''))
+                    if hn and an and hn in mt and an in mt:
+                        row['href'] = ml['href']
+                        break
+                if not row.get('href'):
+                    # Some match anchors have empty text; their parent text
+                    # normally contains the date plus both participants.
+                    target_date = row.get('time','')
+                    for ml in match_links:
+                        mt = norm(ml.get('text',''))
+                        if hn and an and hn in mt and an in mt and target_date and target_date in mt:
+                            row['href'] = ml['href']
+                            break
+    except Exception as exc:
+        print(f"DEBUG: could not enrich fallback rows with DOM links: {exc}", file=sys.stderr)
+    return parsed
 
 
 def normalize_team_text(value: str) -> str:
