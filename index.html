@@ -422,7 +422,7 @@ function mergeMatchSets(fixtures, results){
 async function loadLocalData(){
   setDataStatus('Memuat data lokal XML…', 'loading');
   try{
-    const [fixturesXML, resultsXML, formXML] = await Promise.all([
+    const [fixturesXML, resultsXML, formXML, standingsXML] = await Promise.all([
       fetchLocalXML(DATA_FILES.fixtures),
       fetchLocalXML(DATA_FILES.results).catch(()=>null),
       fetchLocalXML(DATA_FILES.form).catch(()=>null),
@@ -474,7 +474,7 @@ function renderEmptyState(){
   $('heroComp').textContent='Data tidak tersedia'; $('heroDate').textContent='—'; $('heroHome').textContent='—'; $('heroAway').textContent='—'; $('heroTime').textContent='—'; $('heroVenue').textContent='🏟 —'; $('heroCity').textContent='📍 —'; $('heroSide').textContent='—'; $('timer').innerHTML='';
   $('upcomingList').innerHTML='<div class="empty">Data pertandingan belum dapat dimuat dari XML lokal.</div>';
   $('matchList').innerHTML='<div class="empty">Data pertandingan belum dapat dimuat dari XML lokal.</div>';
-  $('calendarGrid').innerHTML='<div class="empty">Kalender belum dapat dibuat karena data XML tidak tersedia.</div>';
+  $('calendarGrid').innerHTML='<div class="empty">Kalender belum dapat dibuat karena data XML tidak tersedia. Pastikan folder <code>data/</code> ikut ter-publish di GitHub Pages.</div>';
 }
 
 // =====================================================
