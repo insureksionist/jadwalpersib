@@ -64,6 +64,10 @@ jobs:
           if [ -f data/last-update.xml ]; then
             echo '--- standings.xml ---' >> debug/workflow.txt
             cat data/standings.xml 2>/dev/null | head -80 >> debug/workflow.txt
+            echo '--- player-stats.xml ---' >> debug/workflow.txt
+            cat data/player-stats.xml 2>/dev/null | head -80 >> debug/workflow.txt
+            echo '--- match-stats.xml ---' >> debug/workflow.txt
+            cat data/match-stats.xml 2>/dev/null | head -80 >> debug/workflow.txt
             echo '--- last-update.xml ---' >> debug/workflow.txt
             cat data/last-update.xml >> debug/workflow.txt
           fi
@@ -90,6 +94,10 @@ jobs:
           grep -c '<team' data/standings.xml || true
           echo '--- form.xml ---'
           grep -c '<match>' data/form.xml || true
+          echo '--- player-stats.xml ---'
+          grep -c '<player>' data/player-stats.xml || true
+          echo '--- match-stats.xml ---'
+          grep -c '<stat ' data/match-stats.xml || true
           echo '--- last-update.xml ---'
           cat data/last-update.xml 2>/dev/null || true
 
@@ -97,7 +105,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/fixtures.xml data/results.xml data/form.xml data/standings.xml data/last-update.xml
+          git add data/fixtures.xml data/results.xml data/form.xml data/standings.xml data/player-stats.xml data/match-stats.xml data/last-update.xml
           if git diff --cached --quiet; then
             echo 'No data changes to commit.'
             exit 0
