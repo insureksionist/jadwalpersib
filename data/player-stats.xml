@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<playerStats version="1.0" source="ileague-rendered" competition="BRI Super League 2026/27">
+  <topScorer>
+    <player>
+      <rank>1</rank>
+      <name>MITKOV</name>
+      <value>2</value>
+    </player>
+    <player>
+      <rank>2</rank>
+      <name>PURZYCKI</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>3</rank>
+      <name>JEREMEJEFF</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>4</rank>
+      <name>ALLANO</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>5</rank>
+      <name>LUQUINHAS</name>
+      <value>1</value>
+    </player>
+  </topScorer>
+  <topAssist>
+    <player>
+      <rank>1</rank>
+      <name>MENALO</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>2</rank>
+      <name>SAIFUL DJOGE</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>3</rank>
+      <name>ADAM ALIS</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>4</rank>
+      <name>IRIANTO</name>
+      <value>1</value>
+    </player>
+    <player>
+      <rank>5</rank>
+      <name>Y. SAYURI</name>
+      <value>1</value>
+    </player>
+  </topAssist>
+  <yellowCards/>
+  <redCards/>
+</playerStats>

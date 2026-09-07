@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<matchStats version="1.0" source="ileague-rendered">
+  <match id="2026-09-06-persib-bandung-psm-makassar">
+    <date>2026-09-06</date>
+    <home>Persib Bandung</home>
+    <away>PSM Makassar</away>
+    <sourceUrl>https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/2026-09-06/PERSIB_BANDUNG/PSM_MAKASSAR</sourceUrl>
+    <stat key="possession">
+      <home>70</home>
+      <away>30</away>
+    </stat>
+    <stat key="shotsOnTarget">
+      <home>6</home>
+      <away>3</away>
+    </stat>
+    <stat key="shots">
+      <home>12</home>
+      <away>7</away>
+    </stat>
+    <stat key="shotAccuracy">
+      <home>50</home>
+      <away>75</away>
+    </stat>
+    <stat key="successfulPasses">
+      <home>496</home>
+      <away>209</away>
+    </stat>
+    <stat key="failedPasses">
+      <home>79</home>
+      <away>89</away>
+    </stat>
+    <stat key="corners">
+      <home>5</home>
+      <away>3</away>
+    </stat>
+    <stat key="tackles">
+      <home>13</home>
+      <away>19</away>
+    </stat>
+    <stat key="offsides">
+      <home>0</home>
+      <away>1</away>
+    </stat>
+    <stat key="fouls">
+      <home>9</home>
+      <away>15</away>
+    </stat>
+    <stat key="yellowCards">
+      <home>1</home>
+      <away>2</away>
+    </stat>
+    <stat key="redCards">
+      <home>0</home>
+      <away>0</away>
+    </stat>
+  </match>
+</matchStats>
