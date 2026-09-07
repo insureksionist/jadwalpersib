@@ -107,3 +107,8 @@ This data is optional and fail-safe: if Flashscore does not expose the required 
 - Added `data/standings.xml`, automatically refreshed from I.League's BRI Super League 2026/27 standings page.
 - Added a responsive standings table to the dashboard.
 - GitHub Actions now commits `form.xml` and `standings.xml` together with fixtures/results.
+
+
+### V11 season-count protection
+
+The dashboard only publishes the three target competitions for the 2026/27 season and validates the expected season totals: 34 BRI Super League, 6 ACL Two, and 6 Shopee Cup. Other competitions on Flashscore are ignored for dashboard totals.

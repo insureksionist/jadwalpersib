@@ -351,7 +351,7 @@ function parseLocalMatches(xml){
     const sideRaw = xmlText(node, 'side');
     const side = sideRaw || (home === 'Persib Bandung' ? 'Home' : away === 'Persib Bandung' ? 'Away' : '');
     const competitionShort = xmlText(node, 'competitionShort') ||
-      (/ACL/i.test(competition) ? 'ACL 2' : /Shopee|ASEAN/i.test(competition) ? 'Shopee Cup' : 'Super League');
+      (/ACL/i.test(competition) ? 'ACL 2' : /Shopee|ASEAN/i.test(competition) ? 'Shopee Cup' : /Super League|Liga 1|Liga Indonesia/i.test(competition) ? 'Super League' : 'Other');
 
     return {
       id: xmlAttrOrText(node, 'id', 'value', '') || xmlText(node, 'matchId', '') || `XML-${index+1}`,
@@ -410,11 +410,29 @@ function recentListHtml(items){return items.map(x=>`<div class="recent-item"><di
 function h2hListHtml(items){return items.map(x=>`<div class="h2h-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="h2h-teams">${escapeHtml(x.home)} vs ${escapeHtml(x.away)}</div><div class="h2h-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
 function renderPrematchInsights(){const next=getNextMatch();const box=$('prematchInsights');if(!next){box.hidden=true;return}const teams=prematchData?.teams||[];const home=teams.find(t=>t.name.toLowerCase()===next.home.toLowerCase())||teams[0];const away=teams.find(t=>t.name.toLowerCase()===next.away.toLowerCase())||teams[1];$('insightSub').textContent=`${next.home} vs ${next.away} · Form 5 pertandingan terakhir & head to head`;$('homeFormTitle').innerHTML=teamBadgeHtml(next.home,20)+`<span>${escapeHtml(next.home)}</span>`;$('awayFormTitle').innerHTML=teamBadgeHtml(next.away,20)+`<span>${escapeHtml(next.away)}</span>`;const hm=home?.matches||[],am=away?.matches||[],hh=prematchData.h2h||[];$('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';$('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L pada form dihitung dari sudut pandang masing-masing tim. Untuk adu penalti, pemenang shootout dihitung sebagai W.':'H2H akan muncul setelah scraper memperoleh halaman pertandingan detail.';box.hidden=false}
 
+function normalizeCompetitionShort(value){
+  const v=String(value||'').trim().toLowerCase();
+  if(/super league|liga 1|liga indonesia/.test(v)) return 'Super League';
+  if(/acl|afc champions league/.test(v)) return 'ACL 2';
+  if(/shopee|asean club championship/.test(v)) return 'Shopee Cup';
+  return 'Other';
+}
+function matchMergeKey(m){
+  const comp=normalizeCompetitionShort(m.competitionShort||m.competition);
+  return [m.date||'',String(m.home||'').trim().toLowerCase(),String(m.away||'').trim().toLowerCase(),comp].join('|');
+}
 function mergeMatchSets(fixtures, results){
+  // Only the three competitions belonging to the 2026/27 dashboard are
+  // displayed. Results from friendlies, President Cup, etc. must not inflate
+  // the season totals or be misclassified as Super League.
+  const allowed=new Set(['Super League','ACL 2','Shopee Cup']);
   const map = new Map();
-  [...fixtures, ...results].forEach(m=>{
-    const existing = map.get(m.id);
-    map.set(m.id, existing ? {...existing, ...Object.fromEntries(Object.entries(m).filter(([,v])=>v!=='' && v!==null && v!==undefined))} : m);
+  [...fixtures, ...results].forEach(raw=>{
+    const m={...raw,competitionShort:normalizeCompetitionShort(raw.competitionShort||raw.competition)};
+    if(!allowed.has(m.competitionShort)) return;
+    const key=matchMergeKey(m);
+    const existing=map.get(key);
+    map.set(key, existing ? {...existing, ...Object.fromEntries(Object.entries(m).filter(([,v])=>v!=='' && v!==null && v!==undefined))} : m);
   });
   return [...map.values()].sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
 }
