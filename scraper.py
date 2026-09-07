@@ -29,6 +29,8 @@ RESULTS_FILE = DATA_DIR / "results.xml"
 LAST_UPDATE_FILE = DATA_DIR / "last-update.xml"
 FORM_FILE = DATA_DIR / "form.xml"
 STANDINGS_FILE = DATA_DIR / "standings.xml"
+PLAYER_STATS_FILE = DATA_DIR / "player-stats.xml"
+MATCH_STATS_FILE = DATA_DIR / "match-stats.xml"
 
 TEAM_NAME = os.getenv("TEAM_NAME", "Persib Bandung")
 TEAM_ID = os.getenv("TEAM_ID", "KpBjbPK1")
@@ -74,7 +76,9 @@ class Match:
 
     @property
     def dt(self) -> datetime:
-        return datetime.fromisoformat(f"{self.date}T{self.time}:00")
+        """Return a sortable datetime, tolerating TBC/missing kickoff times."""
+        tm = self.time if re.fullmatch(r"\d{2}:\d{2}", self.time or "") else "00:00"
+        return datetime.fromisoformat(f"{self.date}T{tm}:00")
 
 
 def clean(value: str | None) -> str:
@@ -176,6 +180,7 @@ def read_existing(path: Path, root_name: str) -> dict[str, Match]:
             home=t("home"), away=t("away"), venue=t("venue"), city=t("city"),
             country=t("country") or "Indonesia", side=t("side"), status=t("status") or "scheduled",
             home_score=t("homeScore"), away_score=t("awayScore"), source_url=t("sourceUrl"),
+            home_team_url=t("homeTeamUrl"), away_team_url=t("awayTeamUrl"),
         )
     return result
 
@@ -202,6 +207,7 @@ def xml_write(path: Path, root_name: str, matches: Iterable[Match], source: str 
             ("home", m.home), ("away", m.away), ("venue", m.venue), ("city", m.city),
             ("country", m.country), ("side", m.side), ("status", m.status),
             ("homeScore", m.home_score), ("awayScore", m.away_score), ("sourceUrl", m.source_url),
+            ("homeTeamUrl", m.home_team_url), ("awayTeamUrl", m.away_team_url),
         ]
         for name, value in fields:
             if value != "":
@@ -287,7 +293,7 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME, year_mode: str = "fix
        record when Persib is one of the two teams and a date/time is present.
     """
     rows = await page.evaluate(
-        """
+        r"""
         () => {
           const out = [];
           const nodes = document.querySelectorAll('.event__match');
@@ -336,7 +342,7 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME, year_mode: str = "fix
     # still present in the DOM, so enrich the text-parser rows with team and
     # match URLs. This is required by the pre-match form/H2H collector.
     try:
-        links = await page.evaluate("""
+        links = await page.evaluate(r"""
         () => ({
           teams: Array.from(document.querySelectorAll('a[href*="/team/"]')).map(a => {
             const parent = a.closest('[id^="g_1_"], .event__match, article, div');
@@ -542,7 +548,7 @@ async def detail_metadata(page, url: str) -> dict[str, str]:
         await page.goto(url, wait_until="domcontentloaded", timeout=30000)
         await page.wait_for_timeout(700)
         return await page.evaluate(
-            """
+            r"""
             () => {
               const body = document.body?.innerText || '';
               const venueMatch = body.match(/Venue:\\s*([^\\n]+)/i);
@@ -676,6 +682,123 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
     return matches
 
 
+
+def player_stats_xml_write(categories: dict[str, list[dict]], source: str = "ileague-rendered") -> None:
+    root = ET.Element("playerStats", {"version":"1.0", "source":source, "competition":"BRI Super League 2026/27"})
+    for category in ("topScorer","topAssist","yellowCards","redCards"):
+        sec = ET.SubElement(root, category)
+        for row in categories.get(category, [])[:5]:
+            node = ET.SubElement(sec, "player")
+            for key in ("rank","name","value","club","url"):
+                v = clean(str(row.get(key, "")))
+                if v: ET.SubElement(node, key).text = v
+    PLAYER_STATS_FILE.write_bytes(minidom.parseString(ET.tostring(root,encoding="utf-8")).toprettyxml(indent="  ",encoding="utf-8"))
+
+
+def _parse_ranked_lines(lines: list[str], headings: tuple[str, ...]) -> dict[str, list[dict]]:
+    normalized = [clean(x) for x in lines if clean(x)]
+    result = {h: [] for h in headings}
+    current = None
+    for line in normalized:
+        low = line.lower()
+        found = next((h for h in headings if h.lower() in low), None)
+        if found:
+            current = found
+            continue
+        if current is None:
+            continue
+        if any(stop in low for stop in ("jumlah penonton", "ringkasan pekan", "klasemen", "selengkapnya", "berita", "match stats")):
+            if low.startswith(("jumlah penonton", "ringkasan pekan", "klasemen", "selengkapnya")):
+                current = None
+            continue
+        m = re.match(r"^(\d{1,2})\s+(.+?)\s+(\d+(?:\.\d+)?)$", line)
+        if not m:
+            continue
+        rank, name, value = m.groups()
+        if len(name) < 2 or name.isdigit():
+            continue
+        result[current].append({"rank":rank,"name":clean(name),"value":value})
+        if len(result[current]) >= 5:
+            current = None
+    return result
+
+
+async def scrape_player_leaders(page) -> dict[str, list[dict]]:
+    url = os.getenv("ILEAGUE_HOME_URL", "https://ileague.id/home/index/bri%20super%20league%202026-27")
+    print(f"Opening player leaders: {url}")
+    await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+    await page.wait_for_timeout(1600)
+    body = await page.locator("body").inner_text(timeout=10000)
+    lines = body.splitlines()
+    categories = _parse_ranked_lines(lines, ("TOP SCORER","TOP ASSIST","TOP YELLOW CARDS","TOP RED CARDS","TOP KARTU KUNING","TOP KARTU MERAH"))
+    # Normalize aliases used by the XML schema.
+    out = {
+        "topScorer": categories.get("TOP SCORER", []),
+        "topAssist": categories.get("TOP ASSIST", []),
+        "yellowCards": categories.get("TOP YELLOW CARDS", []) or categories.get("TOP KARTU KUNING", []),
+        "redCards": categories.get("TOP RED CARDS", []) or categories.get("TOP KARTU MERAH", []),
+    }
+    return out
+
+
+def match_stats_xml_write(match: Match | None, stats: dict[str, tuple[str,str]], source: str = "ileague-rendered") -> None:
+    root = ET.Element("matchStats", {"version":"1.0", "source":source})
+    if match:
+        node = ET.SubElement(root, "match", {"id":match.id})
+        for key, value in (("date",match.date),("home",match.home),("away",match.away),("sourceUrl",match.source_url)):
+            if value: ET.SubElement(node,key).text=value
+        for key, pair in stats.items():
+            item=ET.SubElement(node,"stat",{"key":key})
+            ET.SubElement(item,"home").text=str(pair[0])
+            ET.SubElement(item,"away").text=str(pair[1])
+    MATCH_STATS_FILE.write_bytes(minidom.parseString(ET.tostring(root,encoding="utf-8")).toprettyxml(indent="  ",encoding="utf-8"))
+
+
+async def scrape_match_stats(page, match: Match | None) -> None:
+    if not match or not match.source_url:
+        match_stats_xml_write(match, {})
+        return
+    # Prefer I.League's rendered match page because its public page exposes the
+    # exact stat labels used by the dashboard and does not require private APIs.
+    detail_url = match.source_url
+    if "flashscore.com" in detail_url:
+        # Match IDs are not reliably portable between providers; keep the
+        # existing Flashscore URL only as a fallback and publish an empty file
+        # rather than inventing statistics.
+        match_stats_xml_write(match, {})
+        return
+    await page.goto(detail_url, wait_until="domcontentloaded", timeout=60000)
+    await page.wait_for_timeout(1200)
+    body = await page.locator("body").inner_text(timeout=10000)
+    lines=[clean(x) for x in body.splitlines() if clean(x)]
+    labels={
+      "possession":"Penguasaan bola %",
+      "shotsOnTarget":"Tembakan ke gawang",
+      "shots":"Total tembakan",
+      "shotAccuracy":"Akurasi tembakan %",
+      "successfulPasses":"Umpan sukses",
+      "failedPasses":"Umpan gagal",
+      "corners":"Tendangan sudut",
+      "tackles":"Tekel sukses",
+      "offsides":"Offside",
+      "fouls":"Pelanggaran",
+      "yellowCards":"Kartu kuning",
+      "redCards":"Kartu merah",
+    }
+    stats={}
+    for key,label in labels.items():
+        try:
+            idx=next(i for i,x in enumerate(lines) if label.lower() in x.lower())
+        except StopIteration:
+            continue
+        # Values are commonly on the same line or represented by the next
+        # numeric lines around the label. Collect a short numeric window.
+        window=" ".join(lines[max(0,idx-2):min(len(lines),idx+5)])
+        nums=re.findall(r"(?<!\d)(\d+(?:\.\d+)?)(?!\d)", window)
+        if len(nums)>=2:
+            stats[key]=(nums[-2],nums[-1])
+    match_stats_xml_write(match, stats)
+
 async def scrape() -> tuple[list[Match], list[Match]]:
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=HEADLESS)
@@ -758,15 +881,27 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                 old=by_key.get(key)
                 by_key[key]=merge_metadata(m, old) if old else m
             all_matches=list(by_key.values())
-            all_matches.sort(key=lambda x: x.dt)
+            # Missing kickoff times are valid for TBC fixtures. Sort those by
+            # date first and use 00:00 only as a deterministic tie-breaker.
+            all_matches.sort(key=lambda x: (x.date, x.time or "00:00", x.id))
 
             counts={c:sum(1 for m in all_matches if m.competition_short==c) for c in TARGET_COMPETITIONS}
+            print(f"Season competition counts: {counts}")
             if any(counts.get(c,0) != expected for c,expected in EXPECTED_COUNTS.items()):
                 raise RuntimeError(f"Season count validation failed: {counts}; expected {EXPECTED_COUNTS}")
 
             fixtures = [m for m in all_matches if m.status != "finished"]
             results = [m for m in all_matches if m.status == "finished"]
-            next_match = next((m for m in all_matches if m.time and m.dt.timestamp() >= datetime.now().timestamp()), None)
+            now_local = datetime.now(ZoneInfo(TIMEZONE))
+            # A TBC kickoff still represents an upcoming fixture. Treat today's
+            # TBC match as next; for future dates no kickoff time is required.
+            next_match = next((
+                m for m in all_matches
+                if m.status != "finished" and (
+                    m.date > now_local.date().isoformat()
+                    or (m.date == now_local.date().isoformat() and (not m.time or m.dt >= now_local.replace(tzinfo=None)))
+                )
+            ), None)
             standings_page = await context.new_page()
             try:
                 try:
@@ -778,6 +913,33 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                     print(f"WARNING: standings scrape failed; keeping existing standings.xml: {exc}", file=sys.stderr)
             finally:
                 await standings_page.close()
+            player_page = await context.new_page()
+            try:
+                try:
+                    leaders = await scrape_player_leaders(player_page)
+                    player_stats_xml_write(leaders)
+                    print(f"Player leaders: scorer={len(leaders.get('topScorer',[]))}, assist={len(leaders.get('topAssist',[]))}, yellow={len(leaders.get('yellowCards',[]))}, red={len(leaders.get('redCards',[]))}")
+                except Exception as exc:
+                    print(f"WARNING: player leaders scrape failed; keeping existing player-stats.xml: {exc}", file=sys.stderr)
+            finally:
+                await player_page.close()
+            stats_page = await context.new_page()
+            try:
+                # Use the public I.League match detail URL for the most recent
+                # finished Persib match. If unavailable, retain the existing XML.
+                previous = next((m for m in sorted(results, key=lambda x: x.dt, reverse=True) if m.competition_short == "Super League"), None)
+                if previous:
+                    slug_date = previous.date
+                    home_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.home).strip("_").upper()
+                    away_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.away).strip("_").upper()
+                    previous.source_url = previous.source_url
+                    ileague_match = f"https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/{slug_date}/{home_slug}/{away_slug}"
+                    previous_for_stats = Match(**asdict(previous)); previous_for_stats.source_url = ileague_match
+                    await scrape_match_stats(stats_page, previous_for_stats)
+            except Exception as exc:
+                print(f"WARNING: match stats scrape failed; keeping existing match-stats.xml: {exc}", file=sys.stderr)
+            finally:
+                await stats_page.close()
             await update_prematch_insights(context, next_match, results)
             return fixtures, results
         finally:
@@ -884,7 +1046,7 @@ async def scrape_h2h(page, match_url: str, home_team: str, away_team: str, limit
                     await page.wait_for_timeout(700)
             if not clicked: break
         except Exception: break
-    rows = await page.evaluate("""
+    rows = await page.evaluate(r"""
     () => Array.from(document.querySelectorAll('.h2h__row')).map(row => ({
       date: row.querySelector('.h2h__date')?.innerText?.trim() || '',
       result: row.querySelector('.h2h__regularTimeResult, .h2h__result')?.innerText?.trim() || '',
@@ -916,7 +1078,7 @@ async def find_team_url_from_match_page(page, match_url: str, team_name: str) ->
     try:
         await page.goto(match_url, wait_until="domcontentloaded", timeout=60000)
         await page.wait_for_timeout(1200)
-        data = await page.evaluate("""
+        data = await page.evaluate(r"""
         (target) => {
           const norm = s => (s || '').replace(/\s+/g,' ').trim().toLowerCase();
           const links = Array.from(document.querySelectorAll('a[href*="/team/"]')).map(a => ({href:a.href,text:(a.innerText||a.textContent||a.getAttribute('title')||a.querySelector('img')?.alt||'').replace(/\s+/g,' ').trim()}));
@@ -964,7 +1126,7 @@ async def scrape_standings(page) -> list[dict]:
     print(f"Opening standings: {url}")
     await page.goto(url, wait_until="domcontentloaded", timeout=60000)
     await page.wait_for_timeout(1800)
-    rows = await page.evaluate("""
+    rows = await page.evaluate(r"""
     () => {
       const tables = Array.from(document.querySelectorAll('table'));
       const norm = s => (s || '').replace(/\s+/g,' ').trim();
@@ -1010,8 +1172,10 @@ def validate(fixtures: list[Match], results: list[Match]) -> None:
     for m in all_matches:
         if normalize_team_text(m.home).lower() in {"pen", "pen.", "penalty", "penalties"} or normalize_team_text(m.away).lower() in {"pen", "pen.", "penalty", "penalties"}:
             raise RuntimeError(f"Synthetic penalty row slipped through: {m.id} | {m.home} - {m.away}")
-        if not m.home or not m.away or not m.date or not m.time:
+        if not m.home or not m.away or not m.date:
             raise RuntimeError(f"Invalid match record: {asdict(m)}")
+        if m.status == "finished" and not m.time:
+            raise RuntimeError(f"Finished match has no kickoff time: {m.id} | {m.date} {m.home} - {m.away}")
         if TEAM_NAME.lower() not in {m.home.lower(), m.away.lower()}:
             raise RuntimeError(f"Non-Persib record slipped through: {m.home} - {m.away}")
         if m.status == "finished" and (m.home_score == "" or m.away_score == ""):

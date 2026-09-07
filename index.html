@@ -194,6 +194,15 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
 .standings-table .form-mini{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:900}
 .standings-table .form-mini.w{background:#eaf7ef;color:#23784a}.standings-table .form-mini.d{background:#f1f3f6;color:#687180}.standings-table .form-mini.l{background:#fff0f0;color:#b24747}
 @media(max-width:600px){.standings-card{padding:14px}.standings-table{font-size:11px}.standings-table td{padding:9px 7px}}
+
+/* ===== V13 approved re-layout ===== */
+.refresh-meta{font-size:11px;color:#7e8796;margin-top:5px;font-weight:700}.refresh-value{font-size:16px;color:var(--navy);font-weight:900;margin-top:2px}
+.stats-grid{gap:14px}.stat-card{padding:16px}.stat-logo{width:54px;height:54px;flex-basis:54px;border-radius:14px}.stat-num{font-size:30px}
+.standings-columns{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.85fr);gap:18px;align-items:start}.subsection-title{font-size:12px;text-transform:uppercase;letter-spacing:.8px;font-weight:900;color:#7b8493;margin:0 0 9px}.standings-main{min-width:0}.player-leaders{display:grid;grid-template-columns:1fr 1fr;gap:10px}.leader-card{border:1px solid #edf0f4;border-radius:13px;padding:12px;background:#fbfcfe}.leader-title{font-size:12px;font-weight:900;color:#26344d;margin-bottom:8px}.leader-list{display:grid;gap:5px}.leader-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:6px;align-items:center;padding:6px 7px;background:#fff;border-radius:8px;font-size:10px}.leader-rank{color:#9aa2af;font-weight:900}.leader-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:750}.leader-empty{font-size:10px;color:#9aa2af;padding:8px 0}.accordion-section{padding:0;overflow:hidden}.accordion-trigger{width:100%;border:0;background:#fff;padding:17px 18px;display:flex;align-items:center;justify-content:space-between;text-align:left;color:var(--ink)}.accordion-title{display:block;font-size:18px;font-weight:900;color:var(--navy)}.accordion-sub{display:block;font-size:11px;color:#8b94a2;margin-top:3px}.accordion-chevron{font-size:22px;color:#7e8796;transition:transform .18s ease}.accordion-section.open .accordion-chevron{transform:rotate(180deg)}.accordion-content{display:none;padding:0 18px 18px}.accordion-section.open .accordion-content{display:block}.accordion-section .insight-grid{padding-top:2px}.match-stat-table{border:1px solid #edf0f4;border-radius:12px;overflow:hidden}.match-stat-row{display:grid;grid-template-columns:90px 1fr 90px;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid #edf0f4;font-size:11px;text-align:center}.match-stat-row:last-child{border-bottom:0}.match-stat-row span{color:#7e8796}.match-stat-row strong{color:#23334e}.schedule-layout{display:block}.standings-table td.club{display:flex;align-items:center;gap:8px}.standings-table td.club .team-badge{vertical-align:middle}
+@media(max-width:1180px){.standings-columns{grid-template-columns:1fr}.player-leaders{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.player-leaders{grid-template-columns:1fr 1fr}.refresh-value{font-size:15px}}
+@media(max-width:600px){.page-head{gap:12px}.today-pill{text-align:left;width:100%}.refresh-value{font-size:14px}.stat-logo{width:48px;height:48px;flex-basis:48px}.stat-num{font-size:25px}.standings-columns{grid-template-columns:1fr}.player-leaders{grid-template-columns:1fr 1fr}.accordion-title{font-size:16px}.accordion-sub{font-size:10px}.accordion-trigger{padding:15px 14px}.accordion-content{padding:0 14px 14px}.match-stat-row{grid-template-columns:60px 1fr 60px;font-size:10px}}
+@media(max-width:380px){.player-leaders{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -222,8 +231,8 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
 <main class="main" id="top">
 <div class="container">
   <div class="page-head">
-    <div><div class="eyebrow">Persib Bandung · Season 2026/27</div><h1>Match Center</h1><div class="head-sub">Jadwal pertandingan yang ringkas, jelas, dan mudah dipindai.</div></div>
-    <div class="today-pill"><div>Hari ini <strong id="todayLabel">—</strong></div><div class="refresh-meta">Last data refresh <strong id="lastRefreshLabel">—</strong></div></div>
+    <div><div class="eyebrow">Persib Bandung · Season 2026/27</div><h1>Match Center</h1></div>
+    <div class="today-pill"><div>Hari ini <strong id="todayLabel">—</strong></div><div class="refresh-meta">Last data refresh</div><div class="refresh-value" id="lastRefreshLabel">—</div></div>
   </div>
 
   <div class="stats-grid">
@@ -242,54 +251,53 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
     <div class="countdown"><div><div class="countdown-label">Kick-off countdown</div><div id="countdownNote" style="font-size:9px;color:rgba(255,255,255,.48);margin-top:3px">—</div></div><div class="timer" id="timer"></div></div>
   </section>
 
-  <section class="prematch-insights" id="prematchInsights" hidden>
-    <div class="insight-head"><div><div class="insight-title">📊 Statistik Pertandingan Berikutnya</div><div class="insight-sub" id="insightSub">Form 5 pertandingan terakhir &amp; head to head</div></div></div>
-    <div class="insight-grid">
-      <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="homeFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="homeFormStrip"></div><div class="form-summary" id="homeFormSummary"></div><div class="recent-list" id="homeRecentList"></div></div>
-      <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="awayFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="awayFormStrip"></div><div class="form-summary" id="awayFormSummary"></div><div class="recent-list" id="awayRecentList"></div></div>
-      <div class="insight-panel h2h"><div class="insight-panel-title"><span>🤝 Head to Head</span><span>5 pertemuan terakhir</span></div><div class="h2h-list" id="h2hList"></div><div class="h2h-note" id="h2hNote"></div></div>
+  <section class="section standings-card" id="standings">
+    <div class="section-head"><div><h2 class="section-title">🏆 BRI Super League</h2><div class="section-meta" id="standingsMeta">Klasemen &amp; statistik pemain</div></div><a class="panel-link" href="https://ileague.id/table/index/BRI_SUPER_LEAGUE_2026-27" target="_blank" rel="noopener">Lihat sumber resmi →</a></div>
+    <div class="standings-columns">
+      <div class="standings-main"><div class="subsection-title">Klasemen Liga</div><div class="standings-wrap"><table class="standings-table"><thead><tr><th>#</th><th>Klub</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead><tbody id="standingsBody"></tbody></table></div></div>
+      <div class="player-leaders" id="playerLeaders"></div>
     </div>
-    <div class="insight-source">Data diperbarui otomatis oleh GitHub Actions. Sumber utama: Flashscore · Referensi: I.League / Persib.co.id / Liga.id.</div>
+  </section>
+
+
+  <section class="prematch-insights accordion-section" id="prematchInsights" hidden>
+    <button class="accordion-trigger" type="button" aria-expanded="false"><span><span class="accordion-title">📊 Statistik Pertandingan Berikutnya</span><span class="accordion-sub" id="insightSub">5 pertandingan terakhir &amp; head to head</span></span><span class="accordion-chevron">⌄</span></button>
+    <div class="accordion-content">
+      <div class="insight-grid">
+        <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="homeFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="homeFormStrip"></div><div class="form-summary" id="homeFormSummary"></div><div class="recent-list" id="homeRecentList"></div></div>
+        <div class="insight-panel"><div class="insight-panel-title"><span class="form-team" id="awayFormTitle">—</span><span>5 terakhir</span></div><div class="form-strip" id="awayFormStrip"></div><div class="form-summary" id="awayFormSummary"></div><div class="recent-list" id="awayRecentList"></div></div>
+        <div class="insight-panel h2h"><div class="insight-panel-title"><span>🤝 Head to Head</span><span>5 pertemuan terakhir</span></div><div class="h2h-list" id="h2hList"></div><div class="h2h-note" id="h2hNote"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section accordion-section" id="previousMatchStats">
+    <button class="accordion-trigger" type="button" aria-expanded="false"><span><span class="accordion-title">📈 Statistik Pertandingan Sebelumnya</span><span class="accordion-sub match-stats-title">Total shots, shots on target, possession, passing, corners, cards &amp; lainnya</span></span><span class="accordion-chevron">⌄</span></button>
+    <div class="accordion-content"></div>
+  </section>
+
+  <section class="section accordion-section" id="upcomingFixtures">
+    <button class="accordion-trigger" type="button" aria-expanded="false"><span><span class="accordion-title">📅 Upcoming Fixtures</span><span class="accordion-sub" id="upcomingMeta">Pertandingan mendatang</span></span><span class="accordion-chevron">⌄</span></button>
+    <div class="accordion-content"><div class="match-list" id="upcomingList"></div><div class="upcoming-footer" id="upcomingFooter" hidden><button id="showAllMonth">Tampilkan semua pertandingan bulan ini ↓</button></div></div>
+  </section>
+
+  <section class="section accordion-section" id="calendar">
+    <button class="accordion-trigger" type="button" aria-expanded="false"><span><span class="accordion-title">🗓 Kalender Pertandingan</span><span class="accordion-sub">Satu bulan · pilihan bulan &amp; tahun tetap tersedia</span></span><span class="accordion-chevron">⌄</span></button>
+    <div class="accordion-content">
+      <div class="cal-toolbar"><div class="cal-controls"><button class="cal-nav-btn" id="prevMonth" aria-label="Bulan sebelumnya">‹</button><select class="cal-select" id="calMonthSelect" aria-label="Pilih bulan"></select><select class="cal-select" id="calYearSelect" aria-label="Pilih tahun"></select><button class="cal-nav-btn" id="nextMonth" aria-label="Bulan berikutnya">›</button></div><div class="cal-range" id="calRange">—</div></div>
+      <div class="calendar-three" id="calendarGrid"></div><div class="legend"><span class="legend-item"><img data-comp-logo="sl" alt=""> BRI Super League</span><span class="legend-item"><img data-comp-logo="acl" alt=""> ACL Two</span><span class="legend-item"><img data-comp-logo="shopee" alt=""> Shopee Cup</span><span class="legend-item legend-home">🏠 Home</span><span class="legend-item legend-away">✈️ Away</span></div>
+    </div>
   </section>
 
   <section class="section" id="schedule">
-    <div class="section-head"><div><h2 class="section-title">Filter Jadwal Pertandingan</h2><div class="section-meta">Gunakan filter untuk mempersempit jadwal tanpa mengubah kalender.</div></div><button class="clear-btn" id="clearSearch" type="button">Reset filter</button></div>
+    <div class="section-head"><div><h2 class="section-title">Jadwal Pertandingan</h2><div class="section-meta" id="resultMeta">Filter &amp; daftar seluruh pertandingan mendatang</div></div><button class="clear-btn" id="clearSearch" type="button">Reset filter</button></div>
     <div class="filter-panel">
-      <div class="filter-row"><div class="filter-label">Kompetisi</div><div class="filter-group" id="filterButtons">
-        <button class="filter-btn active" data-filter="ALL">Semua kompetisi</button>
-        <button class="filter-btn sl" data-filter="Super League"><img class="mini-comp-logo" data-comp-logo="sl" alt="">BRI Super League</button>
-        <button class="filter-btn acl" data-filter="ACL 2"><img class="mini-comp-logo" data-comp-logo="acl" alt="">ACL Two</button>
-        <button class="filter-btn shopee" data-filter="Shopee Cup"><img class="mini-comp-logo" data-comp-logo="shopee" alt="">Shopee Cup</button>
-      </div></div>
-      <div class="filter-row"><div class="filter-label">Home / Away</div><div class="filter-group" id="homeAwayButtons">
-        <button class="filter-btn active" data-homeaway="ALL">Semua lokasi</button><button class="filter-btn home" data-homeaway="Home">🏠 Home</button><button class="filter-btn away" data-homeaway="Away">✈️ Away</button>
-      </div><label class="search-wrap"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="Cari lawan, stadion, kota, kompetisi..."></label></div>
+      <div class="filter-row"><div class="filter-label">Kompetisi</div><div class="filter-group" id="filterButtons"><button class="filter-btn active" data-filter="ALL">Semua kompetisi</button><button class="filter-btn sl" data-filter="Super League"><img class="mini-comp-logo" data-comp-logo="sl" alt="">BRI Super League</button><button class="filter-btn acl" data-filter="ACL 2"><img class="mini-comp-logo" data-comp-logo="acl" alt="">ACL Two</button><button class="filter-btn shopee" data-filter="Shopee Cup"><img class="mini-comp-logo" data-comp-logo="shopee" alt="">Shopee Cup</button></div></div>
+      <div class="filter-row"><div class="filter-label">Home / Away</div><div class="filter-group" id="homeAwayButtons"><button class="filter-btn active" data-homeaway="ALL">Semua lokasi</button><button class="filter-btn home" data-homeaway="Home">🏠 Home</button><button class="filter-btn away" data-homeaway="Away">✈️ Away</button></div><label class="search-wrap"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="Cari lawan, stadion, kota, kompetisi..."></label></div>
     </div>
+    <div class="match-list" id="matchList"></div>
   </section>
 
-  <div class="schedule-layout">
-    <section class="upcoming-card">
-      <div class="panel-head"><div><h2 class="panel-title">Upcoming Fixtures</h2><div class="panel-sub" id="upcomingMeta">Pertandingan bulan ini</div></div><button class="panel-link" id="viewAllMonth">Lihat semua jadwal →</button></div>
-      <div class="match-list" id="upcomingList"></div>
-      <div class="upcoming-footer" id="upcomingFooter" hidden><button id="showAllMonth">Tampilkan semua pertandingan bulan ini ↓</button></div>
-    </section>
-
-    <section class="calendar-card" id="calendar">
-      <div class="panel-head"><div><h2 class="panel-title">Kalender Pertandingan</h2><div class="panel-sub">Tampilkan satu bulan agar tanggal dan jadwal tetap fokus.</div></div><div class="cal-range" id="calRange">—</div></div>
-      <div class="cal-toolbar"><div class="cal-controls"><button class="cal-nav-btn" id="prevMonth" aria-label="Bulan sebelumnya">‹</button><select class="cal-select" id="calMonthSelect" aria-label="Pilih bulan"></select><select class="cal-select" id="calYearSelect" aria-label="Pilih tahun"></select><button class="cal-nav-btn" id="nextMonth" aria-label="Bulan berikutnya">›</button></div></div>
-      <div class="calendar-three" id="calendarGrid"></div>
-      <div class="legend">
-        <span class="legend-item"><img data-comp-logo="sl" alt=""> BRI Super League</span><span class="legend-item"><img data-comp-logo="acl" alt=""> ACL Two</span><span class="legend-item"><img data-comp-logo="shopee" alt=""> Shopee Cup</span><span class="legend-item legend-home">🏠 Home</span><span class="legend-item legend-away">✈️ Away</span>
-      </div>
-    </section>
-  </div>
-
-  <section class="standings-card" id="standings">
-  <div class="section-head"><div><h2 class="section-title">🏆 Klasemen BRI Super League</h2><div class="section-meta" id="standingsMeta">Klasemen diperbarui otomatis dari I.League.</div></div><a class="panel-link" href="https://ileague.id/table/index/BRI_SUPER_LEAGUE_2026-27" target="_blank" rel="noopener">Lihat sumber resmi →</a></div>
-  <div class="standings-wrap"><table class="standings-table"><thead><tr><th>#</th><th>Klub</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead><tbody id="standingsBody"></tbody></table></div>
-</section>
-
-<div class="section" id="allSchedule" style="margin-top:18px"><div class="section-head"><div><h2 class="section-title">Semua Jadwal</h2><div class="section-meta" id="resultMeta">—</div></div></div><div class="match-list" id="matchList"></div></div>
   <div class="footer">⚽ <strong>PERSIB BANDUNG 2026/27</strong> · Jadwal dapat berubah mengikuti pengumuman resmi kompetisi.<div class="data-status" id="dataStatus">Memuat data lokal XML…</div><div class="source-note">Primary source: <span>Flashscore</span> · References: <span>I.League</span> · <span>Persib.co.id</span> · <span>Liga.id</span></div></div>
 </div>
 </main></div>
@@ -303,6 +311,8 @@ const COMP_LOGOS = {"sl":{"short":"BRI Super League","data":"data:image/png;base
 // =====================================================
 let matches = [];
 let prematchData = null;
+let playerStatsData = null;
+let matchStatsData = null;
 
 const DATA_FILES = {
   fixtures: './data/fixtures.xml',
@@ -310,7 +320,9 @@ const DATA_FILES = {
   form: './data/form.xml',
   team: './data/team.xml',
   lastUpdate: './data/last-update.xml',
-  standings: './data/standings.xml'
+  standings: './data/standings.xml',
+  playerStats: './data/player-stats.xml',
+  matchStats: './data/match-stats.xml'
 };
 
 async function fetchLocalXML(path){
@@ -379,12 +391,22 @@ function parseStandingsXML(xml){
   if(!xml) return null;
   const text=n=>n?.textContent?.trim()||"";
   return [...xml.querySelectorAll('standings > team')].map(t=>({
-    position:Number(t.getAttribute('position')||text(t.querySelector('position'))||0),
-    club:text(t.querySelector('club')),
-    played:Number(text(t.querySelector('played'))||0), wins:Number(text(t.querySelector('wins'))||0), draws:Number(text(t.querySelector('draws'))||0), losses:Number(text(t.querySelector('losses'))||0),
-    gf:Number(text(t.querySelector('gf'))||0), ga:Number(text(t.querySelector('ga'))||0), gd:Number(text(t.querySelector('gd'))||0), points:Number(text(t.querySelector('points'))||0),
-    form:text(t.querySelector('form'))
+    position:Number(t.getAttribute('position')||text(t.querySelector('position'))||0),club:text(t.querySelector('club')),
+    played:Number(text(t.querySelector('played'))||0),wins:Number(text(t.querySelector('wins'))||0),draws:Number(text(t.querySelector('draws'))||0),losses:Number(text(t.querySelector('losses'))||0),
+    gf:Number(text(t.querySelector('gf'))||0),ga:Number(text(t.querySelector('ga'))||0),gd:Number(text(t.querySelector('gd'))||0),points:Number(text(t.querySelector('points'))||0),form:text(t.querySelector('form'))
   })).filter(x=>x.club).sort((a,b)=>a.position-b.position);
+}
+function parsePlayerStatsXML(xml){
+  if(!xml) return null;
+  const read=key=>[...xml.querySelectorAll(`${key} > player`)].map(p=>({rank:Number(xmlText(p,'rank','0')),name:xmlText(p,'name'),value:xmlText(p,'value'),club:xmlText(p,'club'),url:xmlText(p,'url')})).filter(x=>x.name);
+  return {topScorer:read('topScorer'),topAssist:read('topAssist'),yellowCards:read('yellowCards'),redCards:read('redCards')};
+}
+function parseMatchStatsXML(xml){
+  if(!xml) return null;
+  const m=xml.querySelector('match'); if(!m) return null;
+  const stats={};
+  m.querySelectorAll('stat').forEach(s=>{const k=s.getAttribute('key');if(k)stats[k]={home:xmlText(s,'home'),away:xmlText(s,'away')}});
+  return {date:xmlText(m,'date'),home:xmlText(m,'home'),away:xmlText(m,'away'),stats};
 }
 function renderStandings(){
   const body=$('standingsBody'); if(!body) return;
@@ -392,10 +414,19 @@ function renderStandings(){
   $('standingsMeta').textContent=rows.length?`Update otomatis · ${rows.length} klub · Sumber: I.League`:'Menunggu data klasemen dari scraper.';
   body.innerHTML=rows.length?rows.map(r=>{
     const form=String(r.form||'').split('').filter(x=>/[WDL]/i.test(x)).slice(-5);
-    return `<tr class="${/persib/i.test(r.club)?'persib':''}"><td class="pos">${r.position}</td><td class="club">${teamBadgeHtml(r.club,22)}${escapeHtml(r.club)}</td><td>${r.played}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.gd}</td><td><strong>${r.points}</strong></td><td><span class="form-pill">${form.map(x=>`<span class="form-mini ${x.toLowerCase()}">${x.toUpperCase()}</span>`).join('')}</span></td></tr>`
+    return `<tr class="${/persib/i.test(r.club)?'persib':''}"><td class="pos">${r.position}</td><td class="club">${teamBadgeHtml(r.club,24)}${escapeHtml(r.club)}</td><td>${r.played}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.gd}</td><td><strong>${r.points}</strong></td><td><span class="form-pill">${form.map(x=>`<span class="form-mini ${x.toLowerCase()}">${x.toUpperCase()}</span>`).join('')}</span></td></tr>`
   }).join(''):'<tr><td colspan="11" style="padding:18px;color:#8d96a6">Data klasemen belum tersedia.</td></tr>';
+  renderPlayerLeaders();
 }
-
+function playerLeaderHtml(title,items,icon){
+  if(!items?.length) return `<div class="leader-card"><div class="leader-title">${icon} ${title}</div><div class="leader-empty">Data belum tersedia.</div></div>`;
+  return `<div class="leader-card"><div class="leader-title">${icon} ${title}</div><div class="leader-list">${items.slice(0,5).map((x,i)=>`<div class="leader-row"><span class="leader-rank">${x.rank||i+1}</span><span class="leader-name">${escapeHtml(x.name)}</span><strong>${escapeHtml(x.value)}</strong></div>`).join('')}</div></div>`;
+}
+function renderPlayerLeaders(){
+  const box=$('playerLeaders'); if(!box)return;
+  const d=playerStatsData||{};
+  box.innerHTML=[playerLeaderHtml('Top Scorer',d.topScorer,'⚽'),playerLeaderHtml('Top Assist',d.topAssist,'🅰️'),playerLeaderHtml('Top Yellow Cards',d.yellowCards,'🟨'),playerLeaderHtml('Top Red Cards',d.redCards,'🟥')].join('');
+}
 function parsePrematchXML(xml){
   if(!xml) return null;
   const text=n=>n?.textContent?.trim()||"";
@@ -406,9 +437,25 @@ function parsePrematchXML(xml){
 }
 function formDots(items){return items.map(x=>`<span class="form-dot ${String(x.outcome||'').toLowerCase()}" title="${escapeHtml(x.home)} ${x.homeScore}-${x.awayScore} ${escapeHtml(x.away)}">${escapeHtml(x.outcome||'?')}</span>`).join('')}
 function formSummary(items){const w=items.filter(x=>x.outcome==='W').length,d=items.filter(x=>x.outcome==='D').length,l=items.filter(x=>x.outcome==='L').length;return `${w} Menang · ${d} Seri · ${l} Kalah`}
-function recentListHtml(items){return items.map(x=>`<div class="recent-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="recent-teams">${escapeHtml(x.home)} ${x.penHomeScore&&x.penAwayScore?'':''} vs ${escapeHtml(x.away)}</div><div class="recent-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
+function recentListHtml(items){return items.map(x=>`<div class="recent-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="recent-teams">${escapeHtml(x.home)} vs ${escapeHtml(x.away)}</div><div class="recent-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
 function h2hListHtml(items){return items.map(x=>`<div class="h2h-item"><div class="recent-date">${formatDateID(x.date)}</div><div class="h2h-teams">${escapeHtml(x.home)} vs ${escapeHtml(x.away)}</div><div class="h2h-score">${escapeHtml(x.homeScore)}–${escapeHtml(x.awayScore)}</div></div>`).join('')}
-function renderPrematchInsights(){const next=getNextMatch();const box=$('prematchInsights');if(!next){box.hidden=true;return}const teams=prematchData?.teams||[];const home=teams.find(t=>t.name.toLowerCase()===next.home.toLowerCase())||teams[0];const away=teams.find(t=>t.name.toLowerCase()===next.away.toLowerCase())||teams[1];$('insightSub').textContent=`${next.home} vs ${next.away} · Form 5 pertandingan terakhir & head to head`;$('homeFormTitle').innerHTML=teamBadgeHtml(next.home,20)+`<span>${escapeHtml(next.home)}</span>`;$('awayFormTitle').innerHTML=teamBadgeHtml(next.away,20)+`<span>${escapeHtml(next.away)}</span>`;const hm=home?.matches||[],am=away?.matches||[],hh=prematchData.h2h||[];$('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';$('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L pada form dihitung dari sudut pandang masing-masing tim. Untuk adu penalti, pemenang shootout dihitung sebagai W.':'H2H akan muncul setelah scraper memperoleh halaman pertandingan detail.';box.hidden=false}
+function renderPrematchInsights(){
+  const next=getNextMatch(),box=$('prematchInsights'); if(!next){box.hidden=true;return}
+  const teams=prematchData?.teams||[],home=teams.find(t=>t.name.toLowerCase()===next.home.toLowerCase()),away=teams.find(t=>t.name.toLowerCase()===next.away.toLowerCase());
+  $('insightSub').textContent=`${next.home} vs ${next.away} · 5 pertandingan terakhir & head to head`;
+  $('homeFormTitle').innerHTML=teamBadgeHtml(next.home,20)+`<span>${escapeHtml(next.home)}</span>`;$('awayFormTitle').innerHTML=teamBadgeHtml(next.away,20)+`<span>${escapeHtml(next.away)}</span>`;
+  const hm=home?.matches||[],am=away?.matches||[],hh=prematchData?.h2h||[];
+  $('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';
+  $('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L dihitung dari sudut pandang masing-masing tim.':'H2H akan muncul setelah scraper memperoleh data pertandingan.';box.hidden=false;
+}
+function renderPreviousMatchStats(){
+  const box=$('previousMatchStats'); if(!box)return;
+  const d=matchStatsData;
+  if(!d||!Object.keys(d.stats||{}).length){box.querySelector('.accordion-content').innerHTML='<div class="form-empty">Statistik pertandingan sebelumnya belum tersedia.</div>';return}
+  box.querySelector('.match-stats-title').textContent=`${d.home} vs ${d.away} · ${formatDateID(d.date)}`;
+  const labels={possession:'Penguasaan bola',shotsOnTarget:'Tembakan ke gawang',shots:'Total tembakan',shotAccuracy:'Akurasi tembakan',successfulPasses:'Umpan sukses',failedPasses:'Umpan gagal',corners:'Tendangan sudut',tackles:'Tekel sukses',offsides:'Offside',fouls:'Pelanggaran',yellowCards:'Kartu kuning',redCards:'Kartu merah'};
+  box.querySelector('.accordion-content').innerHTML=`<div class="match-stat-table">${Object.entries(labels).filter(([k])=>d.stats[k]).map(([k,label])=>`<div class="match-stat-row"><strong>${escapeHtml(d.stats[k].home)}</strong><span>${label}</span><strong>${escapeHtml(d.stats[k].away)}</strong></div>`).join('')}</div>`;
+}
 
 function normalizeCompetitionShort(value){
   const v=String(value||'').trim().toLowerCase();
@@ -440,17 +487,21 @@ function mergeMatchSets(fixtures, results){
 async function loadLocalData(){
   setDataStatus('Memuat data lokal XML…', 'loading');
   try{
-    const [fixturesXML, resultsXML, formXML, standingsXML] = await Promise.all([
+    const [fixturesXML, resultsXML, formXML, standingsXML, playerStatsXML, matchStatsXML] = await Promise.all([
       fetchLocalXML(DATA_FILES.fixtures),
       fetchLocalXML(DATA_FILES.results).catch(()=>null),
       fetchLocalXML(DATA_FILES.form).catch(()=>null),
-      fetchLocalXML(DATA_FILES.standings).catch(()=>null)
+      fetchLocalXML(DATA_FILES.standings).catch(()=>null),
+      fetchLocalXML(DATA_FILES.playerStats).catch(()=>null),
+      fetchLocalXML(DATA_FILES.matchStats).catch(()=>null)
     ]);
 
     const fixtures = parseLocalMatches(fixturesXML);
     const results = resultsXML ? parseLocalMatches(resultsXML) : [];
     prematchData = formXML ? parsePrematchXML(formXML) : null;
     standingsData = standingsXML ? parseStandingsXML(standingsXML) : [];
+    playerStatsData = playerStatsXML ? parsePlayerStatsXML(playerStatsXML) : null;
+    matchStatsData = matchStatsXML ? parseMatchStatsXML(matchStatsXML) : null;
     matches = mergeMatchSets(fixtures, results);
 
     if(!matches.length) throw new Error('Tidak ada pertandingan valid di fixtures.xml/results.xml.');
@@ -492,6 +543,8 @@ function renderEmptyState(){
   $('heroComp').textContent='Data tidak tersedia'; $('heroDate').textContent='—'; $('heroHome').textContent='—'; $('heroAway').textContent='—'; $('heroTime').textContent='—'; $('heroVenue').textContent='🏟 —'; $('heroCity').textContent='📍 —'; $('heroSide').textContent='—'; $('timer').innerHTML='';
   $('upcomingList').innerHTML='<div class="empty">Data pertandingan belum dapat dimuat dari XML lokal.</div>';
   $('matchList').innerHTML='<div class="empty">Data pertandingan belum dapat dimuat dari XML lokal.</div>';
+  $('standingsBody').innerHTML='<tr><td colspan="11" style="padding:18px;color:#8d96a6">Data klasemen belum tersedia.</td></tr>';
+  $('playerLeaders').innerHTML='<div class="leader-empty">Data statistik pemain belum tersedia.</div>';
   $('calendarGrid').innerHTML='<div class="empty">Kalender belum dapat dibuat karena data XML tidak tersedia. Pastikan folder <code>data/</code> ikut ter-publish di GitHub Pages.</div>';
 }
 
@@ -533,7 +586,7 @@ const $=id=>document.getElementById(id);
 function escapeHtml(str){return String(str??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s]))}
 function teamInitials(name){const a=String(name).replace(/[^A-Za-z0-9À-ÿ ]/g," ").trim().split(/\s+/);return(a[0]?.[0]||"")+((a[1]?.[0])||"")}
 function teamColor(name){let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;return`hsl(${h%360} 52% 42%)`}
-function teamBadgeHtml(name,size=22){const url=TEAM_LOGOS[name];if(url)return`<span class="team-badge" data-team="${escapeHtml(name)}" style="width:${size}px;height:${size}px"><img src="${url}" alt="${escapeHtml(name)}" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="badge-fallback" style="display:none;width:100%;height:100%;background:${teamColor(name)}">${teamInitials(name)}</span></span>`;return`<span class="team-badge badge-fallback" style="width:${size}px;height:${size}px;background:${teamColor(name)}">${teamInitials(name)}</span>`}
+function teamBadgeHtml(name,size=22){const url=TEAM_LOGOS[name]||TEAM_LOGOS[Object.keys(TEAM_LOGOS).find(k=>k.toLowerCase()===String(name).toLowerCase())||""];if(url)return`<span class="team-badge" data-team="${escapeHtml(name)}" style="width:${size}px;height:${size}px"><img src="${url}" alt="${escapeHtml(name)}" referrerpolicy="no-referrer" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="badge-fallback" style="display:none;width:100%;height:100%;background:${teamColor(name)}">${teamInitials(name)}</span></span>`;return`<span class="team-badge badge-fallback" style="width:${size}px;height:${size}px;background:${teamColor(name)}">${teamInitials(name)}</span>`}
 function compClass(m){return m.competitionShort==="Super League"?"sl":m.competitionShort==="ACL 2"?"acl":m.competitionShort==="Shopee Cup"?"shopee":"other"}
 function compLogo(className){return COMP_LOGOS[className]?.data||""}
 function compName(className){return COMP_LOGOS[className]?.short||(className==="other"?"Lainnya":"")}
@@ -560,12 +613,15 @@ function buildCalendar(){const grid=$('calendarGrid');const d=new Date(calYear,c
 function buildGCalUrl(m){const title=encodeURIComponent("⚽ "+m.home+" vs "+m.away),details=encodeURIComponent(`Competition: ${m.competition}\nMatchday: ${m.matchday}\nHome/Away: ${m.side}\nVenue: ${venueLabel(m)}\nCity: ${cityLabel(m)}`),location=encodeURIComponent([m.venue,m.city,m.country].filter(Boolean).join(", "));if(!m.time){const next=new Date(dateObj(m.date).getTime()+86400000),dateOnly=m.date.replaceAll("-",""),nd=next.getFullYear()+String(next.getMonth()+1).padStart(2,"0")+String(next.getDate()).padStart(2,"0");return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateOnly}/${nd}&details=${details}%0A%0AKick-off%3A%20TBC&location=${location}`}const[y,mo,da]=m.date.split("-").map(Number),[hh,mm]=m.time.split(":").map(Number),start=new Date(Date.UTC(y,mo-1,da,hh-7,mm)),end=new Date(start.getTime()+7200000),fmt=d=>d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,"0")+String(d.getUTCDate()).padStart(2,"0")+"T"+String(d.getUTCHours()).padStart(2,"0")+String(d.getUTCMinutes()).padStart(2,"0")+"00Z";return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`}
 function openModal(list){$('modalContent').innerHTML=list.map(m=>`<div class="modal-head"><div class="modal-comp">${escapeHtml(m.competition)}</div><div class="modal-day">${escapeHtml(m.matchday||"")}</div></div><div class="modal-teams"><div class="modal-team">${teamBadgeHtml(m.home,42)}<div>${escapeHtml(m.home)}</div></div><div class="modal-vs">VS</div><div class="modal-team">${teamBadgeHtml(m.away,42)}<div>${escapeHtml(m.away)}</div></div></div><div class="detail"><div class="detail-row"><span>📅</span><span>${formatDateID(m.date,true)}</span></div><div class="detail-row"><span>🕐</span><span>${timeLabel(m)}</span></div><div class="detail-row"><span>🏟</span><span>${escapeHtml(venueLabel(m))}</span></div><div class="detail-row"><span>📍</span><span>${escapeHtml(cityLabel(m))}</span></div><div class="detail-row"><span>${m.side==="Home"?'🏠':'✈️'}</span><span>${m.side==="Home"?'Kandang':'Tandang'}</span></div></div><a class="gcal" target="_blank" rel="noopener" href="${buildGCalUrl(m)}">＋ Tambahkan ke Google Calendar</a>`).join('<hr style="border:0;border-top:1px solid #eee;margin:18px 0">');$('modalOverlay').classList.add('open')}
 function closeModal(){$('modalOverlay').classList.remove('open')}
+
+function initAccordions(){document.querySelectorAll('.accordion-section').forEach(section=>{const trigger=section.querySelector('.accordion-trigger');if(!trigger)return;trigger.addEventListener('click',()=>{const open=section.classList.toggle('open');trigger.setAttribute('aria-expanded',String(open));});});}
+
 $('filterButtons').onclick=e=>{const b=e.target.closest('.filter-btn');if(!b)return;document.querySelectorAll('#filterButtons .filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentFilter=b.dataset.filter;showAllMonth=false;renderUpcoming();renderList();buildCalendar()};
 $('homeAwayButtons').onclick=e=>{const b=e.target.closest('.filter-btn');if(!b)return;document.querySelectorAll('#homeAwayButtons .filter-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentHomeAway=b.dataset.homeaway;showAllMonth=false;renderUpcoming();renderList();buildCalendar()};
 $('searchInput').oninput=e=>{currentSearch=e.target.value.trim();showAllMonth=false;renderUpcoming();renderList();buildCalendar()};
 $('clearSearch').onclick=()=>{currentSearch="";$('searchInput').value="";currentFilter="ALL";currentHomeAway="ALL";showAllMonth=false;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelector('#filterButtons [data-filter="ALL"]').classList.add('active');document.querySelector('#homeAwayButtons [data-homeaway="ALL"]').classList.add('active');renderUpcoming();renderList();buildCalendar()};
 $('showAllMonth').onclick=()=>{showAllMonth=true;renderUpcoming();$('upcomingList').scrollIntoView({behavior:'smooth',block:'start'})};
-$('viewAllMonth').onclick=()=>{showAllMonth=true;renderUpcoming();$('upcomingList').scrollIntoView({behavior:'smooth',block:'start'})};
+
 $('prevMonth').onclick=()=>{const d=new Date(calYear,calMonth-1,1);calYear=d.getFullYear();calMonth=d.getMonth();buildCalendar()};
 $('nextMonth').onclick=()=>{const d=new Date(calYear,calMonth+1,1);calYear=d.getFullYear();calMonth=d.getMonth();buildCalendar()};
 $('modalClose').onclick=closeModal;$('modalOverlay').onclick=e=>{if(e.target===$('modalOverlay'))closeModal()};document.onkeydown=e=>{if(e.key==='Escape')closeModal()};
@@ -577,10 +633,12 @@ document.querySelectorAll('.side-nav button').forEach(b=>b.onclick=()=>document.
   renderHero();
   renderPrematchInsights();
   renderStandings();
+  renderPreviousMatchStats();
   renderUpcoming();
   renderList();
   populateCalendarSelectors();
   buildCalendar();
+  initAccordions();
 })();
 </script>
 </body></html>
