@@ -1,2 +1,87 @@
-<?xml version='1.0' encoding='utf-8'?>
-<results version="1.0" source="local-dashboard" />
+<?xml version="1.0" encoding="utf-8"?>
+<results version="1.1" source="flashscore-rendered">
+  <match>
+    <id>SL-25</id>
+    <competition>BRI Super League 2026/27</competition>
+    <competitionShort>Super League</competitionShort>
+    <matchday>Matchday 25</matchday>
+    <date>2026-07-25</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Arema FC</away>
+    <venue>Gelora Bandung Lautan Api</venue>
+    <city>Bandung</city>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/arema-fc-dpH3oK85/persib-bandung-KpBjbPK1/?mid=ptLGWHrQ</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/arema-fc/dpH3oK85/</awayTeamUrl>
+  </match>
+  <match>
+    <id>SL-27</id>
+    <competition>BRI Super League 2026/27</competition>
+    <competitionShort>Super League</competitionShort>
+    <matchday>Matchday 27</matchday>
+    <date>2026-08-04</date>
+    <time>15:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Persija Jakarta</away>
+    <venue>Gelora Bandung Lautan Api</venue>
+    <city>Bandung</city>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>2</homeScore>
+    <awayScore>1</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=zP8wGDit</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persija-jakarta/dWeXDE5i/</awayTeamUrl>
+  </match>
+  <match>
+    <id>SL-10</id>
+    <competition>BRI Super League 2026/27</competition>
+    <competitionShort>Super League</competitionShort>
+    <matchday>Matchday 10</matchday>
+    <date>2026-08-18</date>
+    <time>19:30</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Bali United</away>
+    <venue>Gelora Bandung Lautan Api</venue>
+    <city>Bandung</city>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>3</homeScore>
+    <awayScore>2</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=ju1hqtzH</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/bali-united/W82OaQl9/</awayTeamUrl>
+  </match>
+  <match>
+    <id>SL-01</id>
+    <competition>BRI Super League 2026/27</competition>
+    <competitionShort>Super League</competitionShort>
+    <matchday>Matchday 1</matchday>
+    <date>2026-09-06</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>PSM Makassar</away>
+    <venue>Gelora Bandung Lautan Api</venue>
+    <city>Bandung</city>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>3</homeScore>
+    <awayScore>1</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/psm-makassar/IaeYYTE4/</awayTeamUrl>
+  </match>
+</results>
