@@ -869,11 +869,13 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                 pair = (normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
                 baseline_by_pair.setdefault(pair, []).append(m)
 
-            # Start from the canonical 46-match roster. Then overlay scraped
-            # data by exact date/home/away, or (when a fixture was rescheduled)
-            # by the same home/away pair. Never let a Flashscore competition
-            # header reclassify a baseline fixture.
-            by_key = dict(baseline_by_key)
+            # Start from the canonical season roster. IMPORTANT: never append a
+            # scraped row as a new fixture. Each canonical baseline fixture can
+            # receive at most one scraped overlay. This guarantees that parser
+            # noise, duplicate rows, or rescheduled-date variants cannot change
+            # the season roster/counts.
+            updated_by_id: dict[str, Match] = {m.id: m for m in baseline_by_key.values()}
+            matched_ids: set[str] = set()
             accepted_scraped = 0
             rejected_scraped = 0
             for m in normalized.values():
@@ -882,9 +884,12 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                 try:
                     md = date.fromisoformat(m.date)
                 except ValueError:
+                    rejected_scraped += 1
                     continue
                 if not (SEASON_START <= md <= SEASON_END):
+                    rejected_scraped += 1
                     continue
+
                 pair = (normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
                 exact_key = (m.date, pair[0], pair[1])
                 old = baseline_by_key.get(exact_key)
@@ -892,35 +897,25 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                     candidates = baseline_by_pair.get(pair, [])
                     if len(candidates) == 1:
                         old = candidates[0]
-                if old is None:
+                if old is None or old.id in matched_ids:
                     rejected_scraped += 1
                     continue
 
-                # Canonical competition comes from the season roster, not the
-                # text parser. This is the key fix for counts such as 42/12/9.
-                m.competition = old.competition or m.competition
-                m.competition_short = old.competition_short or m.competition_short
-                if not m.competition_short:
-                    rejected_scraped += 1
-                    continue
-
-                # Preserve the baseline record's canonical ID/competition while
-                # overlaying live score/status/date/time/metadata from scrape.
+                # The baseline owns competition/id. Flashscore can only update
+                # mutable match details such as status, score, kickoff and URLs.
                 merged = merge_metadata(m, old)
                 merged.id = old.id
-                merged.competition = old.competition or merged.competition
+                merged.competition = old.competition
                 merged.competition_short = old.competition_short
-                by_key[exact_key] = merged
-                # If the match was rescheduled, remove the old-date key only
-                # when the pair has a unique baseline fixture.
-                if exact_key != (old.date, pair[0], pair[1]) and len(baseline_by_pair.get(pair, [])) == 1:
-                    by_key.pop((old.date, pair[0], pair[1]), None)
+                updated_by_id[old.id] = merged
+                matched_ids.add(old.id)
                 accepted_scraped += 1
 
-            all_matches = list(by_key.values())
+            # Rebuild exclusively from the canonical roster. This is deliberately
+            # ID-based instead of key-based so a rescheduled match cannot create a
+            # 35th Super League record.
+            all_matches = [updated_by_id[m.id] for m in baseline_by_key.values()]
             print(f"Baseline roster: {len(baseline_by_key)}; scraped overlays accepted: {accepted_scraped}; rejected: {rejected_scraped}")
-            # Missing kickoff times are valid for TBC fixtures. Sort those by
-            # date first and use 00:00 only as a deterministic tie-breaker.
             all_matches.sort(key=lambda x: (x.date, x.time or "00:00", x.id))
 
             counts={c:sum(1 for m in all_matches if m.competition_short==c) for c in TARGET_COMPETITIONS}
