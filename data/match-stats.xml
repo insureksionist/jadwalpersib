@@ -1,57 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<matchStats version="1.0" source="ileague-rendered">
-  <match id="2026-09-06-persib-bandung-psm-makassar">
-    <date>2026-09-06</date>
-    <home>Persib Bandung</home>
-    <away>PSM Makassar</away>
+<matchStats version="2.1" source="ileague-rendered-seed">
+  <match id="SL-01">
+    <date>2026-09-06</date><home>Persib Bandung</home><away>PSM Makassar</away>
     <sourceUrl>https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/2026-09-06/PERSIB_BANDUNG/PSM_MAKASSAR</sourceUrl>
-    <stat key="possession">
-      <home>70</home>
-      <away>30</away>
-    </stat>
-    <stat key="shotsOnTarget">
-      <home>6</home>
-      <away>3</away>
-    </stat>
-    <stat key="shots">
-      <home>12</home>
-      <away>7</away>
-    </stat>
-    <stat key="shotAccuracy">
-      <home>50</home>
-      <away>75</away>
-    </stat>
-    <stat key="successfulPasses">
-      <home>496</home>
-      <away>209</away>
-    </stat>
-    <stat key="failedPasses">
-      <home>79</home>
-      <away>89</away>
-    </stat>
-    <stat key="corners">
-      <home>5</home>
-      <away>3</away>
-    </stat>
-    <stat key="tackles">
-      <home>13</home>
-      <away>19</away>
-    </stat>
-    <stat key="offsides">
-      <home>0</home>
-      <away>1</away>
-    </stat>
-    <stat key="fouls">
-      <home>9</home>
-      <away>15</away>
-    </stat>
-    <stat key="yellowCards">
-      <home>1</home>
-      <away>2</away>
-    </stat>
-    <stat key="redCards">
-      <home>0</home>
-      <away>0</away>
-    </stat>
+    <stat key="possession"><home>70</home><away>30</away></stat>
+    <stat key="shotsOnTarget"><home>6</home><away>3</away></stat><stat key="shots"><home>11</home><away>7</away></stat>
+    <stat key="shotAccuracy"><home>55</home><away>75</away></stat><stat key="successfulPasses"><home>495</home><away>209</away></stat>
+    <stat key="failedPasses"><home>76</home><away>89</away></stat><stat key="corners"><home>5</home><away>3</away></stat>
+    <stat key="tackles"><home>13</home><away>19</away></stat><stat key="offsides"><home>0</home><away>1</away></stat>
+    <stat key="fouls"><home>9</home><away>15</away></stat><stat key="yellowCards"><home>1</home><away>2</away></stat><stat key="redCards"><home>0</home><away>0</away></stat>
+    <event type="goal" minute="8" team="away" player="Kodai Tanaka"/>
+    <event type="goal" minute="49" team="home" player="Patricio Martin Matricardi"/>
+    <event type="goal" minute="52" team="home" player="Balša Sekulic"/>
+    <event type="goal" minute="83" team="home" player="Uilliam Barros Pereira"/>
+    <event type="yellow" minute="55" team="away" player="Stefan Jevtoski"/>
+    <event type="yellow" minute="57" team="home" player="Mariano Ezequiel Peralta Bauer"/>
+    <event type="yellow" minute="81" team="away" player="Akbar Tanjung"/>
+  </match>
+  <match id="SL-02">
+    <date>2026-09-12</date><home>Persija Jakarta</home><away>Persib Bandung</away>
+    <sourceUrl>https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/2026-09-12/PERSIJA_JAKARTA/PERSIB_BANDUNG</sourceUrl>
+    <stat key="possession"><home>54</home><away>46</away></stat>
+    <stat key="shotsOnTarget"><home>5</home><away>3</away></stat><stat key="shots"><home>11</home><away>6</away></stat>
+    <stat key="shotAccuracy"><home>56</home><away>75</away></stat><stat key="successfulPasses"><home>403</home><away>342</away></stat>
+    <stat key="failedPasses"><home>69</home><away>76</away></stat><stat key="corners"><home>8</home><away>3</away></stat>
+    <stat key="tackles"><home>16</home><away>19</away></stat><stat key="offsides"><home>3</home><away>1</away></stat>
+    <stat key="fouls"><home>12</home><away>10</away></stat><stat key="yellowCards"><home>2</home><away>1</away></stat><stat key="redCards"><home>0</home><away>0</away></stat>
+    <event type="goal" minute="42" team="home" player="Alexander Thomas Jeremejeff"/>
+    <event type="goal" minute="82" team="away" player="Balša Sekulic"/>
+    <event type="yellow" minute="67" team="home" player="Denis Kolinger"/>
+    <event type="yellow" minute="69" team="away" player="Luka Menalo"/>
+    <event type="yellow" minute="98" team="home" player="Stjepan Loncar"/>
   </match>
 </matchStats>
