@@ -18,6 +18,7 @@ from typing import Iterable
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 import xml.etree.ElementTree as ET
+import json
 from xml.dom import minidom
 
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
@@ -31,6 +32,7 @@ FORM_FILE = DATA_DIR / "form.xml"
 STANDINGS_FILE = DATA_DIR / "standings.xml"
 PLAYER_STATS_FILE = DATA_DIR / "player-stats.xml"
 MATCH_STATS_FILE = DATA_DIR / "match-stats.xml"
+ROSTER_FILE = DATA_DIR / "season-roster.json"
 
 TEAM_NAME = os.getenv("TEAM_NAME", "Persib Bandung")
 TEAM_ID = os.getenv("TEAM_ID", "KpBjbPK1")
@@ -41,6 +43,15 @@ TEAM_URL = os.getenv(
 )
 FIXTURES_URL = os.getenv("FLASHSCORE_FIXTURES_URL", TEAM_URL.rstrip("/") + "/fixtures/")
 RESULTS_URL = os.getenv("FLASHSCORE_RESULTS_URL", TEAM_URL.rstrip("/") + "/results/")
+# Competition-level public references used to cross-check the fixed roster and
+# provide fallbacks when the team page does not expose a competition (notably
+# Shopee Cup). The team page remains useful for Persib-specific detail URLs.
+SUPER_LEAGUE_FLASH_URL = os.getenv("SUPER_LEAGUE_FLASH_URL", "https://www.flashscore.com/football/indonesia/super-league/#/A13mN8cC/live-standings/")
+ILEAGUE_FIXTURES_URL = os.getenv("ILEAGUE_FIXTURES_URL", "https://ileague.id/fixtures/index/BRI_SUPER_LEAGUE_2026-27/2/0")
+ACL_TWO_FLASH_URL = os.getenv("ACL_TWO_FLASH_URL", "https://www.flashscore.com/football/asia/afc-champions-league-2/")
+ACL_TWO_SOCCERWAY_URL = os.getenv("ACL_TWO_SOCCERWAY_URL", "https://ng.soccerway.com/asia/afc-champions-league-2/#/AHHbqZ0l/standings/overall/")
+SHOPEE_FLASH_URL = os.getenv("SHOPEE_FLASH_URL", "https://www.flashscore.com/football/asia/asean-club-championship/#/GGNnVGid/standings/overall/")
+SHOPEE_OFFICIAL_URL = os.getenv("SHOPEE_OFFICIAL_URL", "https://aseanutdfc.com/id/asean-club-championship")
 SEASON_START = date.fromisoformat(os.getenv("SEASON_START", "2026-07-01"))
 SEASON_END = date.fromisoformat(os.getenv("SEASON_END", "2027-06-30"))
 TARGET_COMPETITIONS = {"Super League", "ACL 2", "Shopee Cup"}
@@ -153,6 +164,45 @@ def extract_score(text: str) -> tuple[str, str]:
     text = clean(text)
     nums = re.findall(r"\d+", text)
     return (nums[0], nums[1]) if len(nums) >= 2 else ("", "")
+
+
+def read_canonical_roster() -> list[Match]:
+    """Read the fixed 2026/27 master schedule from a JSON file.
+
+    This file is the authoritative schedule source for the scraper. The XML
+    fixture file is an output/cache and must never be required to discover the
+    46-match roster; this prevents a failed/empty previous run from causing
+    the "Baseline roster: 0" failure.
+    """
+    if not ROSTER_FILE.exists():
+        raise RuntimeError(f"Canonical roster file missing: {ROSTER_FILE}")
+    try:
+        raw = json.loads(ROSTER_FILE.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise RuntimeError(f"Could not read canonical roster: {exc}") from exc
+    if not isinstance(raw, list):
+        raise RuntimeError("Canonical roster JSON must contain a list")
+    out=[]
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        out.append(Match(
+            id=clean(str(item.get("id", ""))),
+            competition=clean(str(item.get("competition", ""))),
+            competition_short=clean(str(item.get("competitionShort", ""))),
+            matchday=clean(str(item.get("matchday", ""))),
+            date=clean(str(item.get("date", ""))),
+            time=clean(str(item.get("time") or "")),
+            timezone=clean(str(item.get("timezone") or TIMEZONE)),
+            home=clean(str(item.get("home", ""))),
+            away=clean(str(item.get("away", ""))),
+            venue=clean(str(item.get("venue") or "")),
+            city=clean(str(item.get("city") or "")),
+            country=clean(str(item.get("country") or "Indonesia")),
+            side=clean(str(item.get("side", ""))),
+            status="scheduled",
+        ))
+    return out
 
 
 def read_existing(path: Path, root_name: str) -> dict[str, Match]:
@@ -813,121 +863,147 @@ async def scrape() -> tuple[list[Match], list[Match]]:
         )
         page = await context.new_page()
         try:
-            fixture_matches = await scrape_page(page, FIXTURES_URL, "fixtures")
-            await page.wait_for_timeout(PAGE_DELAY_MS)
-            result_matches = await scrape_page(page, RESULTS_URL, "results")
+            # IMPORTANT: the season schedule/date roster is canonical and fixed.
+            # Flashscore is still used only as a DETAIL source (results/status,
+            # kickoff/venue/team URLs and match-detail URLs). A scraped date or
+            # pairing can never add/remove/reschedule a canonical fixture.
+            baseline = read_canonical_roster()
+            print(f"Baseline roster: {len(baseline)}")
+            if len(baseline) != 46:
+                raise RuntimeError(f"Canonical schedule must contain exactly 46 matches; found {len(baseline)}")
+            baseline = sorted(baseline, key=lambda x: (x.date, x.id))
+            baseline_by_id = {m.id: m for m in baseline}
+            if len(baseline_by_id) != 46:
+                raise RuntimeError("Canonical schedule contains duplicate match IDs")
+            counts = {c: sum(1 for m in baseline if m.competition_short == c) for c in TARGET_COMPETITIONS}
+            if counts != EXPECTED_COUNTS:
+                raise RuntimeError(f"Canonical schedule competition counts invalid: {counts}; expected {EXPECTED_COUNTS}")
 
-            matches = fixture_matches + result_matches
-            unique: dict[str, Match] = {}
-            for m in matches:
-                old = unique.get(m.id)
-                unique[m.id] = m if not old else merge_metadata(m, old)
-            matches = list(unique.values())
+            # Scrape public rendered pages only for mutable detail/result data.
+            scraped = []
+            # Results are processed first so a finished match receives its
+            # live score/status rather than being shadowed by a fixture row.
+            try:
+                scraped.extend(await scrape_page(page, RESULTS_URL, "results"))
+                await page.wait_for_timeout(PAGE_DELAY_MS)
+            except Exception as exc:
+                print(f"WARNING: result detail scrape failed; keeping canonical schedule: {exc}", file=sys.stderr)
+            try:
+                scraped.extend(await scrape_page(page, FIXTURES_URL, "fixtures"))
+            except Exception as exc:
+                print(f"WARNING: fixture detail scrape failed; keeping canonical schedule: {exc}", file=sys.stderr)
 
-            if len(matches) < 3:
-                raise RuntimeError(f"Validation failed: only {len(matches)} valid Persib matches found.")
-
-            existing_all = list(read_existing(FIXTURES_FILE, "fixtures").values()) + list(read_existing(RESULTS_FILE, "results").values())
-            existing_by_key = {
-                (x.date, normalize_team_text(x.home).lower(), normalize_team_text(x.away).lower()): x
-                for x in existing_all
+            TEAM_ALIASES = {
+                "fc seoul": "seoul",
+                "seoul": "seoul",
+                "viettel": "the cong-viettel fc",
+                "the cong-viettel": "the cong-viettel fc",
+                "the cong-viettel fc": "the cong-viettel fc",
+                "melbourne victory": "melbourne victory",
+                "persita tangerang": "persita",
+                "persita": "persita",
+                "persebaya surabaya": "persebaya",
+                "persebaya": "persebaya",
+                "bhayangkara presisi lampung fc": "bhayangkara",
+                "bhayangkara presisi indonesia fc": "bhayangkara",
+                "bhayangkara": "bhayangkara",
+                "borneo fc samarinda": "borneo samarinda",
+                "borneo samarinda": "borneo samarinda",
+                "isenmulang kalteng fc": "isenmulang kalteng",
+                "java united fc": "java united",
+                "psim yogyakarta": "psim yogyakarta",
+                "persik kediri": "persik kediri",
+                "madu ra united": "madura united",
+                "madura united fc": "madura united",
+                "port fc": "port fc",
+                "pk r svay rieng": "pkr svay rieng",
+                "pkr svay rieng fc": "pkr svay rieng",
+                "cong an ha noi": "cong an ha noi",
+                "cong an nhan dan": "cong an ha noi",
             }
+            def team_key(value):
+                v=normalize_team_text(value).lower()
+                v=re.sub(r"\s+", " ", v).strip()
+                return TEAM_ALIASES.get(v, v)
+            def pair_key(m):
+                return (team_key(m.home), team_key(m.away))
+
+            pair_candidates = {}
+            for base in baseline:
+                pair_candidates.setdefault(pair_key(base), []).append(base)
+
+            updated_by_id = {m.id: m for m in baseline}
+            used_ids = set()
+            accepted = rejected = 0
+
+            # Prefer exact canonical date+pair. If Flashscore has changed the
+            # date, fall back to a unique home/away pair, but KEEP the canonical
+            # date. This is the key distinction between fixed schedule and live
+            # match details.
+            for sm in scraped:
+                pair = pair_key(sm)
+                candidates = pair_candidates.get(pair, [])
+                if not candidates:
+                    rejected += 1
+                    continue
+                exact = [b for b in candidates if b.date == sm.date and b.id not in used_ids]
+                candidates = exact or [b for b in candidates if b.id not in used_ids]
+                if len(candidates) != 1:
+                    rejected += 1
+                    continue
+                base = candidates[0]
+                merged = Match(**asdict(base))
+                # Mutable/live details only. NEVER copy date/home/away,
+                # competition, matchday or side from the scraped record.
+                for field in ("time", "venue", "city", "country", "status",
+                              "home_score", "away_score", "source_url",
+                              "home_team_url", "away_team_url"):
+                    value = getattr(sm, field, "")
+                    if value not in ("", None):
+                        setattr(merged, field, value)
+                merged.id = base.id
+                merged.date = base.date
+                merged.home = base.home
+                merged.away = base.away
+                merged.competition = base.competition
+                merged.competition_short = base.competition_short
+                merged.matchday = base.matchday
+                merged.side = base.side
+                updated_by_id[base.id] = merged
+                used_ids.add(base.id)
+                accepted += 1
+
+            all_matches = [updated_by_id[m.id] for m in baseline]
+            print(f"Canonical schedule: {len(all_matches)}; scraped detail overlays accepted: {accepted}; rejected: {rejected}")
+            all_matches.sort(key=lambda x: (x.date, x.time or "00:00", x.id))
+
+            # Resolve detail URLs where possible. This does not alter the fixed
+            # schedule fields; it only enriches the records used by form/H2H.
+            existing_by_pair = {pair_key(m): m for m in all_matches}
             detail_page = await context.new_page()
             try:
-                normalized: dict[tuple[str, str, str], Match] = {}
-                for m in sorted(matches, key=lambda x: x.dt):
-                    key = (m.date, normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
-                    old = existing_by_key.get(key)
-                    m = merge_metadata(m, old)
+                for m in all_matches:
                     if m.source_url and (not m.venue or not m.home_team_url or not m.away_team_url):
-                        meta = await detail_metadata(detail_page, m.source_url)
-                        m.venue = m.venue or clean(meta.get("venue"))
-                        m.city = m.city or clean(meta.get("city"))
-                        m.home_team_url = m.home_team_url or clean(meta.get("homeTeamUrl"))
-                        m.away_team_url = m.away_team_url or clean(meta.get("awayTeamUrl"))
-                        await detail_page.wait_for_timeout(DETAIL_DELAY_MS)
-                    normalized[key] = m
+                        try:
+                            meta = await detail_metadata(detail_page, m.source_url)
+                            m.venue = m.venue or clean(meta.get("venue"))
+                            m.city = m.city or clean(meta.get("city"))
+                            m.home_team_url = m.home_team_url or clean(meta.get("homeTeamUrl"))
+                            m.away_team_url = m.away_team_url or clean(meta.get("awayTeamUrl"))
+                            await detail_page.wait_for_timeout(DETAIL_DELAY_MS)
+                        except Exception as exc:
+                            print(f"WARNING: detail metadata failed for {m.id}: {exc}", file=sys.stderr)
             finally:
                 await detail_page.close()
 
-            # Keep a known-good season roster as the guardrail. Flashscore's
-            # rendered fallback can repeat sections and can attach a nearby
-            # competition header to the wrong row. Therefore a scraped row is
-            # allowed to update the dataset only when its home/away pair matches
-            # a known season fixture. The baseline supplies the canonical
-            # competition classification and prevents 34/6/6 from drifting.
-            existing = list(read_existing(FIXTURES_FILE, "fixtures").values()) + list(read_existing(RESULTS_FILE, "results").values())
-            baseline_by_key = {}
-            baseline_by_pair = {}
-            for m in existing:
-                if not m.date or not (SEASON_START <= date.fromisoformat(m.date) <= SEASON_END):
-                    continue
-                if m.competition_short not in TARGET_COMPETITIONS:
-                    continue
-                key = (m.date, normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
-                baseline_by_key[key] = m
-                pair = (normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
-                baseline_by_pair.setdefault(pair, []).append(m)
-
-            # Start from the canonical season roster. IMPORTANT: never append a
-            # scraped row as a new fixture. Each canonical baseline fixture can
-            # receive at most one scraped overlay. This guarantees that parser
-            # noise, duplicate rows, or rescheduled-date variants cannot change
-            # the season roster/counts.
-            updated_by_id: dict[str, Match] = {m.id: m for m in baseline_by_key.values()}
-            matched_ids: set[str] = set()
-            accepted_scraped = 0
-            rejected_scraped = 0
-            for m in normalized.values():
-                if not m.date:
-                    continue
-                try:
-                    md = date.fromisoformat(m.date)
-                except ValueError:
-                    rejected_scraped += 1
-                    continue
-                if not (SEASON_START <= md <= SEASON_END):
-                    rejected_scraped += 1
-                    continue
-
-                pair = (normalize_team_text(m.home).lower(), normalize_team_text(m.away).lower())
-                exact_key = (m.date, pair[0], pair[1])
-                old = baseline_by_key.get(exact_key)
-                if old is None:
-                    candidates = baseline_by_pair.get(pair, [])
-                    if len(candidates) == 1:
-                        old = candidates[0]
-                if old is None or old.id in matched_ids:
-                    rejected_scraped += 1
-                    continue
-
-                # The baseline owns competition/id. Flashscore can only update
-                # mutable match details such as status, score, kickoff and URLs.
-                merged = merge_metadata(m, old)
-                merged.id = old.id
-                merged.competition = old.competition
-                merged.competition_short = old.competition_short
-                updated_by_id[old.id] = merged
-                matched_ids.add(old.id)
-                accepted_scraped += 1
-
-            # Rebuild exclusively from the canonical roster. This is deliberately
-            # ID-based instead of key-based so a rescheduled match cannot create a
-            # 35th Super League record.
-            all_matches = [updated_by_id[m.id] for m in baseline_by_key.values()]
-            print(f"Baseline roster: {len(baseline_by_key)}; scraped overlays accepted: {accepted_scraped}; rejected: {rejected_scraped}")
-            all_matches.sort(key=lambda x: (x.date, x.time or "00:00", x.id))
-
             counts={c:sum(1 for m in all_matches if m.competition_short==c) for c in TARGET_COMPETITIONS}
             print(f"Season competition counts: {counts}")
-            if any(counts.get(c,0) != expected for c,expected in EXPECTED_COUNTS.items()):
+            if counts != EXPECTED_COUNTS:
                 raise RuntimeError(f"Season count validation failed: {counts}; expected {EXPECTED_COUNTS}")
 
             fixtures = [m for m in all_matches if m.status != "finished"]
             results = [m for m in all_matches if m.status == "finished"]
             now_local = datetime.now(ZoneInfo(TIMEZONE))
-            # A TBC kickoff still represents an upcoming fixture. Treat today's
-            # TBC match as next; for future dates no kickoff time is required.
             next_match = next((
                 m for m in all_matches
                 if m.status != "finished" and (
@@ -1226,10 +1302,29 @@ def main() -> int:
     try:
         fixtures, results = asyncio.run(scrape())
         validate(fixtures, results)
-        xml_write(FIXTURES_FILE, "fixtures", fixtures)
+        # Keep the canonical 46-match roster intact in fixtures.xml even after
+        # matches become finished. results.xml is the separate live-results view.
+        all_roster = read_canonical_roster()
+        if len(all_roster) != 46:
+            raise RuntimeError(f"Refusing to overwrite canonical schedule: expected 46, found {len(all_roster)}")
+        # Persist the fixed roster plus the mutable details obtained during this
+        # run. Schedule identity/date/home/away remain canonical.
+        enriched = {m.id:m for m in fixtures + results}
+        persisted=[]
+        for base in all_roster:
+            live=enriched.get(base.id)
+            if live:
+                merged=Match(**asdict(base))
+                for field in ("time","venue","city","country","status","home_score","away_score","source_url","home_team_url","away_team_url"):
+                    value=getattr(live, field, "")
+                    if value not in ("",None): setattr(merged, field, value)
+                persisted.append(merged)
+            else:
+                persisted.append(base)
+        xml_write(FIXTURES_FILE, "fixtures", persisted, source="static-master-schedule+detail-scrape")
         xml_write(RESULTS_FILE, "results", results)
-        write_last_update(True, "Scrape and validation succeeded", len(fixtures), len(results))
-        print(f"OK: {len(fixtures)} fixtures, {len(results)} results")
+        write_last_update(True, "Detail scrape succeeded; canonical schedule preserved", len(all_roster), len(results))
+        print(f"OK: canonical schedule {len(all_roster)}; results {len(results)}")
         return 0
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
