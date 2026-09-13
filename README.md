@@ -41,3 +41,13 @@ ACL Two uses the published opponent name **The Cong-Viettel FC** for the Viettel
 
 ## GitHub Actions
 The workflow remains daily at 23:00 WIB and supports manual execution. The scraper uses normal public rendered pages only; it does not call private feeds/APIs, bypass access controls, solve CAPTCHAs or rotate proxies.
+
+## V21 fixes — 13 September 2026
+- `results.xml` is now restricted to matches that have actually been played; future canonical fixtures cannot appear as finished results even if a stale XML contains scores/status.
+- Result detail statistics are keyed by canonical match IDs (`SL-01`, `SL-02`, etc.), so clicking a result opens the correct statistics.
+- Result modal now supports goals + minute + yellow/red cards in addition to match statistics.
+- `last-update.xml` is loaded by the dashboard and the header now displays the actual last successful refresh timestamp.
+- Failed scraper runs retain the previous successful refresh timestamp instead of erasing it.
+- I.League player-leader parsing was hardened; empty scraper output no longer overwrites good player statistics.
+- Yellow/red card leaders have a rendered-match fallback so card statistics can be rebuilt from completed I.League match timelines.
+- Existing fixed 46-match master schedule, upcoming fixtures, calendar, filters, standings, form/H2H and Google Calendar features are preserved.

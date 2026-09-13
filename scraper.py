@@ -268,17 +268,21 @@ def xml_write(path: Path, root_name: str, matches: Iterable[Match], source: str 
 
 
 def write_last_update(success: bool, message: str, fixture_count: int, result_count: int) -> None:
-    root = ET.Element("lastUpdate", {"version": "1.1", "source": "flashscore-rendered"})
+    root = ET.Element("lastUpdate", {"version": "1.2", "source": "flashscore-rendered"})
     now = datetime.now(timezone.utc).astimezone(ZoneInfo(TIMEZONE)).isoformat(timespec="seconds")
+    previous_success = ""
+    if LAST_UPDATE_FILE.exists():
+        try:
+            old = ET.parse(LAST_UPDATE_FILE).getroot()
+            previous_success = clean(old.findtext("lastSuccess") or old.findtext("last_success") or "")
+        except Exception:
+            pass
+    last_success = now if success else previous_success
     for key, value in [
-        # Keep snake_case aliases for the dashboard's current parser, while
-        # retaining camelCase fields for readability/compatibility.
-        ("lastSuccess", now if success else ""),
-        ("last_success", now if success else ""),
-        ("status", "ok" if success else "error"),
-        ("message", message),
-        ("fixtureCount", str(fixture_count)),
-        ("resultCount", str(result_count)),
+        ("lastSuccess", last_success), ("last_success", last_success),
+        ("lastAttempt", now), ("last_attempt", now),
+        ("status", "ok" if success else "error"), ("message", message),
+        ("fixtureCount", str(fixture_count)), ("resultCount", str(result_count)),
         ("sourceUrl", TEAM_URL),
     ]:
         ET.SubElement(root, key).text = value
@@ -691,7 +695,16 @@ async def scrape_page(page, url: str, page_kind: str) -> list[Match]:
             if page_kind == "results" and status == "scheduled":
                 status = "finished"
 
+            # Never let a stale/cached result row mark a future canonical match
+            # as finished. The master schedule date remains authoritative.
+            now_local = datetime.now(ZoneInfo(TIMEZONE))
+            parsed_dt = datetime.fromisoformat(f"{d}T{tm}:00").replace(tzinfo=ZoneInfo(TIMEZONE))
+            if parsed_dt > now_local:
+                status = "scheduled"
+
             hs, as_ = clean(row.get("homeScore")), clean(row.get("awayScore"))
+            if status != "finished":
+                hs, as_ = "", ""
             if not hs and not as_:
                 # Some finished matches (especially penalty-shootout games)
                 # do not expose the score through .event__scores. Parse the
@@ -746,30 +759,36 @@ def player_stats_xml_write(categories: dict[str, list[dict]], source: str = "ile
 
 
 def _parse_ranked_lines(lines: list[str], headings: tuple[str, ...]) -> dict[str, list[dict]]:
-    normalized = [clean(x) for x in lines if clean(x)]
-    result = {h: [] for h in headings}
-    current = None
-    for line in normalized:
-        low = line.lower()
-        found = next((h for h in headings if h.lower() in low), None)
+    normalized=[clean(x) for x in lines if clean(x)]
+    result={h:[] for h in headings}
+    current=None
+    heading_tokens={h.lower() for h in headings}
+    for raw in normalized:
+        low=raw.lower()
+        found=next((h for h in headings if h.lower() in low),None)
         if found:
-            current = found
+            current=found
             continue
         if current is None:
             continue
-        if any(stop in low for stop in ("jumlah penonton", "ringkasan pekan", "klasemen", "selengkapnya", "berita", "match stats")):
-            if low.startswith(("jumlah penonton", "ringkasan pekan", "klasemen", "selengkapnya")):
-                current = None
+        if any(tok in low for tok in ("top scorer","top assist","top saves","top passes","top yellow cards","top red cards","top kartu kuning","top kartu merah","jumlah penonton","ringkasan pekan","klasemen")) and not any(tok in current.lower() for tok in ("top scorer","top assist","top yellow cards","top red cards","top kartu kuning","top kartu merah")):
+            current=None
             continue
-        m = re.match(r"^(\d{1,2})\s+(.+?)\s+(\d+(?:\.\d+)?)$", line)
+        # I.League's first leaderboard row can be rendered as:
+        # "Image: Logo Klub 1 MITKOV 2"; subsequent rows are "2 NAME 1".
+        line=re.sub(r'^.*?\b(?=\d{1,2}\s+)', '', raw)
+        m=re.search(r'^(\d{1,2})\s+(.+?)\s+(\d+(?:\.\d+)?)$', line)
+        if not m:
+            m=re.search(r'\b(\d{1,2})\s+([A-Za-zÀ-ÿ.\'’ -]{2,}?)\s+(\d+(?:\.\d+)?)$', raw)
         if not m:
             continue
-        rank, name, value = m.groups()
-        if len(name) < 2 or name.isdigit():
+        rank,name,value=m.groups()
+        name=clean(name).strip('-–—')
+        if len(name)<2 or name.isdigit():
             continue
-        result[current].append({"rank":rank,"name":clean(name),"value":value})
-        if len(result[current]) >= 5:
-            current = None
+        result[current].append({"rank":rank,"name":name,"value":value})
+        if len(result[current])>=5:
+            current=None
     return result
 
 
@@ -791,9 +810,9 @@ async def scrape_player_leaders(page) -> dict[str, list[dict]]:
     return out
 
 
-def match_stats_xml_write(matches_stats: list[tuple[Match, dict[str, tuple[str,str]]]], source: str = "ileague-rendered") -> None:
-    root = ET.Element("matchStats", {"version":"2.0", "source":source})
-    for match, stats in matches_stats:
+def match_stats_xml_write(matches_stats: list[tuple[Match, dict[str, tuple[str,str]], list[dict]]], source: str = "ileague-rendered") -> None:
+    root = ET.Element("matchStats", {"version":"2.1", "source":source})
+    for match, stats, events in matches_stats:
         if not match:
             continue
         node = ET.SubElement(root, "match", {"id":match.id})
@@ -803,14 +822,21 @@ def match_stats_xml_write(matches_stats: list[tuple[Match, dict[str, tuple[str,s
             item=ET.SubElement(node,"stat",{"key":key})
             ET.SubElement(item,"home").text=str(pair[0])
             ET.SubElement(item,"away").text=str(pair[1])
+        seen=set()
+        for ev in events or []:
+            sig=(ev.get("type"),ev.get("minute"),ev.get("player"),ev.get("team"))
+            if sig in seen: continue
+            seen.add(sig)
+            attrs={k:str(ev.get(k,"")) for k in ("type","minute","team","player") if ev.get(k)}
+            ET.SubElement(node,"event",attrs)
     MATCH_STATS_FILE.write_bytes(minidom.parseString(ET.tostring(root,encoding="utf-8")).toprettyxml(indent="  ",encoding="utf-8"))
 
-async def scrape_match_stats(page, match: Match | None) -> dict[str, tuple[str,str]]:
+async def scrape_match_stats(page, match: Match | None) -> tuple[dict[str, tuple[str,str]], list[dict]]:
     if not match or not match.source_url:
-        return {}
+        return {}, []
     detail_url = match.source_url
     if "flashscore.com" in detail_url:
-        return {}
+        return {}, []
     await page.goto(detail_url, wait_until="domcontentloaded", timeout=60000)
     await page.wait_for_timeout(1200)
     body = await page.locator("body").inner_text(timeout=10000)
@@ -828,7 +854,95 @@ async def scrape_match_stats(page, match: Match | None) -> dict[str, tuple[str,s
         window=" ".join(lines[max(0,idx-2):min(len(lines),idx+5)])
         nums=re.findall(r"(?<!\d)(\d+(?:\.\d+)?)(?!\d)", window)
         if len(nums)>=2: stats[key]=(nums[-2],nums[-1])
-    return stats
+
+    home_players=set(); away_players=set()
+    try:
+        gk=[i for i,x in enumerate(lines) if x == "Penjaga Gawang"]
+        if len(gk)>=2:
+            def names_between(a,b):
+                out=set()
+                for raw in lines[a:b]:
+                    m=re.match(r"^\d+\s+(.+?)(?:\s+'\d+(?:\+\d+)?(?:\(\d+\))?)*$", raw)
+                    if m:
+                        nm=clean(m.group(1))
+                        if len(nm)>2: out.add(re.sub(r"[^a-z0-9]+","",nm.lower()))
+                return out
+            home_players=names_between(gk[0]+1,gk[1])
+            away_players=names_between(gk[1]+1,len(lines))
+    except Exception:
+        pass
+    def norm_player(v): return re.sub(r"[^a-z0-9]+","",clean(v).lower())
+    events=[]
+    stop_at=next((i for i,x in enumerate(lines) if x == "Penjaga Gawang"),len(lines))
+    for raw in lines[:stop_at]:
+        mg=re.match(r"^(\d+(?:\+\d+)?)'\s+(.+?)\s+mencetak Goal(?:.*)?$", raw, flags=re.I)
+        my=re.match(r"^(\d+(?:\+\d+)?)'\s+(.+?)\s+mendapatkan Kartu Kuning$", raw, flags=re.I)
+        mr=re.match(r"^(\d+(?:\+\d+)?)'\s+(.+?)\s+mendapatkan Kartu Merah$", raw, flags=re.I)
+        hit=mg or my or mr
+        if not hit: continue
+        minute,player=hit.groups(); np=norm_player(player)
+        team="home" if np in home_players else "away" if np in away_players else ""
+        typ="goal" if mg else "yellow" if my else "red"
+        events.append({"type":typ,"minute":minute,"team":team,"player":clean(player)})
+    dedup=[]; seen=set()
+    for ev in events:
+        sig=(ev["type"],ev["minute"],ev["player"],ev.get("team",""))
+        if sig not in seen:
+            seen.add(sig); dedup.append(ev)
+    return stats, dedup
+
+async def scrape_card_leaders(context, max_links: int = 60) -> dict[str, list[dict]]:
+    links=set()
+    for url in (ILEAGUE_FIXTURES_URL, os.getenv("ILEAGUE_HOME_URL", "https://ileague.id/home/index/bri%20super%20league%202026-27")):
+        page=await context.new_page()
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+            await page.wait_for_timeout(1200)
+            found=await page.evaluate("""() => Array.from(document.querySelectorAll('a[href*="/result/detail/BRI_SUPER_LEAGUE_2026-27/"]')).map(a=>a.href)""")
+            for href in found or []:
+                if "/result/detail/BRI_SUPER_LEAGUE_2026-27/" in href:
+                    links.add(href.split('#')[0])
+        except Exception as exc:
+            print(f"WARNING: could not collect I.League result links from {url}: {exc}", file=sys.stderr)
+        finally:
+            await page.close()
+    now=datetime.now(ZoneInfo(TIMEZONE)); valid=[]
+    for href in links:
+        m=re.search(r"/result/detail/BRI_SUPER_LEAGUE_2026-27/(\d{4}-\d{2}-\d{2})/",href)
+        if not m: continue
+        try:
+            d=date.fromisoformat(m.group(1))
+            if d <= now.date(): valid.append((d,href))
+        except ValueError: pass
+    valid=sorted(valid,key=lambda x:(x[0],x[1]),reverse=True)[:max_links]
+    counts={"yellow":{},"red":{}}
+    page=await context.new_page()
+    try:
+        for _,href in valid:
+            try:
+                dummy=Match(id=href,competition="BRI Super League 2026/27",competition_short="Super League",matchday="",date="2000-01-01",time="00:00",timezone=TIMEZONE,home="",away="",source_url=href)
+                _,events=await scrape_match_stats(page,dummy)
+                match_seen_cards=set()
+                for ev in events:
+                    kind=ev.get("type"); name=clean(ev.get("player"))
+                    if kind not in counts or not name: continue
+                    # I.League player statistics count a player's yellow card
+                    # once per match; a second-yellow sequence in the same match
+                    # should not be double-counted in the season leaderboard.
+                    sig=(kind,name)
+                    if kind=='yellow' and sig in match_seen_cards: continue
+                    match_seen_cards.add(sig)
+                    counts[kind][name]=counts[kind].get(name,0)+1
+                await page.wait_for_timeout(300)
+            except Exception as exc:
+                print(f"WARNING: card leader detail failed for {href}: {exc}", file=sys.stderr)
+    finally:
+        await page.close()
+    def top(kind):
+        rows=sorted(counts[kind].items(), key=lambda kv:(-kv[1],kv[0].lower()))[:5]
+        return [{"rank":str(i+1),"name":name,"value":str(value)} for i,(name,value) in enumerate(rows)]
+    return {"yellowCards":top("yellow"),"redCards":top("red")}
+
 
 async def scrape() -> tuple[list[Match], list[Match]]:
     async with async_playwright() as pw:
@@ -1017,7 +1131,17 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             try:
                 try:
                     leaders = await scrape_player_leaders(player_page)
-                    player_stats_xml_write(leaders)
+                    if not leaders.get('yellowCards') and not leaders.get('redCards'):
+                        try:
+                            card_leaders = await scrape_card_leaders(context)
+                            leaders['yellowCards'] = card_leaders.get('yellowCards', [])
+                            leaders['redCards'] = card_leaders.get('redCards', [])
+                        except Exception as card_exc:
+                            print(f"WARNING: card leader fallback failed; keeping existing card leaders: {card_exc}", file=sys.stderr)
+                    if any(leaders.get(k) for k in ('topScorer','topAssist','yellowCards','redCards')):
+                        player_stats_xml_write(leaders)
+                    else:
+                        print("WARNING: player leader scrape returned no categories; keeping existing player-stats.xml", file=sys.stderr)
                     print(f"Player leaders: scorer={len(leaders.get('topScorer',[]))}, assist={len(leaders.get('topAssist',[]))}, yellow={len(leaders.get('yellowCards',[]))}, red={len(leaders.get('redCards',[]))}")
                 except Exception as exc:
                     print(f"WARNING: player leaders scrape failed; keeping existing player-stats.xml: {exc}", file=sys.stderr)
@@ -1037,8 +1161,8 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                         away_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.away).strip("_").upper()
                         ileague_match = f"https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/{slug_date}/{home_slug}/{away_slug}"
                         previous_for_stats = Match(**asdict(previous)); previous_for_stats.source_url = ileague_match
-                        stats = await scrape_match_stats(stats_page, previous_for_stats)
-                        if stats: stats_records.append((previous, stats))
+                        stats, events = await scrape_match_stats(stats_page, previous_for_stats)
+                        if stats or events: stats_records.append((previous, stats, events))
                         await stats_page.wait_for_timeout(500)
                     except Exception as exc:
                         print(f"WARNING: match stats failed for {previous.id}: {exc}", file=sys.stderr)
