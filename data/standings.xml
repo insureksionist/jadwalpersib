@@ -10,7 +10,7 @@
     <ga>2</ga>
     <gd>4</gd>
     <points>6</points>
-    <form>W</form>
+    <form>W W</form>
   </team>
   <team position="2">
     <club>MADURA UNITED FC</club>
@@ -22,7 +22,7 @@
     <ga>1</ga>
     <gd>4</gd>
     <points>6</points>
-    <form>W</form>
+    <form>W W</form>
   </team>
   <team position="3">
     <club>PERSIJA JAKARTA</club>
@@ -34,7 +34,7 @@
     <ga>1</ga>
     <gd>2</gd>
     <points>6</points>
-    <form>W</form>
+    <form>W W</form>
   </team>
   <team position="4">
     <club>AREMA FC</club>
@@ -46,7 +46,7 @@
     <ga>3</ga>
     <gd>4</gd>
     <points>4</points>
-    <form>W</form>
+    <form>D W</form>
   </team>
   <team position="5">
     <club>PERSITA</club>
@@ -58,7 +58,7 @@
     <ga>3</ga>
     <gd>1</gd>
     <points>4</points>
-    <form>D</form>
+    <form>W D</form>
   </team>
   <team position="6">
     <club>DEWA UNITED BANTEN FC</club>
@@ -73,6 +73,18 @@
     <form>D W</form>
   </team>
   <team position="7">
+    <club>PERSEBAYA SURABAYA</club>
+    <played>2</played>
+    <wins>1</wins>
+    <draws>1</draws>
+    <losses>0</losses>
+    <gf>2</gf>
+    <ga>1</ga>
+    <gd>1</gd>
+    <points>4</points>
+    <form>W D</form>
+  </team>
+  <team position="8">
     <club>PERSIB BANDUNG</club>
     <played>2</played>
     <wins>1</wins>
@@ -84,7 +96,7 @@
     <points>3</points>
     <form>L W</form>
   </team>
-  <team position="8">
+  <team position="9">
     <club>PERSIK KEDIRI</club>
     <played>2</played>
     <wins>1</wins>
@@ -96,7 +108,7 @@
     <points>3</points>
     <form>W L</form>
   </team>
-  <team position="9">
+  <team position="10">
     <club>BORNEO FC SAMARINDA</club>
     <played>2</played>
     <wins>1</wins>
@@ -108,7 +120,7 @@
     <points>3</points>
     <form>W L</form>
   </team>
-  <team position="10">
+  <team position="11">
     <club>BHAYANGKARA PRESISI LAMPUNG FC</club>
     <played>2</played>
     <wins>0</wins>
@@ -120,29 +132,17 @@
     <points>2</points>
     <form>D D</form>
   </team>
-  <team position="11">
-    <club>PSIM YOGYAKARTA</club>
-    <played>1</played>
-    <wins>0</wins>
-    <draws>1</draws>
-    <losses>0</losses>
-    <gf>1</gf>
-    <ga>1</ga>
-    <gd>0</gd>
-    <points>1</points>
-    <form>D</form>
-  </team>
   <team position="12">
-    <club>PERSEBAYA SURABAYA</club>
-    <played>1</played>
+    <club>PSIM YOGYAKARTA</club>
+    <played>2</played>
     <wins>0</wins>
     <draws>1</draws>
-    <losses>0</losses>
+    <losses>1</losses>
     <gf>1</gf>
-    <ga>1</ga>
-    <gd>0</gd>
+    <ga>2</ga>
+    <gd>-1</gd>
     <points>1</points>
-    <form>D</form>
+    <form>L D</form>
   </team>
   <team position="13">
     <club>PSM MAKASSAR</club>
