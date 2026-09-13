@@ -791,9 +791,11 @@ async def scrape_player_leaders(page) -> dict[str, list[dict]]:
     return out
 
 
-def match_stats_xml_write(match: Match | None, stats: dict[str, tuple[str,str]], source: str = "ileague-rendered") -> None:
-    root = ET.Element("matchStats", {"version":"1.0", "source":source})
-    if match:
+def match_stats_xml_write(matches_stats: list[tuple[Match, dict[str, tuple[str,str]]]], source: str = "ileague-rendered") -> None:
+    root = ET.Element("matchStats", {"version":"2.0", "source":source})
+    for match, stats in matches_stats:
+        if not match:
+            continue
         node = ET.SubElement(root, "match", {"id":match.id})
         for key, value in (("date",match.date),("home",match.home),("away",match.away),("sourceUrl",match.source_url)):
             if value: ET.SubElement(node,key).text=value
@@ -803,51 +805,30 @@ def match_stats_xml_write(match: Match | None, stats: dict[str, tuple[str,str]],
             ET.SubElement(item,"away").text=str(pair[1])
     MATCH_STATS_FILE.write_bytes(minidom.parseString(ET.tostring(root,encoding="utf-8")).toprettyxml(indent="  ",encoding="utf-8"))
 
-
-async def scrape_match_stats(page, match: Match | None) -> None:
+async def scrape_match_stats(page, match: Match | None) -> dict[str, tuple[str,str]]:
     if not match or not match.source_url:
-        match_stats_xml_write(match, {})
-        return
-    # Prefer I.League's rendered match page because its public page exposes the
-    # exact stat labels used by the dashboard and does not require private APIs.
+        return {}
     detail_url = match.source_url
     if "flashscore.com" in detail_url:
-        # Match IDs are not reliably portable between providers; keep the
-        # existing Flashscore URL only as a fallback and publish an empty file
-        # rather than inventing statistics.
-        match_stats_xml_write(match, {})
-        return
+        return {}
     await page.goto(detail_url, wait_until="domcontentloaded", timeout=60000)
     await page.wait_for_timeout(1200)
     body = await page.locator("body").inner_text(timeout=10000)
     lines=[clean(x) for x in body.splitlines() if clean(x)]
     labels={
-      "possession":"Penguasaan bola %",
-      "shotsOnTarget":"Tembakan ke gawang",
-      "shots":"Total tembakan",
-      "shotAccuracy":"Akurasi tembakan %",
-      "successfulPasses":"Umpan sukses",
-      "failedPasses":"Umpan gagal",
-      "corners":"Tendangan sudut",
-      "tackles":"Tekel sukses",
-      "offsides":"Offside",
-      "fouls":"Pelanggaran",
-      "yellowCards":"Kartu kuning",
-      "redCards":"Kartu merah",
+      "possession":"Penguasaan bola %","shotsOnTarget":"Tembakan ke gawang","shots":"Total tembakan",
+      "shotAccuracy":"Akurasi tembakan %","successfulPasses":"Umpan sukses","failedPasses":"Umpan gagal",
+      "corners":"Tendangan sudut","tackles":"Tekel sukses","offsides":"Offside","fouls":"Pelanggaran",
+      "yellowCards":"Kartu kuning","redCards":"Kartu merah",
     }
     stats={}
     for key,label in labels.items():
-        try:
-            idx=next(i for i,x in enumerate(lines) if label.lower() in x.lower())
-        except StopIteration:
-            continue
-        # Values are commonly on the same line or represented by the next
-        # numeric lines around the label. Collect a short numeric window.
+        try: idx=next(i for i,x in enumerate(lines) if label.lower() in x.lower())
+        except StopIteration: continue
         window=" ".join(lines[max(0,idx-2):min(len(lines),idx+5)])
         nums=re.findall(r"(?<!\d)(\d+(?:\.\d+)?)(?!\d)", window)
-        if len(nums)>=2:
-            stats[key]=(nums[-2],nums[-1])
-    match_stats_xml_write(match, stats)
+        if len(nums)>=2: stats[key]=(nums[-2],nums[-1])
+    return stats
 
 async def scrape() -> tuple[list[Match], list[Match]]:
     async with async_playwright() as pw:
@@ -875,6 +856,10 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             baseline_by_id = {m.id: m for m in baseline}
             if len(baseline_by_id) != 46:
                 raise RuntimeError("Canonical schedule contains duplicate match IDs")
+            non_persib = [m for m in baseline if TEAM_NAME.lower() not in {m.home.lower(), m.away.lower()}]
+            if non_persib:
+                sample = "; ".join(f"{m.id}: {m.home} - {m.away}" for m in non_persib[:3])
+                raise RuntimeError(f"Canonical roster contains non-Persib match(es): {sample}")
             counts = {c: sum(1 for m in baseline if m.competition_short == c) for c in TARGET_COMPETITIONS}
             if counts != EXPECTED_COUNTS:
                 raise RuntimeError(f"Canonical schedule competition counts invalid: {counts}; expected {EXPECTED_COUNTS}")
@@ -941,6 +926,12 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             # date. This is the key distinction between fixed schedule and live
             # match details.
             for sm in scraped:
+                # Flashscore rendered text can occasionally leak an adjacent
+                # competition row (for example the opponent's next fixture).
+                # Never allow a non-Persib row into the overlay pipeline.
+                if TEAM_NAME.lower() not in {clean(sm.home).lower(), clean(sm.away).lower()}:
+                    rejected += 1
+                    continue
                 pair = pair_key(sm)
                 candidates = pair_candidates.get(pair, [])
                 if not candidates:
@@ -1034,17 +1025,26 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                 await player_page.close()
             stats_page = await context.new_page()
             try:
-                # Use the public I.League match detail URL for the most recent
-                # finished Persib match. If unavailable, retain the existing XML.
-                previous = next((m for m in sorted(results, key=lambda x: x.dt, reverse=True) if m.competition_short == "Super League"), None)
-                if previous:
-                    slug_date = previous.date
-                    home_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.home).strip("_").upper()
-                    away_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.away).strip("_").upper()
-                    previous.source_url = previous.source_url
-                    ileague_match = f"https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/{slug_date}/{home_slug}/{away_slug}"
-                    previous_for_stats = Match(**asdict(previous)); previous_for_stats.source_url = ileague_match
-                    await scrape_match_stats(stats_page, previous_for_stats)
+                # Collect statistics for every finished match we know about,
+                # not only the latest one. The dashboard uses these records
+                # inside the Result Match modal.
+                stats_records = []
+                finished_sl = [m for m in sorted(results, key=lambda x: x.dt, reverse=True) if m.competition_short == "Super League"]
+                for previous in finished_sl[:10]:
+                    try:
+                        slug_date = previous.date
+                        home_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.home).strip("_").upper()
+                        away_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.away).strip("_").upper()
+                        ileague_match = f"https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/{slug_date}/{home_slug}/{away_slug}"
+                        previous_for_stats = Match(**asdict(previous)); previous_for_stats.source_url = ileague_match
+                        stats = await scrape_match_stats(stats_page, previous_for_stats)
+                        if stats: stats_records.append((previous, stats))
+                        await stats_page.wait_for_timeout(500)
+                    except Exception as exc:
+                        print(f"WARNING: match stats failed for {previous.id}: {exc}", file=sys.stderr)
+                if stats_records:
+                    match_stats_xml_write(stats_records)
+                    print(f"Match stats: {len(stats_records)} finished matches")
             except Exception as exc:
                 print(f"WARNING: match stats scrape failed; keeping existing match-stats.xml: {exc}", file=sys.stderr)
             finally:

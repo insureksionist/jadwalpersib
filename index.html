@@ -115,7 +115,7 @@ h1{margin:0;font-size:30px;line-height:1.1;letter-spacing:-1px;font-weight:800}
 .cal-match.sl{background:var(--sl-soft);color:#1557ad}.cal-match.acl{background:var(--acl-soft);color:#8b6200}.cal-match.shopee{background:var(--shopee-soft);color:#247847}.cal-match.other{background:#f3f5f8;color:#667085}.cal-match.away{border-left:3px solid var(--away)}.cal-match.home{border-left:3px solid var(--home)}
 .cal-match .mini-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex:0 0 auto}.cal-match .mini-side{font-size:6px;text-transform:uppercase;opacity:.75}
 .legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #edf0f4}.legend-item{display:flex;align-items:center;gap:5px;font-size:8px;color:#5f6878;font-weight:700}.legend-item img{width:18px;height:18px;object-fit:contain}.legend-dot{width:7px;height:7px;border-radius:50%}.legend-home{color:var(--home)}.legend-away{color:var(--away)}
-.modal-overlay{position:fixed;inset:0;background:rgba(7,17,42,.52);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal-overlay.open{display:flex}.modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:22px;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.22)}.close{position:absolute;right:12px;top:10px;border:0;background:#f2f4f8;width:30px;height:30px;border-radius:50%;font-size:18px;color:#6c7482}.modal-head{display:flex;justify-content:space-between;gap:10px;padding-right:35px}.modal-comp{font-size:11px;font-weight:800;color:var(--navy)}.modal-day{font-size:9px;color:var(--muted)}.modal-teams{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:8px;margin:20px 0}.modal-team{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-weight:800;font-size:12px}.modal-vs{text-align:center;font-size:10px;color:#9aa2b0;font-weight:800}.detail{display:grid;gap:8px;border-top:1px solid #edf0f4;padding-top:13px}.detail-row{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:10px;color:#596375}.gcal{display:block;text-align:center;text-decoration:none;margin-top:15px;padding:10px;background:var(--navy);color:#fff;border-radius:9px;font-size:10px;font-weight:800}
+.modal-overlay{position:fixed;inset:0;background:rgba(7,17,42,.52);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal-overlay.open{display:flex}.modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:22px;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.22)}.close{position:absolute;right:12px;top:10px;border:0;background:#f2f4f8;width:30px;height:30px;border-radius:50%;font-size:18px;color:#6c7482}.modal-head{display:flex;justify-content:space-between;gap:10px;padding-right:35px}.modal-comp{font-size:11px;font-weight:800;color:var(--navy)}.modal-day{font-size:9px;color:var(--muted)}.modal-teams{display:grid;grid-template-columns:1fr 50px 1fr;align-items:center;gap:8px;margin:20px 0}.modal-team{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;font-weight:800;font-size:12px}.modal-vs{text-align:center;font-size:10px;color:#9aa2b0;font-weight:800}.detail{display:grid;gap:8px;border-top:1px solid #edf0f4;padding-top:13px}.detail-row{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:10px;color:#596375}.modal-section-title{font-size:11px;font-weight:900;color:var(--navy);margin-bottom:8px}.gcal{display:block;text-align:center;text-decoration:none;margin-top:15px;padding:10px;background:var(--navy);color:#fff;border-radius:9px;font-size:10px;font-weight:800}
 .footer{font-size:9px;color:#9aa2b0;text-align:center;padding:2px 0 8px}
 .source-note{font-size:9px;color:#9aa2ae;margin-top:5px}.source-note span{font-weight:700;color:#687184}.data-status{font-size:10px;color:#8d96a6;text-align:center;margin-top:2px}.data-status[data-state="ok"]{color:#4f7b62}.data-status[data-state="error"]{color:#b64242}.data-status[data-state="loading"]{color:#9a7a28}
 @media(max-width:1180px){.stats-grid{grid-template-columns:repeat(3,1fr)}.schedule-layout{grid-template-columns:1fr}.calendar-three{grid-template-columns:1fr 1fr 1fr}}
@@ -272,10 +272,6 @@ body{font-family:var(--ui-font);font-size:15px;line-height:1.55;-webkit-font-smo
     </div>
   </section>
 
-  <section class="section accordion-section" id="previousMatchStats">
-    <button class="accordion-trigger" type="button" aria-expanded="false"><span><span class="accordion-title">📈 Statistik Pertandingan Sebelumnya</span><span class="accordion-sub match-stats-title">Total shots, shots on target, possession, passing, corners, cards &amp; lainnya</span></span><span class="accordion-chevron">⌄</span></button>
-    <div class="accordion-content"></div>
-  </section>
 
   <section class="section accordion-section" id="resultsSection">
     <button class="accordion-trigger" type="button" aria-expanded="false"><span><span class="accordion-title">📊 Hasil Pertandingan</span><span class="accordion-sub" id="resultsMeta">Hasil Persib dari XML terakhir</span></span><span class="accordion-chevron">⌄</span></button>
@@ -357,7 +353,7 @@ const STATIC_MATCHES = [
   { id:"ACL2-03", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"MD 3", date:"2026-10-28", time:"18:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Melbourne Victory", venue:"Gelora Bandung Lautan Api Stadium", city:"Bandung", country:"Indonesia", side:"Home" },
   { id:"ACL2-04", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"MD 4", date:"2026-11-04", time:"14:45", timezone:"Asia/Jakarta", home:"Melbourne Victory", away:"Persib Bandung", venue:"Melbourne Rectangular Stadium", city:"Melbourne", country:"Australia", side:"Away" },
   { id:"ACL2-05", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"MD 5", date:"2026-11-25", time:"18:00", timezone:"Asia/Jakarta", home:"Persib Bandung", away:"FC Seoul", venue:"Gelora Bandung Lautan Api Stadium", city:"Bandung", country:"Indonesia", side:"Home" },
-  { id:"ACL2-06", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"MD 6", date:"2026-12-02", time:"18:00", timezone:"Asia/Jakarta", home:"Viettel", away:"The Cong-Viettel FC", venue:"Hang Day Stadium", city:"Hanoi", country:"Vietnam", side:"Away" },
+  { id:"ACL2-06", competition:"AFC Champions League Two 2026/27", competitionShort:"ACL 2", matchday:"MD 6", date:"2026-12-02", time:"18:00", timezone:"Asia/Jakarta", home:"Viettel", away:"Persib Bandung", venue:"Hang Day Stadium", city:"Hanoi", country:"Vietnam", side:"Away" },
   { id:"SHOPEE-01", competition:"Shopee Cup 2026/27", competitionShort:"Shopee Cup", matchday:"MD 1", date:"2026-10-08", time:"17:00", timezone:"Asia/Jakarta", home:"Port FC", away:"Persib Bandung", venue:"PAT Stadium", city:"Bangkok", country:"Thailand", side:"Away" },
   { id:"SHOPEE-02", competition:"Shopee Cup 2026/27", competitionShort:"Shopee Cup", matchday:"MD 2", date:"2026-11-19", time:null, timezone:"Asia/Jakarta", home:"Persib Bandung", away:"Winner Play-Offs 2", venue:"Gelora Bandung Lautan Api Stadium", city:"Bandung", country:"Indonesia", side:"Home" },
   { id:"SHOPEE-03", competition:"Shopee Cup 2026/27", competitionShort:"Shopee Cup", matchday:"MD 3", date:"2026-12-10", time:"18:30", timezone:"Asia/Jakarta", home:"Lion City Sailors", away:"Persib Bandung", venue:"Jalan Besar Stadium", city:"Singapore", country:"Singapore", side:"Away" },
@@ -461,11 +457,15 @@ function parsePlayerStatsXML(xml){
   return {topScorer:read('topScorer'),topAssist:read('topAssist'),yellowCards:read('yellowCards'),redCards:read('redCards')};
 }
 function parseMatchStatsXML(xml){
-  if(!xml) return null;
-  const m=xml.querySelector('match'); if(!m) return null;
-  const stats={};
-  m.querySelectorAll('stat').forEach(s=>{const k=s.getAttribute('key');if(k)stats[k]={home:xmlText(s,'home'),away:xmlText(s,'away')}});
-  return {date:xmlText(m,'date'),home:xmlText(m,'home'),away:xmlText(m,'away'),stats};
+  if(!xml) return {};
+  const out={};
+  xml.querySelectorAll('match').forEach(m=>{
+    const id=m.getAttribute('id')||''; if(!id) return;
+    const stats={};
+    m.querySelectorAll('stat').forEach(st=>{const k=st.getAttribute('key');if(k)stats[k]={home:xmlText(st,'home'),away:xmlText(st,'away')}});
+    out[id]={id,date:xmlText(m,'date'),home:xmlText(m,'home'),away:xmlText(m,'away'),sourceUrl:xmlText(m,'sourceUrl'),stats};
+  });
+  return out;
 }
 function renderStandings(){
   const body=$('standingsBody'); if(!body) return;
@@ -507,13 +507,12 @@ function renderPrematchInsights(){
   $('homeFormStrip').innerHTML=hm.length?formDots(hm):'<div class="form-empty">Data form belum tersedia</div>';$('awayFormStrip').innerHTML=am.length?formDots(am):'<div class="form-empty">Data form belum tersedia</div>';
   $('homeFormSummary').textContent=hm.length?formSummary(hm):'';$('awayFormSummary').textContent=am.length?formSummary(am):'';$('homeRecentList').innerHTML=hm.length?recentListHtml(hm):'';$('awayRecentList').innerHTML=am.length?recentListHtml(am):'';$('h2hList').innerHTML=hh.length?h2hListHtml(hh):'<div class="form-empty">Data head to head belum tersedia.</div>';$('h2hNote').textContent=hh.length?'W/D/L dihitung dari sudut pandang masing-masing tim.':'H2H akan muncul setelah scraper memperoleh data pertandingan.';box.hidden=false;
 }
-function renderPreviousMatchStats(){
-  const box=$('previousMatchStats'); if(!box)return;
-  const d=matchStatsData;
-  if(!d||!Object.keys(d.stats||{}).length){box.querySelector('.accordion-content').innerHTML='<div class="form-empty">Statistik pertandingan sebelumnya belum tersedia.</div>';return}
-  box.querySelector('.match-stats-title').textContent=`${d.home} vs ${d.away} · ${formatDateID(d.date)}`;
+function matchStatsModalHtml(m){
+  const d=matchStatsData?.[m.id];
+  if(!d||!Object.keys(d.stats||{}).length) return '';
   const labels={possession:'Penguasaan bola',shotsOnTarget:'Tembakan ke gawang',shots:'Total tembakan',shotAccuracy:'Akurasi tembakan',successfulPasses:'Umpan sukses',failedPasses:'Umpan gagal',corners:'Tendangan sudut',tackles:'Tekel sukses',offsides:'Offside',fouls:'Pelanggaran',yellowCards:'Kartu kuning',redCards:'Kartu merah'};
-  box.querySelector('.accordion-content').innerHTML=`<div class="match-stat-table">${Object.entries(labels).filter(([k])=>d.stats[k]).map(([k,label])=>`<div class="match-stat-row"><strong>${escapeHtml(d.stats[k].home)}</strong><span>${label}</span><strong>${escapeHtml(d.stats[k].away)}</strong></div>`).join('')}</div>`;
+  const rows=Object.entries(labels).filter(([k])=>d.stats[k]).map(([k,label])=>`<div class=\"match-stat-row\"><strong>${escapeHtml(d.stats[k].home)}</strong><span>${label}</span><strong>${escapeHtml(d.stats[k].away)}</strong></div>`).join('');
+  return `<div style=\"margin-top:18px\"><div class=\"modal-section-title\">📈 Statistik pertandingan</div><div class=\"match-stat-table\">${rows}</div></div>`;
 }
 
 function normalizeCompetitionShort(value){
@@ -543,6 +542,7 @@ function mergeMatchSets(fixtures, results){
   return [...map.values()].sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
 }
 
+function TEAM_NAME_IS_PERSIB(x){return [x.home,x.away].some(v=>String(v||'').toLowerCase()==='persib bandung')}
 async function loadLocalData(){
   setDataStatus('Memuat jadwal & detail pertandingan dari XML…', 'loading');
   try{
@@ -571,7 +571,7 @@ async function loadLocalData(){
     playerStatsData = playerStatsXML ? parsePlayerStatsXML(playerStatsXML) : null;
     matchStatsData = matchStatsXML ? parseMatchStatsXML(matchStatsXML) : null;
     prematchData = formXML ? parsePrematchXML(formXML) : null;
-    window.__resultMatches = resultDetails.filter(x=>x.competitionShort && /Super League|ACL 2|Shopee Cup/.test(x.competitionShort));
+    window.__resultMatches = resultDetails.filter(x=>{const base=STATIC_MATCHES.find(m=>m.id===x.id);return !!base && TEAM_NAME_IS_PERSIB(x)});
     if(matches.length!==46) throw new Error(`Master schedule harus berisi 46 pertandingan, ditemukan ${matches.length}.`);
     setDataStatus('XML update aktif · jadwal tetap 46 pertandingan · detail & hasil diperbarui scraper', 'ok');
     $('lastRefreshLabel').textContent='Detail & hasil dari XML scraper';
@@ -694,7 +694,8 @@ function downloadICS(list,label){if(!list.length){alert('Tidak ada pertandingan 
 function futureMatches(){const now=Date.now();return matches.filter(m=>m.time?((parseMatchDateTime(m)?.getTime()??Infinity)>=now-7200000):m.date>=todayStr())}
 function gcalSelections(){const all=futureMatches().sort((a,b)=>sortKey(a).localeCompare(sortKey(b))),season1=all.filter(m=>m.date>='2026-07-01'&&m.date<='2026-12-31'),season2=all.filter(m=>m.date>='2027-01-01'&&m.date<='2027-06-30');const currentKey=currentMonthKey();return [{label:'Jadwal Bulan Ini',sub:`${all.filter(m=>m.date.slice(0,7)===currentKey).length} pertandingan`,list:all.filter(m=>m.date.slice(0,7)===currentKey),file:'Persib bulan ini'},{label:'Setengah Musim Pertama',sub:`${season1.length} pertandingan`,list:season1,file:'Persib half season 1'},{label:'Setengah Musim Kedua',sub:`${season2.length} pertandingan`,list:season2,file:'Persib half season 2'},{label:'Semusim Penuh',sub:`${all.length} pertandingan`,list:all,file:'Persib 2026-27 full season'},{label:'BRI Super League',sub:`${all.filter(m=>m.competitionShort==='Super League').length} pertandingan`,list:all.filter(m=>m.competitionShort==='Super League'),file:'Persib BRI Super League 2026-27'},{label:'ACL Two',sub:`${all.filter(m=>m.competitionShort==='ACL 2').length} pertandingan`,list:all.filter(m=>m.competitionShort==='ACL 2'),file:'Persib ACL Two 2026-27'},{label:'Shopee Cup',sub:`${all.filter(m=>m.competitionShort==='Shopee Cup').length} pertandingan`,list:all.filter(m=>m.competitionShort==='Shopee Cup'),file:'Persib Shopee Cup 2026-27'},{label:'Semua Kompetisi',sub:`${all.length} pertandingan`,list:all,file:'Persib semua kompetisi 2026-27'},{label:'Home Saja',sub:`${all.filter(m=>m.side==='Home').length} pertandingan`,list:all.filter(m=>m.side==='Home'),file:'Persib home 2026-27'},{label:'Away Saja',sub:`${all.filter(m=>m.side==='Away').length} pertandingan`,list:all.filter(m=>m.side==='Away'),file:'Persib away 2026-27'}]}
 function openGcalOptions(){const box=$('gcalOptions');box.innerHTML=gcalSelections().map((x,i)=>`<button class="gcal-option" type="button" data-gcal-index="${i}"><strong>${escapeHtml(x.label)}</strong><span>${escapeHtml(x.sub)}</span></button>`).join('');$('gcalOverlay').classList.add('open')}
-function openModal(list){$('modalContent').innerHTML=list.map(m=>`<div class="modal-head"><div class="modal-comp">${escapeHtml(m.competition)}</div><div class="modal-day">${escapeHtml(m.matchday||"")}</div></div><div class="modal-teams"><div class="modal-team">${teamBadgeHtml(m.home,42)}<div>${escapeHtml(m.home)}</div></div><div class="modal-vs">VS</div><div class="modal-team">${teamBadgeHtml(m.away,42)}<div>${escapeHtml(m.away)}</div></div></div><div class="detail"><div class="detail-row"><span>📅</span><span>${formatDateID(m.date,true)}</span></div><div class="detail-row"><span>🕐</span><span>${timeLabel(m)}</span></div><div class="detail-row"><span>🏟</span><span>${escapeHtml(venueLabel(m))}</span></div><div class="detail-row"><span>📍</span><span>${escapeHtml(cityLabel(m))}</span></div><div class="detail-row"><span>${m.side==="Home"?'🏠':'✈️'}</span><span>${m.side==="Home"?'Kandang':'Tandang'}</span></div></div><a class="gcal" target="_blank" rel="noopener" href="${buildGCalUrl(m)}">＋ Tambahkan ke Google Calendar</a>`).join('<hr style="border:0;border-top:1px solid #eee;margin:18px 0">');$('modalOverlay').classList.add('open')}
+function openModal(list){$('modalContent').innerHTML=list.map(m=>{const score=(m.homeScore!==''&&m.awayScore!=='')?`${escapeHtml(m.homeScore)} – ${escapeHtml(m.awayScore)}`:'VS';return `<div class=\"modal-head\"><div class=\"modal-comp\">${escapeHtml(m.competition)}</div><div class=\"modal-day\">${escapeHtml(m.matchday||'')}</div></div><div class=\"modal-teams\"><div class=\"modal-team\">${teamBadgeHtml(m.home,42)}<div>${escapeHtml(m.home)}</div></div><div class=\"modal-vs\"><strong class=\"result-score\">${score}</strong>${m.status==='finished'?'<div class=\"result-status\">FT</div>':''}</div><div class=\"modal-team\">${teamBadgeHtml(m.away,42)}<div>${escapeHtml(m.away)}</div></div></div><div class=\"detail\"><div class=\"detail-row\"><span>📅</span><span>${formatDateID(m.date,true)}</span></div><div class=\"detail-row\"><span>🕐</span><span>${timeLabel(m)}</span></div><div class=\"detail-row\"><span>🏟</span><span>${escapeHtml(venueLabel(m))}</span></div><div class=\"detail-row\"><span>📍</span><span>${escapeHtml(cityLabel(m))}</span></div><div class=\"detail-row\"><span>${m.side==='Home'?'🏠':'✈️'}</span><span>${m.side==='Home'?'Kandang':'Tandang'}</span></div></div>${matchStatsModalHtml(m)}<a class=\"gcal\" target=\"_blank\" rel=\"noopener\" href=\"${buildGCalUrl(m)}\">＋ Tambahkan ke Google Calendar</a>`}).join('<hr style=\"border:0;border-top:1px solid #eee;margin:18px 0\">');$('modalOverlay').classList.add('open')}
+
 function closeModal(){$('modalOverlay').classList.remove('open')}
 
 function initAccordions(){document.querySelectorAll('.accordion-section').forEach(section=>{const trigger=section.querySelector('.accordion-trigger');if(!trigger)return;trigger.addEventListener('click',()=>{const open=section.classList.toggle('open');trigger.setAttribute('aria-expanded',String(open));});});}
@@ -717,7 +718,6 @@ document.querySelectorAll('.side-nav button').forEach(b=>b.onclick=()=>document.
   renderHero();
   renderPrematchInsights();
   renderStandings();
-  renderPreviousMatchStats();
   renderUpcoming();
   renderList();
   populateCalendarSelectors();
