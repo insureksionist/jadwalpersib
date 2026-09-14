@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lastUpdate version="1.2" source="flashscore-rendered">
-  <lastSuccess>2026-09-14T09:59:03+07:00</lastSuccess>
-  <last_success>2026-09-14T09:59:03+07:00</last_success>
-  <lastAttempt>2026-09-14T09:59:03+07:00</lastAttempt>
-  <last_attempt>2026-09-14T09:59:03+07:00</last_attempt>
+  <lastSuccess>2026-09-15T03:14:15+07:00</lastSuccess>
+  <last_success>2026-09-15T03:14:15+07:00</last_success>
+  <lastAttempt>2026-09-15T03:14:15+07:00</lastAttempt>
+  <last_attempt>2026-09-15T03:14:15+07:00</last_attempt>
   <status>ok</status>
   <message>Detail scrape succeeded; canonical schedule preserved</message>
   <fixtureCount>46</fixtureCount>
