@@ -56,7 +56,9 @@
     <city>Seoul</city>
     <country>Indonesia</country>
     <side>Away</side>
-    <status>scheduled</status>
+    <status>finished</status>
+    <homeScore>0</homeScore>
+    <awayScore>1</awayScore>
     <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=2BtB1Go1</sourceUrl>
     <homeTeamUrl>https://www.flashscore.com/team/seoul/8tzeYeHp/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
@@ -309,9 +311,9 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=2BtB1Go1</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/seoul/8tzeYeHp/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=QLurGF0f</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/seoul/8tzeYeHp/</awayTeamUrl>
   </match>
   <match>
     <id>SL-11</id>

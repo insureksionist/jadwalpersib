@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <standings version="1.0" source="ileague-rendered" competition="BRI Super League 2026/27">
   <team position="1">
+    <club>DEWA UNITED BANTEN FC</club>
+    <played>3</played>
+    <wins>2</wins>
+    <draws>1</draws>
+    <losses>0</losses>
+    <gf>6</gf>
+    <ga>3</ga>
+    <gd>3</gd>
+    <points>7</points>
+    <form>W D W</form>
+  </team>
+  <team position="2">
     <club>BALI UNITED FC</club>
     <played>2</played>
     <wins>2</wins>
@@ -12,7 +24,7 @@
     <points>6</points>
     <form>W W</form>
   </team>
-  <team position="2">
+  <team position="3">
     <club>MADURA UNITED FC</club>
     <played>2</played>
     <wins>2</wins>
@@ -24,7 +36,7 @@
     <points>6</points>
     <form>W W</form>
   </team>
-  <team position="3">
+  <team position="4">
     <club>PERSIJA JAKARTA</club>
     <played>2</played>
     <wins>2</wins>
@@ -36,7 +48,7 @@
     <points>6</points>
     <form>W W</form>
   </team>
-  <team position="4">
+  <team position="5">
     <club>AREMA FC</club>
     <played>2</played>
     <wins>1</wins>
@@ -48,7 +60,7 @@
     <points>4</points>
     <form>D W</form>
   </team>
-  <team position="5">
+  <team position="6">
     <club>PERSITA</club>
     <played>2</played>
     <wins>1</wins>
@@ -59,18 +71,6 @@
     <gd>1</gd>
     <points>4</points>
     <form>W D</form>
-  </team>
-  <team position="6">
-    <club>DEWA UNITED BANTEN FC</club>
-    <played>2</played>
-    <wins>1</wins>
-    <draws>1</draws>
-    <losses>0</losses>
-    <gf>3</gf>
-    <ga>2</ga>
-    <gd>1</gd>
-    <points>4</points>
-    <form>D W</form>
   </team>
   <team position="7">
     <club>PERSEBAYA SURABAYA</club>
@@ -110,15 +110,15 @@
   </team>
   <team position="10">
     <club>BORNEO FC SAMARINDA</club>
-    <played>2</played>
+    <played>3</played>
     <wins>1</wins>
     <draws>0</draws>
-    <losses>1</losses>
-    <gf>1</gf>
-    <ga>1</ga>
-    <gd>0</gd>
+    <losses>2</losses>
+    <gf>2</gf>
+    <ga>4</ga>
+    <gd>-2</gd>
     <points>3</points>
-    <form>W L</form>
+    <form>L W L</form>
   </team>
   <team position="11">
     <club>BHAYANGKARA PRESISI LAMPUNG FC</club>
