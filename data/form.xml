@@ -1,71 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preMatch version="1.0" source="flashscore-rendered">
-  <nextMatch id="SL-03">
-    <date>2026-09-20</date>
-    <time>19:00</time>
-    <home>Persijap Jepara</home>
+  <nextMatch id="SHOPEE-01">
+    <date>2026-10-08</date>
+    <time>17:00</time>
+    <home>Port FC</home>
     <away>Persib Bandung</away>
-    <competition>BRI Super League 2026/27</competition>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persijap-jepara-AqJqcOYR/?mid=KO07rBLH</sourceUrl>
+    <competition>Shopee Cup 2026/27</competition>
   </nextMatch>
-  <team name="Persijap Jepara">
-    <match>
-      <date>2026-09-12</date>
-      <time>19:00</time>
-      <home>Persijap Jepara</home>
-      <away>Borneo</away>
-      <homeScore>0</homeScore>
-      <awayScore>1</awayScore>
-      <outcome>L</outcome>
-      <competition>Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/borneo-nwyOlpIL/persijap-jepara-AqJqcOYR/?mid=K489gGCL</sourceUrl>
-    </match>
-    <match>
-      <date>2026-09-06</date>
-      <time>19:00</time>
-      <home>Madura United</home>
-      <away>Persijap Jepara</away>
-      <homeScore>2</homeScore>
-      <awayScore>0</awayScore>
-      <outcome>L</outcome>
-      <competition>Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/madura-united-6i1jCnP9/persijap-jepara-AqJqcOYR/?mid=QLsx9T3b</sourceUrl>
-    </match>
-    <match>
-      <date>2026-05-23</date>
-      <time>16:00</time>
-      <home>Persib Bandung</home>
-      <away>Persijap Jepara</away>
-      <homeScore>0</homeScore>
-      <awayScore>0</awayScore>
-      <outcome>D</outcome>
-      <competition>00 Madura United Persijap Jepara 2 0 L Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persijap-jepara-AqJqcOYR/?mid=vwIZiObB</sourceUrl>
-    </match>
-    <match>
-      <date>2026-05-17</date>
-      <time>19:00</time>
-      <home>Persijap Jepara</home>
-      <away>Borneo</away>
-      <homeScore>0</homeScore>
-      <awayScore>0</awayScore>
-      <outcome>D</outcome>
-      <competition>00 Madura United Persijap Jepara 2 0 L Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/borneo-nwyOlpIL/persijap-jepara-AqJqcOYR/?mid=K489gGCL</sourceUrl>
-    </match>
-    <match>
-      <date>2026-05-10</date>
-      <time>15:30</time>
-      <home>Persita</home>
-      <away>Persijap Jepara</away>
-      <homeScore>0</homeScore>
-      <awayScore>3</awayScore>
-      <outcome>W</outcome>
-      <competition>00 Madura United Persijap Jepara 2 0 L Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/persijap-jepara-AqJqcOYR/persita-d0uFG5mk/?mid=raYaEHAk</sourceUrl>
-    </match>
-  </team>
+  <team name="Port FC"/>
   <team name="Persib Bandung">
+    <match>
+      <date>2026-09-20</date>
+      <time>19:00</time>
+      <home>Persijap Jepara</home>
+      <away>Persib Bandung</away>
+      <homeScore>1</homeScore>
+      <awayScore>2</awayScore>
+      <outcome>W</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persijap-jepara-AqJqcOYR/?mid=KO07rBLH</sourceUrl>
+    </match>
     <match>
       <date>2026-09-16</date>
       <time>17:00</time>
@@ -74,7 +28,7 @@
       <homeScore>0</homeScore>
       <awayScore>1</awayScore>
       <outcome>W</outcome>
-      <competition>AFC Champions League 2</competition>
+      <competition>00 Persijap Jepara Persib Bandung 1 2 W AFC Champions League 2</competition>
       <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=2BtB1Go1</sourceUrl>
     </match>
     <match>
@@ -109,17 +63,6 @@
       <outcome>W</outcome>
       <competition>W Super League</competition>
       <sourceUrl>https://www.flashscore.com/match/football/manila-digger-0retwjin/persib-bandung-KpBjbPK1/?mid=8Y48rpJ7</sourceUrl>
-    </match>
-    <match>
-      <date>2026-08-18</date>
-      <time>19:30</time>
-      <home>Persib Bandung</home>
-      <away>Bali United</away>
-      <homeScore>3</homeScore>
-      <awayScore>2</awayScore>
-      <outcome>W</outcome>
-      <competition>W Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=ju1hqtzH</sourceUrl>
     </match>
   </team>
   <headToHead/>

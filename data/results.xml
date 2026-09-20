@@ -64,6 +64,27 @@
     <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
+    <id>SL-03</id>
+    <competition>BRI Super League 2026/27</competition>
+    <competitionShort>Super League</competitionShort>
+    <matchday>Matchday 3</matchday>
+    <date>2026-09-20</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persijap Jepara</home>
+    <away>Persib Bandung</away>
+    <venue>Gelora Bumi Kartini</venue>
+    <city>Jepara</city>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>2</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persijap-jepara-AqJqcOYR/?mid=KO07rBLH</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persijap-jepara/AqJqcOYR/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
+  </match>
+  <match>
     <id>SL-10</id>
     <competition>BRI Super League 2026/27</competition>
     <competitionShort>Super League</competitionShort>

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <standings version="1.0" source="ileague-rendered" competition="BRI Super League 2026/27">
   <team position="1">
+    <club>DEWA UNITED BANTEN FC</club>
+    <played>4</played>
+    <wins>3</wins>
+    <draws>1</draws>
+    <losses>0</losses>
+    <gf>8</gf>
+    <ga>4</ga>
+    <gd>4</gd>
+    <points>10</points>
+    <form>W W D W</form>
+  </team>
+  <team position="2">
     <club>MADURA UNITED FC</club>
     <played>3</played>
     <wins>3</wins>
@@ -12,7 +24,7 @@
     <points>9</points>
     <form>W W W</form>
   </team>
-  <team position="2">
+  <team position="3">
     <club>PERSIJA JAKARTA</club>
     <played>3</played>
     <wins>3</wins>
@@ -24,31 +36,43 @@
     <points>9</points>
     <form>W W W</form>
   </team>
-  <team position="3">
-    <club>DEWA UNITED BANTEN FC</club>
+  <team position="4">
+    <club>BALI UNITED FC</club>
     <played>3</played>
     <wins>2</wins>
-    <draws>1</draws>
-    <losses>0</losses>
+    <draws>0</draws>
+    <losses>1</losses>
     <gf>6</gf>
     <ga>3</ga>
     <gd>3</gd>
-    <points>7</points>
-    <form>W D W</form>
-  </team>
-  <team position="4">
-    <club>BALI UNITED FC</club>
-    <played>2</played>
-    <wins>2</wins>
-    <draws>0</draws>
-    <losses>0</losses>
-    <gf>6</gf>
-    <ga>2</ga>
-    <gd>4</gd>
     <points>6</points>
-    <form>W W</form>
+    <form>L W W</form>
   </team>
   <team position="5">
+    <club>PERSIB BANDUNG</club>
+    <played>3</played>
+    <wins>2</wins>
+    <draws>0</draws>
+    <losses>1</losses>
+    <gf>6</gf>
+    <ga>4</ga>
+    <gd>2</gd>
+    <points>6</points>
+    <form>W L W</form>
+  </team>
+  <team position="6">
+    <club>BORNEO FC SAMARINDA</club>
+    <played>4</played>
+    <wins>2</wins>
+    <draws>0</draws>
+    <losses>2</losses>
+    <gf>3</gf>
+    <ga>4</ga>
+    <gd>-1</gd>
+    <points>6</points>
+    <form>W L W L</form>
+  </team>
+  <team position="7">
     <club>AREMA FC</club>
     <played>3</played>
     <wins>1</wins>
@@ -60,7 +84,7 @@
     <points>5</points>
     <form>D D W</form>
   </team>
-  <team position="6">
+  <team position="8">
     <club>BHAYANGKARA PRESISI LAMPUNG FC</club>
     <played>3</played>
     <wins>1</wins>
@@ -72,7 +96,7 @@
     <points>5</points>
     <form>W D D</form>
   </team>
-  <team position="7">
+  <team position="9">
     <club>PERSITA</club>
     <played>3</played>
     <wins>1</wins>
@@ -84,7 +108,7 @@
     <points>5</points>
     <form>D W D</form>
   </team>
-  <team position="8">
+  <team position="10">
     <club>PERSEBAYA SURABAYA</club>
     <played>3</played>
     <wins>1</wins>
@@ -96,7 +120,7 @@
     <points>5</points>
     <form>D W D</form>
   </team>
-  <team position="9">
+  <team position="11">
     <club>PERSIK KEDIRI</club>
     <played>3</played>
     <wins>1</wins>
@@ -107,30 +131,6 @@
     <gd>1</gd>
     <points>4</points>
     <form>D W L</form>
-  </team>
-  <team position="10">
-    <club>PERSIB BANDUNG</club>
-    <played>2</played>
-    <wins>1</wins>
-    <draws>0</draws>
-    <losses>1</losses>
-    <gf>4</gf>
-    <ga>3</ga>
-    <gd>1</gd>
-    <points>3</points>
-    <form>L W</form>
-  </team>
-  <team position="11">
-    <club>BORNEO FC SAMARINDA</club>
-    <played>3</played>
-    <wins>1</wins>
-    <draws>0</draws>
-    <losses>2</losses>
-    <gf>2</gf>
-    <ga>4</ga>
-    <gd>-2</gd>
-    <points>3</points>
-    <form>L W L</form>
   </team>
   <team position="12">
     <club>PSM MAKASSAR</club>
@@ -170,27 +170,27 @@
   </team>
   <team position="15">
     <club>PSS SLEMAN</club>
-    <played>2</played>
+    <played>3</played>
     <wins>0</wins>
     <draws>0</draws>
-    <losses>2</losses>
-    <gf>2</gf>
-    <ga>5</ga>
-    <gd>-3</gd>
+    <losses>3</losses>
+    <gf>3</gf>
+    <ga>7</ga>
+    <gd>-4</gd>
     <points>0</points>
-    <form>L L</form>
+    <form>L L L</form>
   </team>
   <team position="16">
     <club>PERSIJAP JEPARA</club>
-    <played>2</played>
+    <played>3</played>
     <wins>0</wins>
     <draws>0</draws>
-    <losses>2</losses>
-    <gf>0</gf>
-    <ga>3</ga>
-    <gd>-3</gd>
+    <losses>3</losses>
+    <gf>1</gf>
+    <ga>5</ga>
+    <gd>-4</gd>
     <points>0</points>
-    <form>L L</form>
+    <form>L L L</form>
   </team>
   <team position="17">
     <club>JAVA UNITED FC (-2)</club>
