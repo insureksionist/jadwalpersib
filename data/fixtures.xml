@@ -90,15 +90,18 @@
     <competitionShort>Shopee Cup</competitionShort>
     <matchday>MD 1</matchday>
     <date>2026-10-08</date>
-    <time>17:00</time>
+    <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Port FC</home>
     <away>Persib Bandung</away>
     <venue>PAT Stadium</venue>
     <city>Bangkok</city>
-    <country>Thailand</country>
+    <country>Indonesia</country>
     <side>Away</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/port-mti-fc/Yov9ooRk/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
     <id>SL-04</id>
@@ -182,7 +185,7 @@
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 7</matchday>
     <date>2026-10-25</date>
-    <time>15:30</time>
+    <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Garudayaksa FC</home>
     <away>Persib Bandung</away>
@@ -191,6 +194,9 @@
     <country>Indonesia</country>
     <side>Away</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/garudayaksa-MFnTbofC/persib-bandung-KpBjbPK1/?mid=xxokbgGt</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/garudayaksa/MFnTbofC/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
     <originalDate>2026-10-26</originalDate>
   </match>
   <match>
@@ -199,7 +205,7 @@
     <competitionShort>ACL 2</competitionShort>
     <matchday>MD 3</matchday>
     <date>2026-10-28</date>
-    <time>18:00</time>
+    <time>19:15</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>Melbourne Victory</away>
@@ -208,6 +214,9 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/melbourne-victory-Qql6CzOP/persib-bandung-KpBjbPK1/?mid=2VW4Nc8K</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/melbourne-victory/Qql6CzOP/</awayTeamUrl>
   </match>
   <match>
     <id>SL-08</id>
@@ -215,7 +224,7 @@
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 8</matchday>
     <date>2026-11-01</date>
-    <time>19:00</time>
+    <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>Isenmulang Kalteng</away>
@@ -240,9 +249,12 @@
     <away>Persib Bandung</away>
     <venue>Melbourne Rectangular Stadium</venue>
     <city>Melbourne</city>
-    <country>Australia</country>
+    <country>Indonesia</country>
     <side>Away</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/melbourne-victory-Qql6CzOP/persib-bandung-KpBjbPK1/?mid=YDNzIyWs</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/melbourne-victory/Qql6CzOP/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
     <id>SL-09</id>
@@ -284,7 +296,7 @@
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 10</matchday>
     <date>2026-11-22</date>
-    <time>19:30</time>
+    <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>Bali United</away>
@@ -293,6 +305,7 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=QwDMQfDb</sourceUrl>
     <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/bali-united/W82OaQl9/</awayTeamUrl>
   </match>
@@ -349,9 +362,9 @@
     <country>Indonesia</country>
     <side>Away</side>
     <status>scheduled</status>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/viettel-Gb6wjV0S/?mid=AypJafGD</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/viettel/Gb6wjV0S/</awayTeamUrl>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/viettel-Gb6wjV0S/?mid=6asbCXaJ</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/viettel/Gb6wjV0S/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
     <id>SL-12</id>
@@ -413,6 +426,7 @@
     <competitionShort>Shopee Cup</competitionShort>
     <matchday>MD 4</matchday>
     <date>2026-12-17</date>
+    <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>Johor Darul Ta'zim</away>
@@ -421,6 +435,9 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/johor-dt-AVV6BGlb/persib-bandung-KpBjbPK1/?mid=8x5jwGc2</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/johor-dt/AVV6BGlb/</awayTeamUrl>
   </match>
   <match>
     <id>SL-14</id>
@@ -456,6 +473,9 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
+    <sourceUrl>https://www.flashscore.com/match/football/fc-bhayangkara-6gEuDIDT/persib-bandung-KpBjbPK1/?mid=6mwabliK</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/fc-bhayangkara/6gEuDIDT/</awayTeamUrl>
   </match>
   <match>
     <id>SL-16</id>
@@ -640,7 +660,7 @@
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 25</matchday>
     <date>2027-04-10</date>
-    <time>19:30</time>
+    <time>19:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>Arema FC</away>
@@ -649,8 +669,6 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
-    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/arema-fc/dpH3oK85/</awayTeamUrl>
   </match>
   <match>
     <id>SL-26</id>
@@ -683,8 +701,6 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
-    <homeTeamUrl>https://www.flashscore.com/team/persija-jakarta/dWeXDE5i/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
     <id>SL-28</id>

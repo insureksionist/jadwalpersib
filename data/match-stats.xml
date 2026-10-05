@@ -1,14 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<matchStats version="2.1" source="ileague-rendered-seed">
+<matchStats version="3.0" source="ileague+flashscore">
   <match id="SL-01">
-    <date>2026-09-06</date><home>Persib Bandung</home><away>PSM Makassar</away>
+    <date>2026-09-06</date>
+    <home>Persib Bandung</home>
+    <away>PSM Makassar</away>
     <sourceUrl>https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/2026-09-06/PERSIB_BANDUNG/PSM_MAKASSAR</sourceUrl>
-    <stat key="possession"><home>70</home><away>30</away></stat>
-    <stat key="shotsOnTarget"><home>6</home><away>3</away></stat><stat key="shots"><home>11</home><away>7</away></stat>
-    <stat key="shotAccuracy"><home>55</home><away>75</away></stat><stat key="successfulPasses"><home>495</home><away>209</away></stat>
-    <stat key="failedPasses"><home>76</home><away>89</away></stat><stat key="corners"><home>5</home><away>3</away></stat>
-    <stat key="tackles"><home>13</home><away>19</away></stat><stat key="offsides"><home>0</home><away>1</away></stat>
-    <stat key="fouls"><home>9</home><away>15</away></stat><stat key="yellowCards"><home>1</home><away>2</away></stat><stat key="redCards"><home>0</home><away>0</away></stat>
+    <stat key="possession" source="legacy">
+      <home>70</home>
+      <away>30</away>
+    </stat>
+    <stat key="shotsOnTarget" source="legacy">
+      <home>6</home>
+      <away>3</away>
+    </stat>
+    <stat key="shots" source="legacy">
+      <home>11</home>
+      <away>7</away>
+    </stat>
+    <stat key="shotAccuracy" source="legacy">
+      <home>55</home>
+      <away>75</away>
+    </stat>
+    <stat key="successfulPasses" source="legacy">
+      <home>495</home>
+      <away>209</away>
+    </stat>
+    <stat key="failedPasses" source="legacy">
+      <home>76</home>
+      <away>89</away>
+    </stat>
+    <stat key="corners" source="legacy">
+      <home>5</home>
+      <away>3</away>
+    </stat>
+    <stat key="tackles" source="legacy">
+      <home>13</home>
+      <away>19</away>
+    </stat>
+    <stat key="offsides" source="legacy">
+      <home>0</home>
+      <away>1</away>
+    </stat>
+    <stat key="fouls" source="legacy">
+      <home>9</home>
+      <away>15</away>
+    </stat>
+    <stat key="yellowCards" source="legacy">
+      <home>1</home>
+      <away>2</away>
+    </stat>
+    <stat key="redCards" source="legacy">
+      <home>0</home>
+      <away>0</away>
+    </stat>
     <event type="goal" minute="8" team="away" player="Kodai Tanaka"/>
     <event type="goal" minute="49" team="home" player="Patricio Martin Matricardi"/>
     <event type="goal" minute="52" team="home" player="Balša Sekulic"/>
@@ -18,18 +62,98 @@
     <event type="yellow" minute="81" team="away" player="Akbar Tanjung"/>
   </match>
   <match id="SL-02">
-    <date>2026-09-12</date><home>Persija Jakarta</home><away>Persib Bandung</away>
+    <date>2026-09-12</date>
+    <home>Persija Jakarta</home>
+    <away>Persib Bandung</away>
     <sourceUrl>https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/2026-09-12/PERSIJA_JAKARTA/PERSIB_BANDUNG</sourceUrl>
-    <stat key="possession"><home>54</home><away>46</away></stat>
-    <stat key="shotsOnTarget"><home>5</home><away>3</away></stat><stat key="shots"><home>11</home><away>6</away></stat>
-    <stat key="shotAccuracy"><home>56</home><away>75</away></stat><stat key="successfulPasses"><home>403</home><away>342</away></stat>
-    <stat key="failedPasses"><home>69</home><away>76</away></stat><stat key="corners"><home>8</home><away>3</away></stat>
-    <stat key="tackles"><home>16</home><away>19</away></stat><stat key="offsides"><home>3</home><away>1</away></stat>
-    <stat key="fouls"><home>12</home><away>10</away></stat><stat key="yellowCards"><home>2</home><away>1</away></stat><stat key="redCards"><home>0</home><away>0</away></stat>
+    <stat key="possession" source="legacy">
+      <home>54</home>
+      <away>46</away>
+    </stat>
+    <stat key="shotsOnTarget" source="legacy">
+      <home>5</home>
+      <away>3</away>
+    </stat>
+    <stat key="shots" source="legacy">
+      <home>11</home>
+      <away>6</away>
+    </stat>
+    <stat key="shotAccuracy" source="legacy">
+      <home>56</home>
+      <away>75</away>
+    </stat>
+    <stat key="successfulPasses" source="legacy">
+      <home>403</home>
+      <away>342</away>
+    </stat>
+    <stat key="failedPasses" source="legacy">
+      <home>69</home>
+      <away>76</away>
+    </stat>
+    <stat key="corners" source="legacy">
+      <home>8</home>
+      <away>3</away>
+    </stat>
+    <stat key="tackles" source="legacy">
+      <home>16</home>
+      <away>19</away>
+    </stat>
+    <stat key="offsides" source="legacy">
+      <home>3</home>
+      <away>1</away>
+    </stat>
+    <stat key="fouls" source="legacy">
+      <home>12</home>
+      <away>10</away>
+    </stat>
+    <stat key="yellowCards" source="legacy">
+      <home>2</home>
+      <away>1</away>
+    </stat>
+    <stat key="redCards" source="legacy">
+      <home>0</home>
+      <away>0</away>
+    </stat>
     <event type="goal" minute="42" team="home" player="Alexander Thomas Jeremejeff"/>
     <event type="goal" minute="82" team="away" player="Balša Sekulic"/>
     <event type="yellow" minute="67" team="home" player="Denis Kolinger"/>
     <event type="yellow" minute="69" team="away" player="Luka Menalo"/>
     <event type="yellow" minute="98" team="home" player="Stjepan Loncar"/>
+  </match>
+  <match id="ACL2-01">
+    <date>2026-09-16</date>
+    <home>FC Seoul</home>
+    <away>Persib Bandung</away>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=2BtB1Go1</sourceUrl>
+    <stat key="possession" source="flashscore">
+      <home>60</home>
+      <away>40</away>
+    </stat>
+    <stat key="shots" source="flashscore">
+      <home>15</home>
+      <away>5</away>
+    </stat>
+    <stat key="xg" source="flashscore">
+      <home>0.95</home>
+      <away>0.27</away>
+    </stat>
+  </match>
+  <match id="SL-03">
+    <date>2026-09-20</date>
+    <home>Persijap Jepara</home>
+    <away>Persib Bandung</away>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persijap-jepara-AqJqcOYR/?mid=KO07rBLH</sourceUrl>
+    <stat key="possession" source="flashscore">
+      <home>40</home>
+      <away>60</away>
+    </stat>
+    <stat key="shotsOnTarget" source="flashscore">
+      <home>6</home>
+      <away>7</away>
+    </stat>
+    <stat key="shots" source="flashscore">
+      <home>11</home>
+      <away>13</away>
+    </stat>
   </match>
 </matchStats>

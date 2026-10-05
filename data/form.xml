@@ -2,10 +2,11 @@
 <preMatch version="1.0" source="flashscore-rendered">
   <nextMatch id="SHOPEE-01">
     <date>2026-10-08</date>
-    <time>17:00</time>
+    <time>19:00</time>
     <home>Port FC</home>
     <away>Persib Bandung</away>
     <competition>Shopee Cup 2026/27</competition>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
   </nextMatch>
   <team name="Port FC"/>
   <team name="Persib Bandung">
