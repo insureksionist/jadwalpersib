@@ -1,0 +1,9 @@
+{
+  "_readme": "Koreksi jadwal manual. Kunci = ID laga di season-roster.json. Field yang didukung: date (YYYY-MM-DD), time (HH:MM), venue, city, country, note. Override SELALU menang atas scraper dan dibaca juga oleh index.html, jadi perubahan langsung tampil tanpa menunggu scraper. Hapus entri bila Flashscore sudah menampilkan jadwal yang benar (scraper memberi WARNING jika berbeda).",
+  "overrides": {
+    "SL-07": {
+      "date": "2026-10-25",
+      "note": "Garudayaksa FC vs Persib digeser dari 26 Okt ke 25 Okt 2026. Jam kickoff belum diubah (15:30 WIB)."
+    }
+  }
+}

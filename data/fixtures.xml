@@ -181,7 +181,7 @@
     <competition>BRI Super League 2026/27</competition>
     <competitionShort>Super League</competitionShort>
     <matchday>Matchday 7</matchday>
-    <date>2026-10-26</date>
+    <date>2026-10-25</date>
     <time>15:30</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Garudayaksa FC</home>
@@ -191,6 +191,7 @@
     <country>Indonesia</country>
     <side>Away</side>
     <status>scheduled</status>
+    <originalDate>2026-10-26</originalDate>
   </match>
   <match>
     <id>ACL2-03</id>
@@ -291,10 +292,7 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
-    <status>finished</status>
-    <homeScore>3</homeScore>
-    <awayScore>2</awayScore>
-    <sourceUrl>https://www.flashscore.com/match/football/bali-united-W82OaQl9/persib-bandung-KpBjbPK1/?mid=ju1hqtzH</sourceUrl>
+    <status>scheduled</status>
     <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/bali-united/W82OaQl9/</awayTeamUrl>
   </match>
@@ -650,10 +648,7 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
-    <status>finished</status>
-    <homeScore>1</homeScore>
-    <awayScore>0</awayScore>
-    <sourceUrl>https://www.flashscore.com/match/football/arema-fc-dpH3oK85/persib-bandung-KpBjbPK1/?mid=ptLGWHrQ</sourceUrl>
+    <status>scheduled</status>
     <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/arema-fc/dpH3oK85/</awayTeamUrl>
   </match>
@@ -687,10 +682,7 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
-    <status>finished</status>
-    <homeScore>2</homeScore>
-    <awayScore>1</awayScore>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=KpIFXYk2</sourceUrl>
+    <status>scheduled</status>
     <homeTeamUrl>https://www.flashscore.com/team/persija-jakarta/dWeXDE5i/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
