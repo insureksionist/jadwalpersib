@@ -33,6 +33,8 @@ STANDINGS_FILE = DATA_DIR / "standings.xml"
 PLAYER_STATS_FILE = DATA_DIR / "player-stats.xml"
 MATCH_STATS_FILE = DATA_DIR / "match-stats.xml"
 ROSTER_FILE = DATA_DIR / "season-roster.json"
+OVERRIDES_FILE = DATA_DIR / "schedule-overrides.json"
+DEBUG_DIR = BASE_DIR / "debug"
 
 TEAM_NAME = os.getenv("TEAM_NAME", "Persib Bandung")
 TEAM_ID = os.getenv("TEAM_ID", "KpBjbPK1")
@@ -61,6 +63,12 @@ MAX_PAGES = int(os.getenv("MAX_PAGES", "30"))
 DETAIL_DELAY_MS = int(os.getenv("DETAIL_DELAY_MS", "1200"))
 PAGE_DELAY_MS = int(os.getenv("PAGE_DELAY_MS", "1200"))
 HEADLESS = os.getenv("HEADLESS", "true").lower() not in {"0", "false", "no"}
+# A scraped row may move a canonical fixture only if its date is within this many
+# days of the canonical date. Anything farther is treated as a different match
+# (friendly, previous season, cup) and rejected.
+RESCHEDULE_WINDOW_DAYS = int(os.getenv("RESCHEDULE_WINDOW_DAYS", "45"))
+STATS_MAX_MATCHES = int(os.getenv("STATS_MAX_MATCHES", "8"))
+STATS_SOURCES = [x.strip().lower() for x in os.getenv("STATS_SOURCES", "ileague,flashscore").split(",") if x.strip()]
 
 
 @dataclass
@@ -84,6 +92,7 @@ class Match:
     source_url: str = ""
     home_team_url: str = ""
     away_team_url: str = ""
+    original_date: str = ""  # canonical date when the fixture has been rescheduled
 
     @property
     def dt(self) -> datetime:
@@ -205,6 +214,198 @@ def read_canonical_roster() -> list[Match]:
     return out
 
 
+# ---------------------------------------------------------------------------
+# Team-name matching, schedule overrides and the pure overlay logic
+# ---------------------------------------------------------------------------
+TEAM_ALIASES = {
+    "fc seoul": "seoul", "seoul": "seoul",
+    "viettel": "the cong-viettel fc", "the cong-viettel": "the cong-viettel fc",
+    "the cong-viettel fc": "the cong-viettel fc", "thể công - viettel": "the cong-viettel fc",
+    "persita tangerang": "persita", "persebaya surabaya": "persebaya",
+    "bhayangkara presisi lampung fc": "bhayangkara", "bhayangkara presisi indonesia fc": "bhayangkara",
+    "bhayangkara fc": "bhayangkara", "borneo fc samarinda": "borneo samarinda",
+    "isenmulang kalteng fc": "isenmulang kalteng", "java united fc": "java united",
+    "madu ra united": "madura united", "madura united fc": "madura united",
+    "pk r svay rieng": "pkr svay rieng", "pkr svay rieng fc": "pkr svay rieng",
+    "cong an nhan dan": "cong an ha noi", "cong an hanoi": "cong an ha noi",
+    "hanoi police": "cong an ha noi", "ca hanoi": "cong an ha noi",
+    "johor darul ta'zim": "johor darul tazim", "johor dt": "johor darul tazim",
+    "jdt": "johor darul tazim", "garudayaksa fc": "garudayaksa",
+    "garuda yaksa": "garudayaksa", "garudayaksa bekasi": "garudayaksa",
+    "dewa united fc": "dewa united", "dewa united banten": "dewa united",
+}
+_STOP_TOKENS = {"fc", "fk", "sc", "afc", "cf", "club", "the"}
+_GENERIC_TOKENS = {"united", "utd", "city", "town", "sailors", "police"}
+
+
+def _name_tokens(value: str) -> list[str]:
+    v = normalize_team_text(value).lower()
+    v = TEAM_ALIASES.get(v, v)
+    v = re.sub(r"\((?:[a-z]{2,3})\)", " ", v)
+    v = re.sub(r"[^a-z0-9]+", " ", v)
+    return [t for t in v.split() if t not in _STOP_TOKENS]
+
+
+def names_match(a: str, b: str) -> bool:
+    """Tolerant club-name comparison.
+
+    Equal after removing FC/FK/The and country tags, or one name is fully
+    contained in the other ("Persebaya" vs "Persebaya Surabaya"). Short or
+    generic single tokens ("United", "PSS") never match by containment.
+    """
+    ta, tb = set(_name_tokens(a)), set(_name_tokens(b))
+    if not ta or not tb:
+        return False
+    if ta == tb:
+        return True
+    small, big = (ta, tb) if len(ta) <= len(tb) else (tb, ta)
+    return small <= big and all(len(t) >= 4 and t not in _GENERIC_TOKENS for t in small)
+
+
+def load_overrides(path: Path | None = None) -> dict[str, dict]:
+    """Manual schedule corrections, keyed by canonical match ID.
+
+    Used when a fixture is rescheduled and the scraper cannot (or has not yet)
+    picked the change up. Format: {"overrides": {"SL-07": {"date": "YYYY-MM-DD",
+    "time": "HH:MM", "venue": "...", "note": "..."}}}. Overrides always win.
+    """
+    path = path or OVERRIDES_FILE
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"WARNING: could not read {path.name}: {exc}", file=sys.stderr)
+        return {}
+    items = raw.get("overrides", {}) if isinstance(raw, dict) else {}
+    out: dict[str, dict] = {}
+    for mid, ov in items.items():
+        if not isinstance(ov, dict):
+            continue
+        d = clean(str(ov.get("date") or ""))
+        if d:
+            try:
+                date.fromisoformat(d)
+            except ValueError:
+                print(f"WARNING: override {mid} has invalid date {d!r}; ignored", file=sys.stderr)
+                continue
+        t = clean(str(ov.get("time") or ""))
+        if t and not re.fullmatch(r"\d{2}:\d{2}", t):
+            print(f"WARNING: override {mid} has invalid time {t!r}; time ignored", file=sys.stderr)
+            t = ""
+        out[str(mid)] = {**ov, "date": d, "time": t}
+    return out
+
+
+def apply_overlays(baseline: list[Match], scraped: list[Match], overrides: dict[str, dict],
+                   now_local: datetime, window_days: int = RESCHEDULE_WINDOW_DAYS):
+    """Merge scraped rows onto the canonical roster.
+
+    Identity (id, competition, matchday, home, away, side) always comes from the
+    roster. A scraped row is accepted only if (1) it is a target competition (or
+    the competition could not be read), (2) both club names match a roster
+    fixture in the same orientation, and (3) its date is within ``window_days``
+    of the canonical date - the nearest candidate wins and ties are rejected.
+    An accepted row may *reschedule* the fixture (date/time) and supplies
+    status, score, venue and URLs. Manual overrides are applied last.
+
+    Returns (updated_by_id, report_lines, summary_dict).
+    """
+    updated = {m.id: Match(**asdict(m)) for m in baseline}
+    base_by_id = {m.id: m for m in baseline}
+    used_ids: set[str] = set()
+    used_urls: set[str] = set()
+    scraped_dates: dict[str, str] = {}
+    report: list[str] = []
+    accepted = rejected = 0
+    now_naive = now_local.replace(tzinfo=None)
+
+    def reject(sm: Match, reason: str) -> None:
+        nonlocal rejected
+        rejected += 1
+        report.append(f"REJECT  {sm.date} {sm.time} | {sm.home} - {sm.away} | {sm.competition or '?'} | {reason}")
+
+    for sm in scraped:
+        if TEAM_NAME.lower() not in {clean(sm.home).lower(), clean(sm.away).lower()}:
+            reject(sm, "bukan laga Persib"); continue
+        comp = sm.competition_short or slug_short(sm.competition)
+        if comp in {"President Cup", "Friendlies"}:
+            reject(sm, f"kompetisi di luar musim ini ({comp})"); continue
+        try:
+            sdate = date.fromisoformat(sm.date)
+        except ValueError:
+            reject(sm, "tanggal tidak valid"); continue
+        cands = [b for b in baseline
+                 if b.id not in used_ids
+                 and (comp not in TARGET_COMPETITIONS or b.competition_short == comp)
+                 and names_match(b.home, sm.home) and names_match(b.away, sm.away)]
+        if not cands:
+            reject(sm, "tidak ada fixture roster dengan pasangan tim/kompetisi ini"); continue
+        ranked = sorted(((abs((date.fromisoformat(b.date) - sdate).days), b.id, b) for b in cands))
+        gap, _, base = ranked[0]
+        if gap > window_days:
+            reject(sm, f"selisih tanggal {gap} hari dari {base.id} ({base.date}) melebihi batas {window_days} hari"); continue
+        if len(ranked) > 1 and ranked[1][0] == gap:
+            reject(sm, f"ambigu antara {ranked[0][1]} dan {ranked[1][1]}"); continue
+
+        merged = Match(**asdict(base))
+        for field in ("time", "venue", "city", "country", "status",
+                      "home_score", "away_score", "home_team_url", "away_team_url"):
+            value = getattr(sm, field, "")
+            if value not in ("", None):
+                setattr(merged, field, value)
+        url = clean(sm.source_url)
+        if url and url.split("#")[0] not in used_urls:
+            merged.source_url = url
+            used_urls.add(url.split("#")[0])
+        elif url:
+            report.append(f"NOTE    {base.id}: tautan {url} sudah dipakai laga lain; tidak disalin")
+        if sm.date != base.date:
+            merged.date = sm.date
+            report.append(f"RESCHED {base.id} {base.home} - {base.away}: {base.date} -> {sm.date} {sm.time}")
+        # A match cannot be finished before it kicks off.
+        if merged.status == "finished":
+            try:
+                if merged.dt > now_naive:
+                    merged.status, merged.home_score, merged.away_score = "scheduled", "", ""
+                    report.append(f"NOTE    {base.id}: status finished ditolak karena kickoff {merged.date} {merged.time} belum lewat")
+            except ValueError:
+                pass
+        scraped_dates[base.id] = sm.date
+        updated[base.id] = merged
+        used_ids.add(base.id)
+        accepted += 1
+        report.append(f"ACCEPT  {base.id} <- {sm.date} {sm.time} | {sm.home} - {sm.away} | gap {gap}d")
+
+    for mid, ov in overrides.items():
+        m = updated.get(mid)
+        if not m:
+            report.append(f"WARNING override untuk ID tidak dikenal: {mid}"); continue
+        if ov.get("date"):
+            if mid in scraped_dates and scraped_dates[mid] != ov["date"]:
+                report.append(f"WARNING override {mid}={ov['date']} berbeda dari Flashscore={scraped_dates[mid]}; override dipakai, periksa apakah masih relevan")
+            m.date = ov["date"]
+        for field in ("time", "venue", "city", "country"):
+            if ov.get(field):
+                setattr(m, field, clean(str(ov[field])))
+        report.append(f"OVERRIDE {mid}: {base_by_id[mid].date} -> {m.date} {m.time}" + (f" | {ov['note']}" if ov.get("note") else ""))
+
+    for mid, m in updated.items():
+        m.original_date = base_by_id[mid].date if m.date != base_by_id[mid].date else ""
+
+    summary = {"accepted": accepted, "rejected": rejected,
+               "rescheduled": sum(1 for m in updated.values() if m.original_date)}
+    return updated, report, summary
+
+
+def write_scrape_report(lines: list[str]) -> None:
+    try:
+        DEBUG_DIR.mkdir(exist_ok=True)
+        (DEBUG_DIR / "scrape-report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    except Exception as exc:
+        print(f"WARNING: could not write scrape report: {exc}", file=sys.stderr)
+
+
 def read_existing(path: Path, root_name: str) -> dict[str, Match]:
     if not path.exists():
         return {}
@@ -231,6 +432,7 @@ def read_existing(path: Path, root_name: str) -> dict[str, Match]:
             country=t("country") or "Indonesia", side=t("side"), status=t("status") or "scheduled",
             home_score=t("homeScore"), away_score=t("awayScore"), source_url=t("sourceUrl"),
             home_team_url=t("homeTeamUrl"), away_team_url=t("awayTeamUrl"),
+            original_date=t("originalDate"),
         )
     return result
 
@@ -258,6 +460,7 @@ def xml_write(path: Path, root_name: str, matches: Iterable[Match], source: str 
             ("country", m.country), ("side", m.side), ("status", m.status),
             ("homeScore", m.home_score), ("awayScore", m.away_score), ("sourceUrl", m.source_url),
             ("homeTeamUrl", m.home_team_url), ("awayTeamUrl", m.away_team_url),
+            ("originalDate", m.original_date),
         ]
         for name, value in fields:
             if value != "":
@@ -411,6 +614,7 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME, year_mode: str = "fix
         def norm(v): return normalize_team_text(v).lower()
         team_links = links.get('teams', [])
         match_links = links.get('matches', [])
+        used_hrefs: set[str] = set()
         for row in parsed:
             hn, an = norm(row.get('home','')), norm(row.get('away',''))
             for tl in team_links:
@@ -420,20 +624,35 @@ async def extract_rows(page, anchor_team: str = TEAM_NAME, year_mode: str = "fix
                 if not row.get('awayHref') and tn and (tn == an or an in tn or tn in an):
                     row['awayHref'] = tl['href']
             if not row.get('href'):
-                for ml in match_links:
-                    mt = norm((ml.get('text','') or '') + ' ' + (ml.get('context','') or ''))
-                    if hn and an and hn in mt and an in mt:
-                        row['href'] = ml['href']
-                        break
-                if not row.get('href'):
-                    # Some match anchors have empty text; their parent text
-                    # normally contains the date plus both participants.
-                    target_date = row.get('time','')
+                # Assign each match link to at most one row, prefer the link whose
+                # surrounding text carries the row's own date, and require the
+                # opponent to appear in the URL. Without this a second leg against
+                # the same club (home/away) would inherit the first leg's URL.
+                target_date = norm(row.get('time', ''))
+                opp = an if hn == norm(TEAM_NAME) else hn
+                opp_tokens = [t for t in re.split(r'[^a-z0-9]+', opp) if len(t) >= 4]
+                chosen = ''
+                for pass_no in (1, 2):
                     for ml in match_links:
-                        mt = norm((ml.get('text','') or '') + ' ' + (ml.get('context','') or ''))
-                        if hn and an and hn in mt and an in mt and target_date and target_date in mt:
-                            row['href'] = ml['href']
-                            break
+                        href = (ml.get('href') or '').split('#')[0]
+                        if not href or href in used_hrefs:
+                            continue
+                        mt = norm((ml.get('text', '') or '') + ' ' + (ml.get('context', '') or ''))
+                        if not (hn and an and hn in mt and an in mt):
+                            continue
+                        if mt.find(hn) > mt.find(an):
+                            continue
+                        if opp_tokens and not any(t in href.lower() for t in opp_tokens):
+                            continue
+                        if pass_no == 1 and not (target_date and target_date in mt):
+                            continue
+                        chosen = ml['href']
+                        break
+                    if chosen:
+                        break
+                if chosen:
+                    row['href'] = chosen
+                    used_hrefs.add(chosen.split('#')[0])
     except Exception as exc:
         print(f"DEBUG: could not enrich fallback rows with DOM links: {exc}", file=sys.stderr)
     return parsed
@@ -810,35 +1029,247 @@ async def scrape_player_leaders(page) -> dict[str, list[dict]]:
     return out
 
 
-def match_stats_xml_write(matches_stats: list[tuple[Match, dict[str, tuple[str,str]], list[dict]]], source: str = "ileague-rendered") -> None:
-    root = ET.Element("matchStats", {"version":"2.1", "source":source})
-    for match, stats, events in matches_stats:
-        if not match:
-            continue
-        node = ET.SubElement(root, "match", {"id":match.id})
-        for key, value in (("date",match.date),("home",match.home),("away",match.away),("sourceUrl",match.source_url)):
-            if value: ET.SubElement(node,key).text=value
-        for key, pair in stats.items():
-            item=ET.SubElement(node,"stat",{"key":key})
-            ET.SubElement(item,"home").text=str(pair[0])
-            ET.SubElement(item,"away").text=str(pair[1])
-        seen=set()
-        for ev in events or []:
-            sig=(ev.get("type"),ev.get("minute"),ev.get("player"),ev.get("team"))
-            if sig in seen: continue
-            seen.add(sig)
-            attrs={k:str(ev.get(k,"")) for k in ("type","minute","team","player") if ev.get(k)}
-            ET.SubElement(node,"event",attrs)
-    MATCH_STATS_FILE.write_bytes(minidom.parseString(ET.tostring(root,encoding="utf-8")).toprettyxml(indent="  ",encoding="utf-8"))
+# ---------------------------------------------------------------------------
+# Match statistics: multiple public sources merged per match
+# ---------------------------------------------------------------------------
+STAT_KEYS_ORDER = ("possession", "shotsOnTarget", "shots", "shotAccuracy", "successfulPasses", "failedPasses",
+                   "corners", "tackles", "offsides", "fouls", "yellowCards", "redCards", "saves", "xg")
+SOURCE_PRIORITY = {"ileague": 3, "flashscore": 2}  # anything else (legacy seed) ranks 1
+FLASH_STAT_LABELS = {
+    "ball possession": "possession", "total shots": "shots", "shots total": "shots",
+    "shots on target": "shotsOnTarget", "corner kicks": "corners", "offsides": "offsides",
+    "fouls": "fouls", "yellow cards": "yellowCards", "red cards": "redCards",
+    "goalkeeper saves": "saves", "tackles": "tackles",
+    "expected goals (xg)": "xg", "expected goals": "xg",
+}
 
-async def scrape_match_stats(page, match: Match | None) -> tuple[dict[str, tuple[str,str]], list[dict]]:
+
+def _first_number(token: str) -> str | None:
+    m = re.match(r"^\s*(\d+(?:[.,]\d+)?)", token or "")
+    return m.group(1).replace(",", ".") if m else None
+
+
+def parse_flashscore_stats_text(body: str) -> dict[str, tuple[str, str]]:
+    """Parse the rendered Flashscore statistics tab.
+
+    Each statistic is rendered as three consecutive lines: home value, English
+    category label, away value (for example ``55%`` / ``Ball Possession`` /
+    ``45%``). Values such as ``120 (85%)`` keep the leading count.
+    """
+    lines = [clean(x) for x in body.splitlines() if clean(x)]
+    stats: dict[str, tuple[str, str]] = {}
+    for i, line in enumerate(lines):
+        key = FLASH_STAT_LABELS.get(line.lower())
+        if not key or key in stats or i == 0 or i + 1 >= len(lines):
+            continue
+        left, right = _first_number(lines[i - 1]), _first_number(lines[i + 1])
+        if left is not None and right is not None:
+            stats[key] = (left, right)
+    return stats
+
+
+def _save_stats_debug(label: str, url: str, title: str, body: str) -> None:
+    try:
+        DEBUG_DIR.mkdir(exist_ok=True)
+        safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", label)[:80]
+        (DEBUG_DIR / f"stats-{safe}.txt").write_text(f"URL: {url}\nTITLE: {title}\n\n{body[:8000]}\n", encoding="utf-8")
+    except Exception as exc:
+        print(f"DEBUG: could not save stats diagnostics: {exc}", file=sys.stderr)
+
+
+async def scrape_flashscore_stats(page, match: Match) -> dict[str, tuple[str, str]]:
+    url = clean(match.source_url)
+    if "flashscore.com/match/" not in url:
+        return {}
+    target = url.split("#")[0] + "#/match-summary/match-statistics/0"
+    await page.goto(target, wait_until="domcontentloaded", timeout=60000)
+    await dismiss_consent(page)
+    try:
+        await page.wait_for_function(
+            "() => /ball possession|shots on target|corner kicks/i.test(document.body.innerText)", timeout=15000)
+    except PlaywrightTimeoutError:
+        pass
+    body = await page.locator("body").inner_text(timeout=10000)
+    stats = parse_flashscore_stats_text(body)
+    if not stats:
+        _save_stats_debug(f"{match.id}-flashscore", target, await page.title(), body)
+    return stats
+
+
+async def collect_ileague_result_links(context) -> list[str]:
+    links: set[str] = set()
+    for url in (ILEAGUE_FIXTURES_URL, os.getenv("ILEAGUE_HOME_URL", "https://ileague.id/home/index/bri%20super%20league%202026-27")):
+        page = await context.new_page()
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+            await page.wait_for_timeout(1500)
+            found = await page.evaluate("""() => Array.from(document.querySelectorAll('a[href*="/result/detail/"]')).map(a => a.href)""")
+            for href in found or []:
+                links.add(href.split("#")[0])
+        except Exception as exc:
+            print(f"WARNING: could not collect I.League result links from {url}: {exc}", file=sys.stderr)
+        finally:
+            await page.close()
+    return sorted(links)
+
+
+def resolve_ileague_url(match: Match, links: list[str]) -> str:
+    """Prefer the real link listed by I.League (matched by date + club names);
+    fall back to a URL built from the club names."""
+    for href in links:
+        m = re.search(r"/result/detail/[^/]+/(\d{4}-\d{2}-\d{2})/([^/?#]+)/([^/?#]+)", href)
+        if not m or m.group(1) != match.date:
+            continue
+        if names_match(m.group(2).replace("_", " "), match.home) and names_match(m.group(3).replace("_", " "), match.away):
+            return href
+    home_slug = re.sub(r"[^A-Za-z0-9]+", "_", match.home).strip("_").upper()
+    away_slug = re.sub(r"[^A-Za-z0-9]+", "_", match.away).strip("_").upper()
+    return f"https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/{match.date}/{home_slug}/{away_slug}"
+
+
+def read_match_stats_xml(path: Path | None = None) -> dict[str, dict]:
+    path = path or MATCH_STATS_FILE
+    if not path.exists():
+        return {}
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError:
+        return {}
+    records: dict[str, dict] = {}
+    for node in root.findall("match"):
+        mid = node.get("id", "")
+        if not mid:
+            continue
+        stats = {}
+        for st in node.findall("stat"):
+            key = st.get("key", "")
+            if key:
+                stats[key] = {"home": clean(st.findtext("home")), "away": clean(st.findtext("away")),
+                              "source": st.get("source") or "legacy"}
+        events = [{k: ev.get(k, "") for k in ("type", "minute", "team", "player") if ev.get(k)} for ev in node.findall("event")]
+        records[mid] = {"id": mid, "date": clean(node.findtext("date")), "home": clean(node.findtext("home")),
+                        "away": clean(node.findtext("away")), "sourceUrl": clean(node.findtext("sourceUrl")),
+                        "stats": stats, "events": events}
+    return records
+
+
+def merge_match_stats(records: dict[str, dict], match: Match, source: str,
+                      stats: dict[str, tuple[str, str]], events: list[dict], source_url: str) -> bool:
+    """Merge one source's result into the record. A key is replaced only by a source of
+    equal or higher priority, so existing data is never lost or downgraded."""
+    rec = records.setdefault(match.id, {"id": match.id, "date": match.date, "home": match.home, "away": match.away,
+                                        "sourceUrl": "", "stats": {}, "events": []})
+    changed = False
+    rank = SOURCE_PRIORITY.get(source, 1)
+    for key, (h, a) in stats.items():
+        cur = rec["stats"].get(key)
+        if cur is None or rank >= SOURCE_PRIORITY.get(cur["source"], 1):
+            new = {"home": str(h), "away": str(a), "source": source}
+            if cur != new:
+                rec["stats"][key] = new
+                changed = True
+    if events and source == "ileague" and events != rec["events"]:
+        rec["events"] = events
+        changed = True
+    if source_url and (not rec["sourceUrl"] or source == "ileague"):
+        rec["sourceUrl"] = source_url
+    rec.update({"date": match.date, "home": match.home, "away": match.away})
+    return changed
+
+
+def write_match_stats_xml(records: dict[str, dict]) -> None:
+    root = ET.Element("matchStats", {"version": "3.0", "source": "ileague+flashscore"})
+    for rec in sorted(records.values(), key=lambda r: (r.get("date", ""), r["id"])):
+        node = ET.SubElement(root, "match", {"id": rec["id"]})
+        for key in ("date", "home", "away", "sourceUrl"):
+            if rec.get(key):
+                ET.SubElement(node, key).text = rec[key]
+        ordered = [k for k in STAT_KEYS_ORDER if k in rec["stats"]] + sorted(k for k in rec["stats"] if k not in STAT_KEYS_ORDER)
+        for key in ordered:
+            st = rec["stats"][key]
+            item = ET.SubElement(node, "stat", {"key": key, "source": st["source"]})
+            ET.SubElement(item, "home").text = st["home"]
+            ET.SubElement(item, "away").text = st["away"]
+        seen = set()
+        for ev in rec.get("events", []):
+            sig = (ev.get("type"), ev.get("minute"), ev.get("player"), ev.get("team"))
+            if sig in seen:
+                continue
+            seen.add(sig)
+            ET.SubElement(node, "event", {k: str(v) for k, v in ev.items() if v})
+    MATCH_STATS_FILE.write_bytes(minidom.parseString(ET.tostring(root, encoding="utf-8")).toprettyxml(indent="  ", encoding="utf-8"))
+
+
+def stats_targets(results: list[Match], records: dict[str, dict], now_local: datetime, limit: int | None = None) -> list[Match]:
+    """Finished matches that still need statistics: no record, fewer than 10 stat keys, or
+    played within the last 3 days (sources revise numbers shortly after full time)."""
+    limit = STATS_MAX_MATCHES if limit is None else limit
+    out = []
+    for m in sorted((x for x in results if x.status == "finished"), key=lambda x: x.dt, reverse=True):
+        rec = records.get(m.id)
+        age = (now_local.date() - date.fromisoformat(m.date)).days
+        if rec is None or len(rec["stats"]) < 10 or age <= 3:
+            out.append(m)
+    return out[:limit]
+
+
+async def collect_match_stats(context, results: list[Match]) -> None:
+    records = read_match_stats_xml()
+    now_local = datetime.now(ZoneInfo(TIMEZONE))
+    targets = stats_targets(results, records, now_local)
+    if not targets:
+        print("Match stats: every finished match already has complete statistics")
+        return
+    print(f"Match stats: collecting {', '.join(m.id for m in targets)} (sources: {', '.join(STATS_SOURCES)})")
+    ileague_links: list[str] = []
+    if "ileague" in STATS_SOURCES and any(m.competition_short == "Super League" for m in targets):
+        ileague_links = await collect_ileague_result_links(context)
+        print(f"I.League result links found: {len(ileague_links)}")
+    page = await context.new_page()
+    changed = False
+    try:
+        for m in targets:
+            if "ileague" in STATS_SOURCES and m.competition_short == "Super League":
+                url = resolve_ileague_url(m, ileague_links)
+                try:
+                    probe = Match(**asdict(m)); probe.source_url = url
+                    stats, events = await scrape_match_stats(page, probe, label=f"{m.id}-ileague")
+                    print(f"  {m.id} I.League: {len(stats)} stats, {len(events)} events")
+                    if stats or events:
+                        changed |= merge_match_stats(records, m, "ileague", stats, events, url)
+                except Exception as exc:
+                    print(f"WARNING: I.League stats failed for {m.id}: {exc}", file=sys.stderr)
+            if "flashscore" in STATS_SOURCES and "flashscore.com/match/" in (m.source_url or ""):
+                try:
+                    fstats = await scrape_flashscore_stats(page, m)
+                    print(f"  {m.id} Flashscore: {len(fstats)} stats")
+                    if fstats:
+                        changed |= merge_match_stats(records, m, "flashscore", fstats, [], m.source_url)
+                except Exception as exc:
+                    print(f"WARNING: Flashscore stats failed for {m.id}: {exc}", file=sys.stderr)
+            await page.wait_for_timeout(500)
+    finally:
+        await page.close()
+    if changed:
+        write_match_stats_xml(records)
+        print(f"Match stats: wrote {len(records)} match records")
+    else:
+        print("Match stats: no new data; keeping existing match-stats.xml")
+
+
+async def scrape_match_stats(page, match: Match | None, label: str = "") -> tuple[dict[str, tuple[str,str]], list[dict]]:
     if not match or not match.source_url:
         return {}, []
     detail_url = match.source_url
     if "flashscore.com" in detail_url:
         return {}, []
     await page.goto(detail_url, wait_until="domcontentloaded", timeout=60000)
-    await page.wait_for_timeout(1200)
+    try:
+        await page.wait_for_function(
+            "() => /penguasaan bola|tembakan|kartu kuning|mencetak goal/i.test(document.body.innerText)", timeout=12000)
+    except PlaywrightTimeoutError:
+        pass
+    await page.wait_for_timeout(500)
     body = await page.locator("body").inner_text(timeout=10000)
     lines=[clean(x) for x in body.splitlines() if clean(x)]
     labels={
@@ -889,6 +1320,8 @@ async def scrape_match_stats(page, match: Match | None) -> tuple[dict[str, tuple
         sig=(ev["type"],ev["minute"],ev["player"],ev.get("team",""))
         if sig not in seen:
             seen.add(sig); dedup.append(ev)
+    if label and not stats and not dedup:
+        _save_stats_debug(label, detail_url, await page.title(), body)
     return stats, dedup
 
 async def scrape_card_leaders(context, max_links: int = 60) -> dict[str, list[dict]]:
@@ -992,99 +1425,24 @@ async def scrape() -> tuple[list[Match], list[Match]]:
             except Exception as exc:
                 print(f"WARNING: fixture detail scrape failed; keeping canonical schedule: {exc}", file=sys.stderr)
 
-            TEAM_ALIASES = {
-                "fc seoul": "seoul",
-                "seoul": "seoul",
-                "viettel": "the cong-viettel fc",
-                "the cong-viettel": "the cong-viettel fc",
-                "the cong-viettel fc": "the cong-viettel fc",
-                "melbourne victory": "melbourne victory",
-                "persita tangerang": "persita",
-                "persita": "persita",
-                "persebaya surabaya": "persebaya",
-                "persebaya": "persebaya",
-                "bhayangkara presisi lampung fc": "bhayangkara",
-                "bhayangkara presisi indonesia fc": "bhayangkara",
-                "bhayangkara": "bhayangkara",
-                "borneo fc samarinda": "borneo samarinda",
-                "borneo samarinda": "borneo samarinda",
-                "isenmulang kalteng fc": "isenmulang kalteng",
-                "java united fc": "java united",
-                "psim yogyakarta": "psim yogyakarta",
-                "persik kediri": "persik kediri",
-                "madu ra united": "madura united",
-                "madura united fc": "madura united",
-                "port fc": "port fc",
-                "pk r svay rieng": "pkr svay rieng",
-                "pkr svay rieng fc": "pkr svay rieng",
-                "cong an ha noi": "cong an ha noi",
-                "cong an nhan dan": "cong an ha noi",
-            }
-            def team_key(value):
-                v=normalize_team_text(value).lower()
-                v=re.sub(r"\s+", " ", v).strip()
-                return TEAM_ALIASES.get(v, v)
-            def pair_key(m):
-                return (team_key(m.home), team_key(m.away))
-
-            pair_candidates = {}
-            for base in baseline:
-                pair_candidates.setdefault(pair_key(base), []).append(base)
-
-            updated_by_id = {m.id: m for m in baseline}
-            used_ids = set()
-            accepted = rejected = 0
-
-            # Prefer exact canonical date+pair. If Flashscore has changed the
-            # date, fall back to a unique home/away pair, but KEEP the canonical
-            # date. This is the key distinction between fixed schedule and live
-            # match details.
-            for sm in scraped:
-                # Flashscore rendered text can occasionally leak an adjacent
-                # competition row (for example the opponent's next fixture).
-                # Never allow a non-Persib row into the overlay pipeline.
-                if TEAM_NAME.lower() not in {clean(sm.home).lower(), clean(sm.away).lower()}:
-                    rejected += 1
-                    continue
-                pair = pair_key(sm)
-                candidates = pair_candidates.get(pair, [])
-                if not candidates:
-                    rejected += 1
-                    continue
-                exact = [b for b in candidates if b.date == sm.date and b.id not in used_ids]
-                candidates = exact or [b for b in candidates if b.id not in used_ids]
-                if len(candidates) != 1:
-                    rejected += 1
-                    continue
-                base = candidates[0]
-                merged = Match(**asdict(base))
-                # Mutable/live details only. NEVER copy date/home/away,
-                # competition, matchday or side from the scraped record.
-                for field in ("time", "venue", "city", "country", "status",
-                              "home_score", "away_score", "source_url",
-                              "home_team_url", "away_team_url"):
-                    value = getattr(sm, field, "")
-                    if value not in ("", None):
-                        setattr(merged, field, value)
-                merged.id = base.id
-                merged.date = base.date
-                merged.home = base.home
-                merged.away = base.away
-                merged.competition = base.competition
-                merged.competition_short = base.competition_short
-                merged.matchday = base.matchday
-                merged.side = base.side
-                updated_by_id[base.id] = merged
-                used_ids.add(base.id)
-                accepted += 1
-
+            # Schedule identity comes from the roster; Flashscore rows may confirm a
+            # reschedule (date/time) only when they match a roster fixture by club
+            # names + competition and fall inside RESCHEDULE_WINDOW_DAYS.
+            now_local = datetime.now(ZoneInfo(TIMEZONE))
+            overrides = load_overrides()
+            updated_by_id, report, summary = apply_overlays(baseline, scraped, overrides, now_local)
             all_matches = [updated_by_id[m.id] for m in baseline]
-            print(f"Canonical schedule: {len(all_matches)}; scraped detail overlays accepted: {accepted}; rejected: {rejected}")
+            print(f"Canonical schedule: {len(all_matches)}; scraped overlays accepted: {summary['accepted']}; "
+                  f"rejected: {summary['rejected']}; rescheduled: {summary['rescheduled']}; overrides: {len(overrides)}")
+            for line in report:
+                if line.startswith(("RESCHED", "OVERRIDE", "WARNING")):
+                    print(line)
+            write_scrape_report([f"Scrape report {now_local.isoformat(timespec='seconds')}",
+                                 f"scraped rows: {len(scraped)}; {summary}", *report])
             all_matches.sort(key=lambda x: (x.date, x.time or "00:00", x.id))
 
             # Resolve detail URLs where possible. This does not alter the fixed
             # schedule fields; it only enriches the records used by form/H2H.
-            existing_by_pair = {pair_key(m): m for m in all_matches}
             detail_page = await context.new_page()
             try:
                 for m in all_matches:
@@ -1147,32 +1505,10 @@ async def scrape() -> tuple[list[Match], list[Match]]:
                     print(f"WARNING: player leaders scrape failed; keeping existing player-stats.xml: {exc}", file=sys.stderr)
             finally:
                 await player_page.close()
-            stats_page = await context.new_page()
             try:
-                # Collect statistics for every finished match we know about,
-                # not only the latest one. The dashboard uses these records
-                # inside the Result Match modal.
-                stats_records = []
-                finished_sl = [m for m in sorted(results, key=lambda x: x.dt, reverse=True) if m.competition_short == "Super League"]
-                for previous in finished_sl[:10]:
-                    try:
-                        slug_date = previous.date
-                        home_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.home).strip("_").upper()
-                        away_slug = re.sub(r"[^A-Za-z0-9]+", "_", previous.away).strip("_").upper()
-                        ileague_match = f"https://ileague.id/result/detail/BRI_SUPER_LEAGUE_2026-27/{slug_date}/{home_slug}/{away_slug}"
-                        previous_for_stats = Match(**asdict(previous)); previous_for_stats.source_url = ileague_match
-                        stats, events = await scrape_match_stats(stats_page, previous_for_stats)
-                        if stats or events: stats_records.append((previous, stats, events))
-                        await stats_page.wait_for_timeout(500)
-                    except Exception as exc:
-                        print(f"WARNING: match stats failed for {previous.id}: {exc}", file=sys.stderr)
-                if stats_records:
-                    match_stats_xml_write(stats_records)
-                    print(f"Match stats: {len(stats_records)} finished matches")
+                await collect_match_stats(context, results)
             except Exception as exc:
-                print(f"WARNING: match stats scrape failed; keeping existing match-stats.xml: {exc}", file=sys.stderr)
-            finally:
-                await stats_page.close()
+                print(f"WARNING: match stats collection failed; keeping existing match-stats.xml: {exc}", file=sys.stderr)
             await update_prematch_insights(context, next_match, results)
             return fixtures, results
         finally:
@@ -1439,7 +1775,7 @@ def main() -> int:
             live=enriched.get(base.id)
             if live:
                 merged=Match(**asdict(base))
-                for field in ("time","venue","city","country","status","home_score","away_score","source_url","home_team_url","away_team_url"):
+                for field in ("date","original_date","time","venue","city","country","status","home_score","away_score","source_url","home_team_url","away_team_url"):
                     value=getattr(live, field, "")
                     if value not in ("",None): setattr(merged, field, value)
                 persisted.append(merged)
@@ -1447,7 +1783,8 @@ def main() -> int:
                 persisted.append(base)
         xml_write(FIXTURES_FILE, "fixtures", persisted, source="static-master-schedule+detail-scrape")
         xml_write(RESULTS_FILE, "results", results)
-        write_last_update(True, "Detail scrape succeeded; canonical schedule preserved", len(all_roster), len(results))
+        resched = sum(1 for m in persisted if m.original_date)
+        write_last_update(True, f"Detail scrape succeeded; 46-match roster preserved; rescheduled fixtures: {resched}", len(all_roster), len(results))
         print(f"OK: canonical schedule {len(all_roster)}; results {len(results)}")
         return 0
     except Exception as exc:

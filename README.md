@@ -8,7 +8,7 @@ Expected season roster:
 - ACL Two: 6
 - ASEAN Club Championship / Shopee Cup: 6
 
-The scraper **must not change schedule identity/date/home/away**. It enriches the fixed roster with mutable information: kickoff, venue, city, team URLs, source URL, status and score, plus the existing form/H2H, standings, player leaders and previous-match statistics.
+The scraper **never changes schedule identity** (ID, competition, matchday, home/away, side). It enriches the fixed roster with mutable information: date/time (reschedules, see V22), venue, city, team URLs, source URL, status and score, plus the existing form/H2H, standings, player leaders and match statistics.
 
 `data/fixtures.xml` is an enriched cache/output of the fixed roster; it is **not** used as the authoritative roster input. This prevents an empty/corrupt previous XML from causing `Baseline roster: 0` or season-count failures.
 
@@ -51,3 +51,23 @@ The workflow remains daily at 23:00 WIB and supports manual execution. The scrap
 - I.League player-leader parsing was hardened; empty scraper output no longer overwrites good player statistics.
 - Yellow/red card leaders have a rendered-match fallback so card statistics can be rebuilt from completed I.League match timelines.
 - Existing fixed 46-match master schedule, upcoming fixtures, calendar, filters, standings, form/H2H and Google Calendar features are preserved.
+
+## V22 fixes — 5 October 2026
+
+### Schedule changes (reschedules)
+- `season-roster.json` / `STATIC_MATCHES` remain the **baseline** (identity + originally published date).
+- **Automatic:** a Flashscore row may move a fixture's date/time only if it matches a roster fixture by competition + both club names (tolerant matching: `FC`, `The`, country tags, "Persebaya" = "Persebaya Surabaya") **and** its date is within `RESCHEDULE_WINDOW_DAYS` (default 45) of the baseline date. The nearest candidate wins; ties are rejected. Friendlies/Piala Presiden rows are never matched.
+- **Manual:** edit `data/schedule-overrides.json` (`{"overrides": {"SL-07": {"date": "2026-10-25"}}}`). Overrides always win, are read directly by `index.html` (so they show immediately, without waiting for the scraper), and the scraper logs a `WARNING` if Flashscore later disagrees. Remove an entry once Flashscore shows the right date.
+- Rescheduled matches carry `<originalDate>` in `fixtures.xml` and show a "Jadwal berubah · semula …" tag on the dashboard.
+- Fixed: a match could be marked `finished` with a future date (pre-season rows glued onto later fixtures), and one Flashscore match URL could be reused by two fixtures. A match can no longer be `finished` before its kickoff.
+- Every run writes `debug/scrape-report.txt` (uploaded as the `persib-scraper-debug-*` artifact) listing each accepted/rejected row with the reason, plus all reschedules and overrides.
+
+### Match statistics from several sources
+- Sources: **I.League** (Super League only; link resolved from the real I.League result links, name-built URL as fallback) and the **rendered Flashscore statistics tab** (all competitions, so ACL Two / Shopee Cup now get statistics). Controlled by `STATS_SOURCES` (default `ileague,flashscore`).
+- `match-stats.xml` (v3) keeps existing data and merges per statistic with priority I.League > Flashscore > legacy seed; each `<stat>` records its `source`, and the modal shows "Sumber statistik". Flashscore also supplies saves and xG.
+- Only matches that lack data (< 10 statistics) or finished within 3 days are fetched, at most `STATS_MAX_MATCHES` (default 8) per run.
+- When a page yields nothing, its text is saved as `debug/stats-<match>-<source>.txt` for diagnosis.
+- Not included: Sofascore. It has no public rendered statistics page that works without its private API and it blocks automated access, which conflicts with this project's "public rendered pages only" rule.
+
+### Tests
+`python -m unittest discover -s tests -v` (offline; no browser needed).
