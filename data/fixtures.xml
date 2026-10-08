@@ -98,7 +98,9 @@
     <city>Bangkok</city>
     <country>Indonesia</country>
     <side>Away</side>
-    <status>scheduled</status>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>3</awayScore>
     <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
     <homeTeamUrl>https://www.flashscore.com/team/port-mti-fc/Yov9ooRk/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>

@@ -156,4 +156,22 @@
       <away>13</away>
     </stat>
   </match>
+  <match id="SHOPEE-01">
+    <date>2026-10-08</date>
+    <home>Port FC</home>
+    <away>Persib Bandung</away>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
+    <stat key="possession" source="flashscore">
+      <home>55</home>
+      <away>45</away>
+    </stat>
+    <stat key="shots" source="flashscore">
+      <home>14</home>
+      <away>14</away>
+    </stat>
+    <stat key="xg" source="flashscore">
+      <home>1.42</home>
+      <away>1.61</away>
+    </stat>
+  </match>
 </matchStats>

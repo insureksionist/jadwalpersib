@@ -84,4 +84,25 @@
     <homeTeamUrl>https://www.flashscore.com/team/persijap-jepara/AqJqcOYR/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
+  <match>
+    <id>SHOPEE-01</id>
+    <competition>Shopee Cup 2026/27</competition>
+    <competitionShort>Shopee Cup</competitionShort>
+    <matchday>MD 1</matchday>
+    <date>2026-10-08</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Port FC</home>
+    <away>Persib Bandung</away>
+    <venue>PAT Stadium</venue>
+    <city>Bangkok</city>
+    <country>Indonesia</country>
+    <side>Away</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>3</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/port-mti-fc/Yov9ooRk/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
+  </match>
 </results>
