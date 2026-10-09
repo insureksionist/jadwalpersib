@@ -14,15 +14,15 @@
   </team>
   <team position="2">
     <club>MADURA UNITED FC</club>
-    <played>3</played>
+    <played>4</played>
     <wins>3</wins>
     <draws>0</draws>
-    <losses>0</losses>
+    <losses>1</losses>
     <gf>7</gf>
-    <ga>2</ga>
-    <gd>5</gd>
+    <ga>4</ga>
+    <gd>3</gd>
     <points>9</points>
-    <form>W W W</form>
+    <form>L W W W</form>
   </team>
   <team position="3">
     <club>PERSIJA JAKARTA</club>
@@ -37,6 +37,30 @@
     <form>W W W</form>
   </team>
   <team position="4">
+    <club>PERSEBAYA SURABAYA</club>
+    <played>4</played>
+    <wins>2</wins>
+    <draws>2</draws>
+    <losses>0</losses>
+    <gf>4</gf>
+    <ga>2</ga>
+    <gd>2</gd>
+    <points>8</points>
+    <form>W D W D</form>
+  </team>
+  <team position="5">
+    <club>PERSIK KEDIRI</club>
+    <played>4</played>
+    <wins>2</wins>
+    <draws>1</draws>
+    <losses>1</losses>
+    <gf>5</gf>
+    <ga>2</ga>
+    <gd>3</gd>
+    <points>7</points>
+    <form>W D W L</form>
+  </team>
+  <team position="6">
     <club>BALI UNITED FC</club>
     <played>3</played>
     <wins>2</wins>
@@ -48,7 +72,7 @@
     <points>6</points>
     <form>L W W</form>
   </team>
-  <team position="5">
+  <team position="7">
     <club>PERSIB BANDUNG</club>
     <played>3</played>
     <wins>2</wins>
@@ -60,7 +84,7 @@
     <points>6</points>
     <form>W L W</form>
   </team>
-  <team position="6">
+  <team position="8">
     <club>BORNEO FC SAMARINDA</club>
     <played>4</played>
     <wins>2</wins>
@@ -72,7 +96,7 @@
     <points>6</points>
     <form>W L W L</form>
   </team>
-  <team position="7">
+  <team position="9">
     <club>AREMA FC</club>
     <played>3</played>
     <wins>1</wins>
@@ -84,7 +108,7 @@
     <points>5</points>
     <form>D D W</form>
   </team>
-  <team position="8">
+  <team position="10">
     <club>BHAYANGKARA PRESISI LAMPUNG FC</club>
     <played>3</played>
     <wins>1</wins>
@@ -96,7 +120,7 @@
     <points>5</points>
     <form>W D D</form>
   </team>
-  <team position="9">
+  <team position="11">
     <club>PERSITA</club>
     <played>3</played>
     <wins>1</wins>
@@ -107,30 +131,6 @@
     <gd>1</gd>
     <points>5</points>
     <form>D W D</form>
-  </team>
-  <team position="10">
-    <club>PERSEBAYA SURABAYA</club>
-    <played>3</played>
-    <wins>1</wins>
-    <draws>2</draws>
-    <losses>0</losses>
-    <gf>3</gf>
-    <ga>2</ga>
-    <gd>1</gd>
-    <points>5</points>
-    <form>D W D</form>
-  </team>
-  <team position="11">
-    <club>PERSIK KEDIRI</club>
-    <played>3</played>
-    <wins>1</wins>
-    <draws>1</draws>
-    <losses>1</losses>
-    <gf>3</gf>
-    <ga>2</ga>
-    <gd>1</gd>
-    <points>4</points>
-    <form>D W L</form>
   </team>
   <team position="12">
     <club>PSM MAKASSAR</club>
@@ -206,14 +206,14 @@
   </team>
   <team position="18">
     <club>ISENMULANG KALTENG FC (-2)</club>
-    <played>3</played>
+    <played>4</played>
     <wins>0</wins>
     <draws>0</draws>
-    <losses>3</losses>
+    <losses>4</losses>
     <gf>1</gf>
-    <ga>10</ga>
-    <gd>-9</gd>
+    <ga>11</ga>
+    <gd>-10</gd>
     <points>-2</points>
-    <form>L L L</form>
+    <form>L L L L</form>
   </team>
 </standings>

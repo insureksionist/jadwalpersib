@@ -162,16 +162,16 @@
     <away>Persib Bandung</away>
     <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
     <stat key="possession" source="flashscore">
-      <home>55</home>
-      <away>45</away>
+      <home>54</home>
+      <away>46</away>
     </stat>
     <stat key="shots" source="flashscore">
-      <home>14</home>
-      <away>14</away>
+      <home>15</home>
+      <away>15</away>
     </stat>
     <stat key="xg" source="flashscore">
-      <home>1.42</home>
-      <away>1.61</away>
+      <home>1.58</home>
+      <away>1.90</away>
     </stat>
   </match>
 </matchStats>
