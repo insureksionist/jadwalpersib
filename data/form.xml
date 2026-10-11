@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preMatch version="1.0" source="flashscore-rendered">
-  <nextMatch id="SL-04">
-    <date>2026-10-11</date>
-    <time>19:00</time>
+  <nextMatch id="ACL2-02">
+    <date>2026-10-14</date>
+    <time>19:15</time>
     <home>Persib Bandung</home>
-    <away>Dewa United</away>
-    <competition>BRI Super League 2026/27</competition>
+    <away>The Cong-Viettel FC</away>
+    <competition>AFC Champions League Two 2026/27</competition>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/viettel-Gb6wjV0S/?mid=AypJafGD</sourceUrl>
   </nextMatch>
   <team name="Persib Bandung">
+    <match>
+      <date>2026-10-11</date>
+      <time>19:00</time>
+      <home>Persib Bandung</home>
+      <away>Dewa United</away>
+      <homeScore>2</homeScore>
+      <awayScore>2</awayScore>
+      <outcome>D</outcome>
+      <competition>Super League</competition>
+      <sourceUrl>https://www.flashscore.com/match/football/dewa-united-IeUVbzhs/persib-bandung-KpBjbPK1/?mid=neOK9mKG</sourceUrl>
+    </match>
     <match>
       <date>2026-10-08</date>
       <time>19:00</time>
@@ -16,7 +28,7 @@
       <homeScore>1</homeScore>
       <awayScore>3</awayScore>
       <outcome>W</outcome>
-      <competition>ASEAN Club Championship</competition>
+      <competition>00 Persib Bandung Dewa United 2 2 D ASEAN Club Championship</competition>
       <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/port-mti-fc-Yov9ooRk/?mid=O856UoFU</sourceUrl>
     </match>
     <match>
@@ -52,18 +64,7 @@
       <competition>W Super League</competition>
       <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persija-jakarta-dWeXDE5i/?mid=KpIFXYk2</sourceUrl>
     </match>
-    <match>
-      <date>2026-09-06</date>
-      <time>19:00</time>
-      <home>Persib Bandung</home>
-      <away>PSM Makassar</away>
-      <homeScore>3</homeScore>
-      <awayScore>1</awayScore>
-      <outcome>W</outcome>
-      <competition>W Super League</competition>
-      <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/psm-makassar-IaeYYTE4/?mid=bZup77YA</sourceUrl>
-    </match>
   </team>
-  <team name="Dewa United"/>
+  <team name="The Cong-Viettel FC"/>
   <headToHead/>
 </preMatch>

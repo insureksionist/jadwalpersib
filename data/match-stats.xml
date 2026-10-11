@@ -174,4 +174,22 @@
       <away>1.90</away>
     </stat>
   </match>
+  <match id="SL-04">
+    <date>2026-10-11</date>
+    <home>Persib Bandung</home>
+    <away>Dewa United</away>
+    <sourceUrl>https://www.flashscore.com/match/football/dewa-united-IeUVbzhs/persib-bandung-KpBjbPK1/?mid=neOK9mKG</sourceUrl>
+    <stat key="possession" source="flashscore">
+      <home>54</home>
+      <away>46</away>
+    </stat>
+    <stat key="shotsOnTarget" source="flashscore">
+      <home>6</home>
+      <away>2</away>
+    </stat>
+    <stat key="shots" source="flashscore">
+      <home>17</home>
+      <away>7</away>
+    </stat>
+  </match>
 </matchStats>
