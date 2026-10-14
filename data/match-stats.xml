@@ -192,4 +192,22 @@
       <away>7</away>
     </stat>
   </match>
+  <match id="ACL2-02">
+    <date>2026-10-14</date>
+    <home>Persib Bandung</home>
+    <away>The Cong-Viettel FC</away>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/viettel-Gb6wjV0S/?mid=AypJafGD</sourceUrl>
+    <stat key="possession" source="flashscore">
+      <home>47</home>
+      <away>53</away>
+    </stat>
+    <stat key="shots" source="flashscore">
+      <home>15</home>
+      <away>10</away>
+    </stat>
+    <stat key="xg" source="flashscore">
+      <home>1.70</home>
+      <away>0.66</away>
+    </stat>
+  </match>
 </matchStats>

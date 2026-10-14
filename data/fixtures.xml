@@ -54,14 +54,9 @@
     <away>Persib Bandung</away>
     <venue>Seoul World Cup Stadium</venue>
     <city>Seoul</city>
-    <country>Indonesia</country>
+    <country>South Korea</country>
     <side>Away</side>
-    <status>finished</status>
-    <homeScore>0</homeScore>
-    <awayScore>1</awayScore>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=2BtB1Go1</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/seoul/8tzeYeHp/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
+    <status>scheduled</status>
   </match>
   <match>
     <id>SL-03</id>
@@ -140,7 +135,9 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
-    <status>scheduled</status>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
     <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/viettel-Gb6wjV0S/?mid=AypJafGD</sourceUrl>
     <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/viettel/Gb6wjV0S/</awayTeamUrl>
@@ -209,7 +206,7 @@
     <competitionShort>ACL 2</competitionShort>
     <matchday>MD 3</matchday>
     <date>2026-10-28</date>
-    <time>19:15</time>
+    <time>18:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>Melbourne Victory</away>
@@ -218,9 +215,6 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
-    <sourceUrl>https://www.flashscore.com/match/football/melbourne-victory-Qql6CzOP/persib-bandung-KpBjbPK1/?mid=2VW4Nc8K</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/melbourne-victory/Qql6CzOP/</awayTeamUrl>
   </match>
   <match>
     <id>SL-08</id>
@@ -253,12 +247,9 @@
     <away>Persib Bandung</away>
     <venue>Melbourne Rectangular Stadium</venue>
     <city>Melbourne</city>
-    <country>Indonesia</country>
+    <country>Australia</country>
     <side>Away</side>
     <status>scheduled</status>
-    <sourceUrl>https://www.flashscore.com/match/football/melbourne-victory-Qql6CzOP/persib-bandung-KpBjbPK1/?mid=YDNzIyWs</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/melbourne-victory/Qql6CzOP/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
     <id>SL-09</id>
@@ -319,7 +310,7 @@
     <competitionShort>ACL 2</competitionShort>
     <matchday>MD 5</matchday>
     <date>2026-11-25</date>
-    <time>19:15</time>
+    <time>18:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Persib Bandung</home>
     <away>FC Seoul</away>
@@ -328,9 +319,6 @@
     <country>Indonesia</country>
     <side>Home</side>
     <status>scheduled</status>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/seoul-8tzeYeHp/?mid=QLurGF0f</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/seoul/8tzeYeHp/</awayTeamUrl>
   </match>
   <match>
     <id>SL-11</id>
@@ -357,18 +345,15 @@
     <competitionShort>ACL 2</competitionShort>
     <matchday>MD 6</matchday>
     <date>2026-12-02</date>
-    <time>17:00</time>
+    <time>18:00</time>
     <timezone>Asia/Jakarta</timezone>
     <home>Viettel</home>
     <away>Persib Bandung</away>
     <venue>Hang Day Stadium</venue>
     <city>Hanoi</city>
-    <country>Indonesia</country>
+    <country>Vietnam</country>
     <side>Away</side>
     <status>scheduled</status>
-    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/viettel-Gb6wjV0S/?mid=6asbCXaJ</sourceUrl>
-    <homeTeamUrl>https://www.flashscore.com/team/viettel/Gb6wjV0S/</homeTeamUrl>
-    <awayTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</awayTeamUrl>
   </match>
   <match>
     <id>SL-12</id>
