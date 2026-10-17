@@ -2,15 +2,15 @@
 <standings version="1.0" source="ileague-rendered" competition="BRI Super League 2026/27">
   <team position="1">
     <club>PERSIJA JAKARTA</club>
-    <played>4</played>
+    <played>5</played>
     <wins>4</wins>
     <draws>0</draws>
-    <losses>0</losses>
-    <gf>8</gf>
-    <ga>1</ga>
-    <gd>7</gd>
+    <losses>1</losses>
+    <gf>10</gf>
+    <ga>4</ga>
+    <gd>6</gd>
     <points>12</points>
-    <form>W W W W</form>
+    <form>L W W W W</form>
   </team>
   <team position="2">
     <club>DEWA UNITED BANTEN FC</club>
@@ -25,6 +25,18 @@
     <form>D W W D W</form>
   </team>
   <team position="3">
+    <club>PERSITA</club>
+    <played>5</played>
+    <wins>3</wins>
+    <draws>2</draws>
+    <losses>0</losses>
+    <gf>11</gf>
+    <ga>8</ga>
+    <gd>3</gd>
+    <points>11</points>
+    <form>W W D W D</form>
+  </team>
+  <team position="4">
     <club>MADURA UNITED FC</club>
     <played>5</played>
     <wins>3</wins>
@@ -36,7 +48,7 @@
     <points>10</points>
     <form>D L W W W</form>
   </team>
-  <team position="4">
+  <team position="5">
     <club>BALI UNITED FC</club>
     <played>5</played>
     <wins>3</wins>
@@ -47,18 +59,6 @@
     <gd>7</gd>
     <points>9</points>
     <form>L W L W W</form>
-  </team>
-  <team position="5">
-    <club>PERSITA</club>
-    <played>4</played>
-    <wins>2</wins>
-    <draws>2</draws>
-    <losses>0</losses>
-    <gf>8</gf>
-    <ga>6</ga>
-    <gd>2</gd>
-    <points>8</points>
-    <form>W D W D</form>
   </team>
   <team position="6">
     <club>PERSEBAYA SURABAYA</club>
@@ -110,15 +110,15 @@
   </team>
   <team position="10">
     <club>AREMA FC</club>
-    <played>4</played>
+    <played>5</played>
     <wins>1</wins>
     <draws>3</draws>
-    <losses>0</losses>
-    <gf>10</gf>
-    <ga>6</ga>
-    <gd>4</gd>
+    <losses>1</losses>
+    <gf>11</gf>
+    <ga>9</ga>
+    <gd>2</gd>
     <points>6</points>
-    <form>D D D W</form>
+    <form>L D D D W</form>
   </team>
   <team position="11">
     <club>BORNEO FC SAMARINDA</club>
@@ -145,6 +145,18 @@
     <form>W W L L D</form>
   </team>
   <team position="13">
+    <club>GARUDAYAKSA FC</club>
+    <played>5</played>
+    <wins>1</wins>
+    <draws>2</draws>
+    <losses>2</losses>
+    <gf>6</gf>
+    <ga>7</ga>
+    <gd>-1</gd>
+    <points>5</points>
+    <form>W L D L D</form>
+  </team>
+  <team position="14">
     <club>PSM MAKASSAR</club>
     <played>5</played>
     <wins>1</wins>
@@ -156,7 +168,7 @@
     <points>5</points>
     <form>W L D D L</form>
   </team>
-  <team position="14">
+  <team position="15">
     <club>PSS SLEMAN</club>
     <played>4</played>
     <wins>1</wins>
@@ -167,18 +179,6 @@
     <gd>-1</gd>
     <points>3</points>
     <form>W L L L</form>
-  </team>
-  <team position="15">
-    <club>GARUDAYAKSA FC</club>
-    <played>4</played>
-    <wins>0</wins>
-    <draws>2</draws>
-    <losses>2</losses>
-    <gf>3</gf>
-    <ga>6</ga>
-    <gd>-3</gd>
-    <points>2</points>
-    <form>L D L D</form>
   </team>
   <team position="16">
     <club>PSIM YOGYAKARTA</club>
