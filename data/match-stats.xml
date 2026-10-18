@@ -210,4 +210,22 @@
       <away>0.66</away>
     </stat>
   </match>
+  <match id="SL-05">
+    <date>2026-10-18</date>
+    <home>Persib Bandung</home>
+    <away>Persik Kediri</away>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persik-kediri-MDFOmQ7H/?mid=0x1XzQIF</sourceUrl>
+    <stat key="possession" source="flashscore">
+      <home>42</home>
+      <away>58</away>
+    </stat>
+    <stat key="shotsOnTarget" source="flashscore">
+      <home>2</home>
+      <away>3</away>
+    </stat>
+    <stat key="shots" source="flashscore">
+      <home>11</home>
+      <away>12</away>
+    </stat>
+  </match>
 </matchStats>

@@ -161,7 +161,9 @@
     <city>Bandung</city>
     <country>Indonesia</country>
     <side>Home</side>
-    <status>scheduled</status>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
     <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persik-kediri-MDFOmQ7H/?mid=0x1XzQIF</sourceUrl>
     <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/persik-kediri/MDFOmQ7H/</awayTeamUrl>

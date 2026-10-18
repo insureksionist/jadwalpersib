@@ -147,4 +147,25 @@
     <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
     <awayTeamUrl>https://www.flashscore.com/team/viettel/Gb6wjV0S/</awayTeamUrl>
   </match>
+  <match>
+    <id>SL-05</id>
+    <competition>BRI Super League 2026/27</competition>
+    <competitionShort>Super League</competitionShort>
+    <matchday>Matchday 5</matchday>
+    <date>2026-10-18</date>
+    <time>19:00</time>
+    <timezone>Asia/Jakarta</timezone>
+    <home>Persib Bandung</home>
+    <away>Persik Kediri</away>
+    <venue>Gelora Bandung Lautan Api</venue>
+    <city>Bandung</city>
+    <country>Indonesia</country>
+    <side>Home</side>
+    <status>finished</status>
+    <homeScore>1</homeScore>
+    <awayScore>0</awayScore>
+    <sourceUrl>https://www.flashscore.com/match/football/persib-bandung-KpBjbPK1/persik-kediri-MDFOmQ7H/?mid=0x1XzQIF</sourceUrl>
+    <homeTeamUrl>https://www.flashscore.com/team/persib-bandung/KpBjbPK1/</homeTeamUrl>
+    <awayTeamUrl>https://www.flashscore.com/team/persik-kediri/MDFOmQ7H/</awayTeamUrl>
+  </match>
 </results>

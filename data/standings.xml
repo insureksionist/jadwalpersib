@@ -49,6 +49,18 @@
     <form>D L W W W</form>
   </team>
   <team position="5">
+    <club>PERSIB BANDUNG</club>
+    <played>5</played>
+    <wins>3</wins>
+    <draws>1</draws>
+    <losses>1</losses>
+    <gf>9</gf>
+    <ga>6</ga>
+    <gd>3</gd>
+    <points>10</points>
+    <form>W D W L W</form>
+  </team>
+  <team position="6">
     <club>BALI UNITED FC</club>
     <played>5</played>
     <wins>3</wins>
@@ -60,29 +72,17 @@
     <points>9</points>
     <form>L W L W W</form>
   </team>
-  <team position="6">
-    <club>PERSEBAYA SURABAYA</club>
-    <played>4</played>
-    <wins>2</wins>
-    <draws>2</draws>
-    <losses>0</losses>
-    <gf>4</gf>
-    <ga>2</ga>
-    <gd>2</gd>
-    <points>8</points>
-    <form>W D W D</form>
-  </team>
   <team position="7">
-    <club>PERSIK KEDIRI</club>
-    <played>4</played>
+    <club>PERSEBAYA SURABAYA</club>
+    <played>5</played>
     <wins>2</wins>
-    <draws>1</draws>
-    <losses>1</losses>
-    <gf>5</gf>
-    <ga>2</ga>
-    <gd>3</gd>
-    <points>7</points>
-    <form>W D W L</form>
+    <draws>3</draws>
+    <losses>0</losses>
+    <gf>6</gf>
+    <ga>4</ga>
+    <gd>2</gd>
+    <points>9</points>
+    <form>D W D W D</form>
   </team>
   <team position="8">
     <club>BHAYANGKARA PRESISI LAMPUNG FC</club>
@@ -97,16 +97,16 @@
     <form>D D W D D</form>
   </team>
   <team position="9">
-    <club>PERSIB BANDUNG</club>
-    <played>4</played>
+    <club>PERSIK KEDIRI</club>
+    <played>5</played>
     <wins>2</wins>
     <draws>1</draws>
-    <losses>1</losses>
-    <gf>8</gf>
-    <ga>6</ga>
+    <losses>2</losses>
+    <gf>5</gf>
+    <ga>3</ga>
     <gd>2</gd>
     <points>7</points>
-    <form>D W L W</form>
+    <form>L W D W L</form>
   </team>
   <team position="10">
     <club>AREMA FC</club>
@@ -170,15 +170,15 @@
   </team>
   <team position="15">
     <club>PSS SLEMAN</club>
-    <played>4</played>
+    <played>5</played>
     <wins>1</wins>
-    <draws>0</draws>
+    <draws>1</draws>
     <losses>3</losses>
-    <gf>6</gf>
-    <ga>7</ga>
+    <gf>8</gf>
+    <ga>9</ga>
     <gd>-1</gd>
-    <points>3</points>
-    <form>W L L L</form>
+    <points>4</points>
+    <form>D W L L L</form>
   </team>
   <team position="16">
     <club>PSIM YOGYAKARTA</club>
